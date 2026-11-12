@@ -1,7 +1,9 @@
 # Campaign creation and settings
 
-All paths use `/ads/google`. Read account diagnostics and existing campaign
-refs first. Keep settings changes scoped to the user's actual request.
+All paths use `/ads/google`. For a new campaign, first check `/account` as
+described in the skill. For existing campaigns, use their saved refs and
+campaign-specific account settings; a denied new-account check does not block
+them. Keep settings changes scoped to the user's actual request.
 
 ## Create a paused Search shell
 

@@ -41,26 +41,45 @@ The [server conversions reference](references/server-conversions.md) describes
 the narrower runtime `analytics` access. Never put the OS key in browser code
 or project evidence; direct Google credentials are not needed.
 
-Read the account and existing campaigns before choosing an object:
+Before new campaign setup, read the selected account. For work on existing
+campaigns, list them and use their saved refs; new-account access is independent:
 
 ```bash
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/ads/google/account" -s
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/ads/google/campaigns" -s
 ```
 
-Account diagnostics are in `data.raw` (customer id, currency, timezone, status);
-campaigns are in `data.campaigns`. OS assigns the account: customer overrides
-are rejected. Preserve the exact returned `ref`, shaped
+`GET /ads/google/account` checks access for new work and returns account
+diagnostics in `data.raw` (customer id, currency, timezone, status). An explicit
+Registry assignment takes priority. Without one, the shared Egbe account is
+available only to approved owner emails. OS selects this server-side; customer
+overrides are rejected and the caller cannot grant access by supplying an email.
+
+- Success: continue the requested setup and planning with the returned account.
+- `403` containing `google_ads_not_available`: tell the founder clearly, “New
+  Google advertising through Egbe is unavailable for this project.” They can use
+  their own Google Ads account through their own authorized tools/credentials,
+  or agree a manual account connection/assignment with Egbe. Having an MCC or
+  completing the Dashboard OAuth pilot alone does not assign an OS account.
+  Do not request a founder MCC as a prerequisite or promise automatic connection.
+- Registry/provider `5xx`: report a temporary account-check failure, retry the
+  read later and escalate persistent failure to Egbe. This is not an access denial.
+
+The restriction applies to selecting an account for new work, including keyword
+ideas. It does not revoke existing campaign access. A denied account check must
+not block an authorized read, edit, pause or saved-operation retry on an existing
+campaign. Campaigns are in `data.campaigns`. Preserve the exact returned `ref`, shaped
 `customer_id:campaign_id`; existing campaigns can belong to earlier assigned
 accounts. Names are not ownership proof. For the selected campaign,
 `GET /ads/google/campaigns/{ref}/account-settings` reads currency, timezone and
 auto-tagging. Product agents cannot change shared-account auto-tagging; report
 a needed change to Egbe, without requesting an admin key.
 
-A 401/403, ownership 404, missing provider configuration, unavailable account
-assignment, quota or wallet error is a concrete blocker, not permission to use
-another account or raw provider API. Retry unavailable account assignment with
-read-only requests later; report persistent failure to Egbe.
+Other auth, ownership, configuration, quota and wallet errors block the affected
+Egbe operation. Never use Egbe credentials, account overrides or raw provider
+calls to bypass a restriction. A founder may separately authorize work through
+their own tools and credentials; those are outside these OS endpoints. Keep
+secrets out of chat, browser code and project evidence.
 
 ## Choose the operation
 
