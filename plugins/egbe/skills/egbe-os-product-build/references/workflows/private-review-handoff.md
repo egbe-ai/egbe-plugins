@@ -36,7 +36,12 @@ weaken authentication to make a review possible.
 
 Keep the minimum authorized review access usable for the agreed review window,
 within the caller's time and resource limits. Record its expiry and cleanup
-owner; preserve the founder's ordinary access. If an essential human step or
+owner; preserve the founder's ordinary access. When the reviewer can read the
+shared project folder, a private Git-ignored file there, such as one under
+`.local/`, is a supported credential handoff; keep it out of commits, public
+pages and reports. Prefer expiry the product enforces itself, such as review
+accounts or sessions it rejects after the deadline, so cleanup does not depend
+on a process running after you stop. If an essential human step or
 capability remains unavailable, state the precise gap and continue independent
 authorized preparation. Do not report the missing check as passed.
 

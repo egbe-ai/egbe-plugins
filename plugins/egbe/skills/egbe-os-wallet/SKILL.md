@@ -119,6 +119,29 @@ sale and top-up fees, merchant responsibilities, payouts and refunds. Do not
 substitute a generic direct-provider tariff. If policy discovery is unavailable
 during rollout, report that gap; do not infer a zero-cost policy or buy credit.
 
+## Work within an authorized amount
+
+The periodic fee belongs to the existing active project. It accrues whether or
+not you build, publish or attach the managed database; stopping it means pausing
+or deleting the project, which is the owner's choice. Authorized product work
+does not create that commitment. Under `usage_cost_basis`, the Wallet usage that
+building adds comes from the AI, paid-tool and advertising operations you choose,
+plus any option a capability marks as consuming Wallet resources, such as a warm
+`min_instances` deployment.
+
+When the founder has authorized a specific amount for this work, including any
+recurring fee they accepted, that authorization covers operations whose expected
+cost fits within it. Without a hard platform cap, you enforce the limit: prefer
+unmetered capabilities, estimate metered work before starting it, recheck the
+balance at material points and stop before an operation would exceed the
+remaining authorized amount. Report the limit as manually enforced. Do not
+withhold authorized work, ask again for the same permission or require a
+platform-enforced cap because the Wallet does not provide one. The authorization
+never covers top-ups, card charges, purchases, spending the founder excluded such
+as advertising, or anything beyond the stated amount. Whether the remaining
+credit can sustain a customer promise is an offer-sizing question, not a reason
+to skip authorized preparation.
+
 ## Top up
 
 ```bash
