@@ -36,6 +36,7 @@ test("report cannot create an empty replacement for a missing outreach DB", t =>
   const dbPath = path.join(root, "missing", "outreach.db");
   const result = spawnSync(process.execPath, [path.resolve(__dirname, "../outreach-report.js"), "--db", dbPath], { encoding: "utf8" });
   assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /^outreach\.db not found: /);
   assert.equal(fs.existsSync(dbPath), false);
   assert.equal(fs.existsSync(path.dirname(dbPath)), false);
 });

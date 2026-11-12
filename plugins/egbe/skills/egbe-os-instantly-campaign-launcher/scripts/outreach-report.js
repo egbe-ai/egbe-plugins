@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const fs = require("fs");
 const path = require("path");
 const { parseArgs } = require("./lib/helpers");
 const { dbPathForRun, queryAllReadOnly } = require("./lib/outreach-db");
@@ -30,6 +31,7 @@ function main() {
   const runKey = args["run-key"] ? String(args["run-key"]) : null;
 
   if (!dbPath) fail("Missing --run-dir or --db");
+  if (!fs.existsSync(dbPath)) fail(`outreach.db not found: ${dbPath}`);
 
   let sql;
   let params = [];

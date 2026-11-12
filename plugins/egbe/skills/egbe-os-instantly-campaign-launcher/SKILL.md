@@ -1,7 +1,7 @@
 ---
 name: egbe-os-instantly-campaign-launcher
 description: Prepare, explicitly activate, observe and recover project-owned Instantly email campaigns and reply queues.
-version: 1.3.2
+version: 1.3.3
 user-invocable: true
 metadata:
   egbe-when: "Use for Instantly campaign preparation, activation, replies, observation or recovery."
@@ -58,8 +58,13 @@ For activation, readiness to continue, or protection recovery, read
 to check what the bundled monitor supports and what its state actually proves.
 
 Keep the owning run under
-`egbe-docs/marketing/campaigns/instantly/<run_key>/`. Inspect its manifest,
-state and project `outreach.db` before continuing; JSON checkpoints and queue
+`egbe-docs/marketing/campaigns/instantly/<run_key>/`. Before continuing, read its
+manifest and state files and query the project `outreach.db`, next to the run
+directories, only through the read-only `scripts/outreach-report.js`
+([usage](references/observation-and-scheduling.md#collect-facts-for-one-run)).
+If it reports the database missing, say so; do not search the workspace or open
+SQLite with inline code. Bundled scripts treat missing history after sending as a
+blocker, not something to recreate. JSON checkpoints and queue
 files remain active state, not disposable duplicates. Use only the run's
 campaign IDs. Registry/gateway ownership is the tenant authority; local
 manifest/tags narrow the run and detect conflicts, but do not grant access.
