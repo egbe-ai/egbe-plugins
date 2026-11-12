@@ -53,8 +53,9 @@ Read only the reference needed for the operation:
 - [Run state](references/run-state.md): executable configuration, artifacts,
   identity, handoff and replenishment; includes the [spec scaffold](references/run-spec-template.json).
 
-Before activation, also read [configured protection](references/observation-and-scheduling.md#configured-operational-protection)
-to check whether the supplied safeguards are supported by the bundled monitor.
+For activation, readiness to continue, or protection recovery, read
+[configured protection](references/observation-and-scheduling.md#configured-operational-protection)
+to check what the bundled monitor supports and what its state actually proves.
 
 Keep the owning run under
 `egbe-docs/marketing/campaigns/instantly/<run_key>/`. Inspect its manifest,
