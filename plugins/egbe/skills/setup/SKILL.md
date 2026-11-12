@@ -9,12 +9,13 @@ You are connected to the founder's Egbe project through MCP. If this result name
 a `business`, pass it to every later egbe_request, egbe_local_setup and
 egbe_complete_setup call.
 
-This setup runs from the Egbe plugin, which already provides Egbe's skills in
-every session. Read those skills and their files from the plugin; use
-`egbe_skill` only for what the plugin lacks, such as `egbe-os-quickstart` below.
-In step 2, do not call `egbe_local_setup` or install the Egbe catalog, even in a
-persistent project workspace: continue with step 3 through this connection. A
-later step that needs a local project key follows its skill's instructions.
+This setup runs from the Egbe plugin, which provides Egbe's skills in every
+session. Read those skills and their files from the plugin; use `egbe_skill`
+only for what the plugin lacks, such as `egbe-os-quickstart` below. Step 2 is
+unchanged: a persistent project workspace still gets the standard setup through
+`egbe_local_setup`, including the project's playbooks, saved credentials and
+session logging. Once a project has its own installed Egbe skills, use those
+rather than the plugin's copies.
 
 1. **Introduce Egbe.** Read
    `egbe_skill(name="egbe-os-quickstart", resource="references/introduction.md")` and the

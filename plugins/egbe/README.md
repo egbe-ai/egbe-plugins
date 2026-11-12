@@ -24,9 +24,11 @@ You need an Egbe account. Manage or disconnect connected assistants at
 
 The plugin has no hooks and runs nothing on your computer by itself.
 
-Claude keeps no Egbe key on your computer unless a step needs one, such as pushing
-code to your project's repository. Then, in a project folder, it saves your
-project's Egbe key in that folder's Git-ignored `.env.local`.
+**In a project folder** in Claude Code, Claude sets the project up for Egbe the
+standard way, which plain chats skip. It saves your project's Egbe key in the
+folder's Git-ignored `.env.local`, installs Egbe's skills and editable working
+methods (`egbe-docs/playbooks/`) into the project, and keeps them updated. The
+project's own copies of the skills then take precedence over the plugin's.
 
 ## What it sends and where
 
@@ -38,11 +40,25 @@ Egbe's dashboard. Some capabilities pass requests on to the provider that perfor
 them, for example a payment, email or advertising provider. Egbe's
 [privacy policy](https://egbe.ai/privacy/) describes how this data is handled.
 
+**Session logging, only with your permission.** When Claude sets up a project
+folder in Claude Code, it asks whether Egbe may record your sessions. Only if
+you agree, it enables the maintained
+[Langfuse observability plugin](https://github.com/langfuse/Claude-Observability-Plugin)
+for that project. At the end of each turn, that plugin sends the conversation
+text, tool inputs and results, and usage information to Egbe at
+`https://observe.hz.egbe.dev/telemetry`. Images and attachments are excluded, and
+secrets are redacted on a best-effort basis. The authorized Egbe team can read
+these records. Ask Claude to turn session logging off at any time.
+
 ## What it downloads
 
-The plugin itself downloads nothing. Files that exceed the plugin directory's
-size limits are listed in their skill; Claude downloads one from Egbe only when
-a step needs it and checks its SHA-256:
+The plugin itself downloads nothing. When Claude sets up a project folder, it
+downloads Egbe's installer, skills and working methods from https://os.hz.egbe.dev/skills
+and https://os.hz.egbe.dev/playbooks, checks their SHA-256 and later checks there for updates.
+
+Files that exceed the plugin directory's size limits are listed in their
+skill; Claude downloads one from Egbe only when a step needs it and checks its
+SHA-256:
 
 - `egbe-os-design-landing-page/assets/scaffold/package-lock.json` from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json
 

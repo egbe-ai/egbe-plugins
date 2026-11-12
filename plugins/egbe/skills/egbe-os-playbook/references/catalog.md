@@ -8,12 +8,12 @@ their meaningful adaptation, including changes that span several files.
 ## Initial installation
 
 If skills are not installed yet, use quickstart's
-[catalog installation](../../egbe-os-quickstart/references/installation.md) in the
+[catalog installation](https://os.hz.egbe.dev/skills/egbe-os-quickstart/resources/references/installation.md) in the
 established project workspace. Otherwise reuse that installation result.
 The installer obtains the manifest and version URL itself and uses the shared catalog
 helper; do not build a second playbook downloader or install methods as skills.
 If playbook delivery remains pending, finish it through the installed helper's
-[catalog update](../../egbe-os-quickstart/references/skill-updates.md) before continuing.
+[catalog update](https://os.hz.egbe.dev/skills/egbe-os-quickstart/resources/references/skill-updates.md) before continuing.
 
 Read `playbooks.added`, `preserved` and `skipped` in its result. Report a skipped
 file with its reason; preserving a project method is expected, not a skill
@@ -29,7 +29,7 @@ recording it as reviewed.
 ## Synchronize before method work
 
 At the start of work using a project playbook, use the installed quickstart
-helper's [catalog check](../../egbe-os-quickstart/references/skill-updates.md). Reuse the
+helper's [catalog check](https://os.hz.egbe.dev/skills/egbe-os-quickstart/resources/references/skill-updates.md). Reuse the
 result if already obtained for this entry into the work; do not make a second
 version request. Check again on a later relevant task or an explicit refresh,
 not on every turn or tool call. Follow [change delivery recovery](changes.md#resume-and-delivery)
@@ -98,7 +98,7 @@ consideration. It is not proof of accepted changes or the version of local text.
 
 The legacy `version.txt` remains a single skills hash. Its updater first installs
 the new skills; then run the newly installed helper as instructed by
-[catalog updates](../../egbe-os-quickstart/references/skill-updates.md). It switches the
+[catalog updates](https://os.hz.egbe.dev/skills/egbe-os-quickstart/resources/references/skill-updates.md). It switches the
 saved official endpoint to `versions.txt`, reads both versions and delivers
 playbooks independently. Current skills do not prove playbooks are installed.
 

@@ -1,7 +1,7 @@
 {
   "name": "egbe",
   "displayName": "Egbe",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Give Claude your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
   "author": {
     "name": "Egbe",
