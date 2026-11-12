@@ -1,7 +1,7 @@
 ---
 name: egbe-os-instantly-campaign-launcher
-description: Prepare, explicitly activate, observe and recover project-owned Instantly email campaigns and reply queues.
-version: 1.3.3
+description: Prepare, explicitly activate, observe and recover project-owned Instantly email campaigns and reply queues; inspect assigned sender state.
+version: 1.3.4
 user-invocable: true
 metadata:
   egbe-when: "Use for Instantly campaign preparation, activation, replies, observation or recovery."
@@ -44,7 +44,7 @@ not permission to send cold outreach through Mailu or a trust-domain mailbox.
 Read only the reference needed for the operation:
 
 - [Campaign operations](references/instantly-ops.md): preparation/activation,
-  sender selection, pagination, date-filtered reads, rendering, verification,
+  sender selection and state, pagination, date-filtered reads, rendering, verification,
   imports and safe cleanup.
 - [Reply handling](references/reply-handling.md): queue actions, confirmed
   opt-outs, same-thread sends and uncertain-send recovery.

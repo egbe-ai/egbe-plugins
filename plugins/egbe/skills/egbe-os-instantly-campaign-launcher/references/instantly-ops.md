@@ -8,9 +8,12 @@ helper; no provider API key or hosted-agent boot environment is assumed.
 `launch-campaign.js` materializes available credentials and identity in the
 private run `.env` (0600). Workers load that file or an explicit `--env-file`.
 
-The gateway exposes project-owned campaigns, leads and campaign emails.
+The gateway exposes project-owned campaigns, their assigned senders, leads and
+campaign emails.
 `GET /accounts` is a shared workspace account list, not tenant-filtered sender
-authorization. Registry ownership is authoritative. Manifest IDs and run/agent
+authorization; read-only keys cannot use it. For an existing campaign's sender
+state, use the scoped read below with either a regular or read-only project key.
+Registry campaign ownership is authoritative. Manifest IDs and run/agent
 tags are local scope/conflict checks; best-effort tag assignment is recorded and
 does not replace server ownership. Never use a name match or tag to adopt another
 project's campaign.
@@ -29,15 +32,15 @@ Paths below are relative to `$OS_URL/outreach/instantly`. The bundled
 | --- | --- | --- |
 | `/campaigns` | `limit` (default 100), `starting_after` | `listCampaigns(limit, startingAfter)` |
 | `/accounts` | `limit` (default 100), `starting_after`, `status_filter` | `listAccounts(limit, {starting_after, status_filter})` |
+| `/campaigns/{id}/senders` | None | `campaignSenders(id)` |
 | `/campaigns/{id}/analytics/overview` | `start_date`, `end_date` | `analyticsOverview([id], {start_date, end_date})` |
 
 For lists, pass the response's `next_starting_after` unchanged as
 `starting_after` on the next read. Campaign pages are filtered to this project
 after provider pagination: even an empty `items` array can have a next cursor.
 Continue until the cursor is absent; stop and report a repeated cursor or read
-failure instead of claiming the list is complete. Account reads preserve
-`warmup_status` and `stat_warmup_score`; restrict observations to the campaign's
-assigned senders. The SDK also accepts `status` as an alias for `status_filter`.
+failure instead of claiming the list is complete. For account-list filtering,
+the SDK also accepts `status` as an alias for `status_filter`.
 
 Overview dates accept `YYYY-MM-DD` or full ISO 8601 timestamps; date-only values
 mean UTC midnight. For a UTC calendar day, specify explicit bounds such as
@@ -48,6 +51,28 @@ and `bounced_count`; keep these observations separate from lifetime totals.
 Invalid ranges return the provider's error, not an empty or lifetime report.
 The campaign ID comes from the owned path, not caller-supplied `id`/`ids`
 parameters. See the [provider overview contract](https://developer.instantly.ai/api-reference/campaign/get-campaigns-analytics-overview).
+
+## Read assigned sender state
+
+`GET /campaigns/{id}/senders` checks project ownership and reads the campaign's
+current `email_list`; it does not accept sender addresses or domains from the
+caller. It returns only those senders, including inactive ones, with `email`,
+`status`, `daily_limit`, `warmup_status` and `stat_warmup_score`. This is a read
+of campaign assignment, not proof of exclusive ownership of a mailbox.
+
+The response contains `campaign_id`, `observed_at` (UTC fetch time), `items` and
+`complete`. Each item has `data_status` (`available`, `partial` or `unavailable`)
+and `missing_fields`; unreadable values stay `null`, with a safe `reason` for a
+failed account read. `complete` means data coverage, not healthy senders or
+permission to send. An empty explicit assignment is not a healthy sending pool.
+Reads have a shared 20-second budget (below the OS proxy timeout); slow or
+unfinished reads stay unavailable while completed observations are preserved.
+Tag-based assignment is not expanded: `sender_tag_assignment_unresolved` keeps
+`complete: false`, even if all explicitly assigned senders were read.
+
+Missing/malformed campaign assignment returns an error rather than an empty
+success. Preserve unknowns; do not fall back to the shared `/accounts` list or
+another key to turn incomplete data into a successful check.
 
 ## Prepare or activate an existing run
 

@@ -14,6 +14,10 @@ source/quality and `metrics_observed_at` separately from packaging
 `generated_at`. Do not sum cumulative snapshots or call a newly packaged old
 snapshot fresh evidence.
 
+For mailbox state and warmup, use the [assigned sender read](instantly-ops.md#read-assigned-sender-state).
+It is available to regular and read-only project keys; it does not install a
+warmup-based pause control in the bundled monitor.
+
 `outreach-report` reads project SQLite and returns a JSON array of rows.
 Modes are `summary`, `leads`, `queue` and `events`, with optional `--limit`,
 `--run-key` and `--db`. `--run-dir` selects the project DB; add `--run-key`

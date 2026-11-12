@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const http = require("node:http");
 const { InstantlyClient } = require("./instantly-client");
 
-async function withClient(run) {
+async function withClient(run, responseBody) {
   const seen = [];
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, "http://localhost");
@@ -11,9 +11,9 @@ async function withClient(run) {
     assert.equal(req.method, "GET");
     assert.equal(req.headers.authorization, "Bearer test");
     res.writeHead(200, { "content-type": "application/json" });
-    res.end(JSON.stringify({ data: url.searchParams.has("starting_after")
+    res.end(JSON.stringify({ data: responseBody ?? (url.searchParams.has("starting_after")
       ? { items: [{ id: "owned" }], next_starting_after: null }
-      : { items: [], next_starting_after: "opaque/page+1" } }));
+      : { items: [], next_starting_after: "opaque/page+1" }) }));
   });
   await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
   try {
@@ -49,6 +49,31 @@ test("account reads preserve cursor and provider status alias", async () => {
       limit: "2", status_filter: "1", starting_after: "sender+1@example.test",
     } }]);
   });
+});
+
+test("campaign sender reads use only the encoded campaign path", async () => {
+  await withClient(async (client, seen) => {
+    await client.campaignSenders("campaign/other?email=foreign@example.test#fragment");
+    assert.deepEqual(seen, [{
+      path: "/outreach/instantly/campaigns/campaign%2Fother%3Femail%3Dforeign%40example.test%23fragment/senders",
+      query: {},
+    }]);
+  });
+});
+
+test("campaign sender reads preserve unavailable signals without shared-list fallback", async () => {
+  const observation = {
+    campaign_id: "campaign-1", observed_at: "2026-11-12T12:00:00Z", complete: false,
+    items: [{ email: "sender@example.test", status: 1, daily_limit: 0,
+      warmup_status: null, stat_warmup_score: null, data_status: "partial",
+      missing_fields: ["warmup_status", "stat_warmup_score"] }],
+  };
+  await withClient(async (client, seen) => {
+    const result = await client.campaignSenders("campaign-1");
+    assert.equal(result.status, 200);
+    assert.deepEqual(result.body, observation);
+    assert.deepEqual(seen, [{ path: "/outreach/instantly/campaigns/campaign-1/senders", query: {} }]);
+  }, observation);
 });
 
 test("overview keeps date-only and ISO timestamp queries exactly as supplied", async () => {

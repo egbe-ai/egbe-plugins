@@ -169,6 +169,10 @@ class InstantlyClient {
     return this.request('GET', `/campaigns/${id}/sending-status`);
   }
 
+  campaignSenders(id) {
+    return this.request('GET', `/campaigns/${encodeURIComponent(id)}/senders`);
+  }
+
   listAccounts(limit = 100, query = {}) {
     const params = { limit, ...query };
     if (params.status != null && params.status_filter == null) {
