@@ -1,5 +1,5 @@
 ---
-name: setup
+name: egbe-setup
 description: Set up Egbe for the founder's business through the Egbe connector. Use when the founder asks to set up, connect or start using Egbe.
 ---
 

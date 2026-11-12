@@ -9,7 +9,7 @@ web search and scraping, and an LLM, all billed to your Egbe wallet.
 
 1. Install the plugin from Claude's plugin directory, or in Claude Code:
    `claude plugin install egbe --marketplace egbe-ai/egbe-plugins`.
-2. Ask Claude to set up Egbe, or run `/egbe:setup` in Claude Code.
+2. Ask Claude to set up Egbe, or run `/egbe:egbe-setup` in Claude Code.
 3. When Claude first uses Egbe, your browser opens Egbe's sign-in page. Choose
    the business Claude may work on and approve the connection.
 
