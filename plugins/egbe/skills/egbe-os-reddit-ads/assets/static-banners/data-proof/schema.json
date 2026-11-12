@@ -1,0 +1,61 @@
+{
+  "name": "data-proof",
+  "description": "Big number + framing punchline. Highest stop-rate but highest trust risk — stat MUST be real and verifiable.",
+  "canvas": { "width": 1080, "height": 1350 },
+  "universality": "MEDIUM",
+  "fields": {
+    "statNumber": {
+      "type": "string",
+      "maxChars": 5,
+      "required": true,
+      "description": "The big stat. Must fit 5 chars. Format: 87% | $2.4M | 1,247 | 3x. '$1,247,000' will break the 200px size."
+    },
+    "statLabel": {
+      "type": "string",
+      "maxLines": 2,
+      "maxChars": 70,
+      "required": true,
+      "description": "Plain factual label for the stat. No marketing language."
+    },
+    "punchline": {
+      "type": "string",
+      "maxLines": 2,
+      "maxChars": 60,
+      "required": true,
+      "accentSpan": "recommended",
+      "description": "Reframes the stat as product value. Use <span class=\"accent\">phrase</span> on the key insight."
+    },
+    "source": {
+      "type": "string",
+      "minChars": 8,
+      "maxChars": 80,
+      "required": true,
+      "description": "MUST be real, citable, ideally linkable. Format: 'Source: Company 2025 Report' or 'Based on 1,200 user surveys'. No fabricated attributions. If no real source exists, use a different template — do NOT leave blank or invent one."
+    },
+    "cta": {
+      "type": "string",
+      "maxChars": 18,
+      "required": true,
+      "description": "Verb-led CTA, 2-3 words. Good: 'Try It Free', 'See an Example'. Bad: 'Learn More', 'Click Here'."
+    },
+    "brand": {
+      "type": "string",
+      "maxChars": 20,
+      "required": false,
+      "description": "Brand name — subtle, right side of CTA row"
+    }
+  },
+  "style": {
+    "accentColor": "#ff6b35",
+    "description": "Override accentColor to match product brand. The stat number uses accent color by default."
+  },
+  "rendering": "Read template.html from this directory and replace {{placeholders}} with field values. Replace {{accentColor}} in the :root CSS variable. Use <span class=\"accent\">phrase</span> for accent-colored text in punchline. Do NOT generate HTML from scratch — the template contains exact font sizes (180px stat), spacing, and flex layout that must be preserved.",
+  "forbidden": [
+    "fake or unverifiable sources",
+    "stats above 99 without comparative context",
+    "stats without a comparative framing in the punchline",
+    "gradient backgrounds or decorative shapes",
+    "marketing buzzwords — stat + framing, not hype",
+    "large logos — brand is a subtle text label only"
+  ]
+}

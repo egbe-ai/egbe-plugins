@@ -1,0 +1,25 @@
+{
+  "name": "egbe",
+  "displayName": "Egbe",
+  "version": "0.1.0",
+  "description": "Give Claude your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
+  "author": {
+    "name": "Egbe",
+    "url": "https://egbe.ai"
+  },
+  "homepage": "https://egbe.ai",
+  "repository": "https://github.com/egbe-ai/egbe-plugins",
+  "keywords": [
+    "founders",
+    "startup",
+    "hosting",
+    "payments",
+    "analytics",
+    "marketing"
+  ],
+  "icon": "./assets/icon.svg",
+  "documentationUrl": "https://os.hz.egbe.dev/plugins/egbe",
+  "supportUrl": "https://os.hz.egbe.dev/plugins/egbe/support",
+  "privacyPolicyUrl": "https://egbe.ai/privacy/",
+  "termsOfServiceUrl": "https://egbe.ai/terms/"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Campaign Landing Page"
+  short_description: "Build campaign pages, lead capture and tracking"
+  default_prompt: "Use $egbe-os-campaign-landing-page to implement or verify the agreed campaign page, routing and conversion path."

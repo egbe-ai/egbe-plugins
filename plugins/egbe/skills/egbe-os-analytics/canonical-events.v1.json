@@ -1,0 +1,256 @@
+{
+  "schema_version": "product_analytics_events.v1",
+  "status": "active",
+  "owner": "egbe-os-analytics",
+  "purpose": "Canonical product analytics event contract for OpenClaw-developed products.",
+  "naming_policy": {
+    "product_events": "Use stable snake_case event names.",
+    "system_exception": "campaign-visit remains hyphenated because analytics-gateway campaign reporting is built around this system event.",
+    "product_specificity": "Do not encode product, page, or button identity in the event name. Put those details in payload fields."
+  },
+  "applicability_policy": {
+    "required_when_applicable": true,
+    "do_not_fake_events": true,
+    "selection_rule": "Evaluate every event's required_when against the supplied product requirements and real behavior. Applicable acquisition, interaction, activation, signup, verification, and payment events compose additively; no single product profile is a complete checklist.",
+    "pageview_rule": "Use the shared Umami snippet's native pageviews for required page-view measurement; do not invent a custom page-view event.",
+    "interaction_rule": "Require cta_click for each primary conversion placement and button_click only for analytically meaningful secondary actions, never every incidental control.",
+    "not_applicable_marker": "Mark missing lifecycle areas as not_applicable or pending in product metadata instead of emitting fake events."
+  },
+  "common_payload": {
+    "required": ["product_slug", "path"],
+    "recommended": ["surface", "visitor_id", "visit_id", "first_utm_source", "first_utm_medium", "first_utm_campaign"],
+    "optional": [
+      "first_utm_content",
+      "first_utm_term",
+      "first_gclid",
+      "first_fbclid",
+      "first_msclkid",
+      "first_ttclid",
+      "first_landing_path",
+      "first_referrer",
+      "first_seen_at",
+      "experiment_id",
+      "variant_id",
+      "activation_id",
+      "account_id",
+      "user_id"
+    ],
+    "privacy": {
+      "no_raw_emails": true,
+      "no_secret_values": true,
+      "direct_identifiers": "Avoid raw personal identifiers in Umami payloads. Use non-sensitive internal IDs only when needed."
+    }
+  },
+  "attribution_payload": {
+    "source": "Frontend reads window.__egbeAttribution.read(); backend persists the same first-touch fields with durable signup/payment metadata for later backend joins. Signup rows use canonical first_utm_* columns (or their camelCase ORM equivalents) so Site Gateway can discover them automatically.",
+    "first_touch_fields": [
+      "visitor_id",
+      "visit_id",
+      "first_utm_source",
+      "first_utm_medium",
+      "first_utm_campaign",
+      "first_utm_content",
+      "first_utm_term",
+      "first_gclid",
+      "first_fbclid",
+      "first_msclkid",
+      "first_ttclid",
+      "first_landing_path",
+      "first_referrer",
+      "first_seen_at"
+    ],
+    "rule": "First-touch fields remain stable for the visitor. Later touch data may be stored separately, but channel reports use first-touch by default."
+  },
+  "delivery_policy": {
+    "source_model": "Separate lifecycle confirmation from Umami delivery. Backend can be the source of truth for a durable fact while the browser emits the canonical Umami event so it stays attached to the user's session timeline.",
+    "browser_session_rule": "Events that occur during an active user flow must be emitted with the Umami browser tracker (`window.umami.track`) after any required backend confirmation. Do not use direct backend `/api/send` as the primary delivery path for these user-session funnel events.",
+    "browser_after_backend_confirmation": {
+      "events": ["activated", "signup_completed", "email_verified", "checkout_started", "purchase"],
+      "rule": "The backend confirms the durable state change and returns an analytics descriptor. The browser then sends the canonical event immediately or stores it in a short-lived pending queue (for example sessionStorage) and flushes it after redirect."
+    },
+    "backend_direct": {
+      "allowed_when": "Use direct backend delivery only for webhook, renewal, refund, admin/system, or other out-of-session lifecycle events that have no active browser session timeline to join.",
+      "events": ["subscription_renewed", "subscription_canceled", "refund"],
+      "rule": "Persist first-touch attribution with account/payment metadata so backend direct events can still be joined for channel reporting. Treat Umami {\"beep\":\"boop\"} as filtered delivery when a backend collector send is used."
+    },
+    "forbidden_primary_backend_collector_events": ["activated", "signup_completed", "checkout_started", "purchase"],
+    "umami_session_note": "Umami server-side sends can write aggregate events, but they may receive a different `session_id` from browser events. Use browser delivery for user-session funnel timelines."
+  },
+  "optional_telemetry_policy": {
+    "non_funnel_events": ["engagement-click", "engagement-scroll", "engagement-time"],
+    "rule": "Optional engagement telemetry is not part of the canonical product funnel and must not satisfy `cta_click`, `button_click`, or lifecycle event guardrails."
+  },
+  "events": [
+    {
+      "name": "campaign-visit",
+      "category": "acquisition",
+      "source": "frontend_system",
+      "confirmation_source": "frontend_system",
+      "umami_delivery": "browser",
+      "required_when": "A public product page has the shared analytics tracking snippet and the visitor arrives with UTM, click-id, or other explicit campaign attribution. Referrer-only traffic does not trigger this event by itself.",
+      "firing_rule": "The shared tracking snippet emits once per attributed visit signature.",
+      "required_payload": ["visitor_id", "visit_id"],
+      "required_one_of_payload": [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+        "gclid",
+        "fbclid",
+        "msclkid",
+        "ttclid"
+      ],
+      "recommended_payload": ["landing_path", "referrer", "first_seen_at"]
+    },
+    {
+      "name": "cta_click",
+      "category": "landing",
+      "source": "frontend",
+      "confirmation_source": "frontend",
+      "umami_delivery": "browser",
+      "required_when": "A primary conversion-driving CTA exists on a public page.",
+      "firing_rule": "Fire when the visitor clicks a primary CTA that moves them toward activation, signup, pricing, checkout, or a channel handoff.",
+      "required_payload": ["product_slug", "path", "surface", "cta_id", "cta_role"],
+      "recommended_payload": ["label", "destination", "position", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "button_click",
+      "category": "interaction",
+      "source": "frontend",
+      "confirmation_source": "frontend",
+      "umami_delivery": "browser",
+      "required_when": "A non-primary but analytically meaningful button exists.",
+      "firing_rule": "Fire for important product or landing buttons. Do not fire for every incidental UI control.",
+      "required_payload": ["product_slug", "path", "surface", "button_id", "button_role"],
+      "recommended_payload": ["label", "destination", "position", "state", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "activated",
+      "category": "activation",
+      "source": "frontend_or_backend",
+      "confirmation_source": "frontend_or_backend",
+      "umami_delivery": "browser_after_backend_confirmation",
+      "required_when": "The product has a real first-value moment or core action completion before or after signup.",
+      "firing_rule": "Fire when the visitor receives real product value or completes a caller-required core outcome, not when they merely click a button. Use a stable activation_type for each measured outcome and identify one type as the product's primary activation. If the outcome is created by a backend action, return a confirmed analytics descriptor and emit from the browser after success.",
+      "required_payload": ["product_slug", "path", "activation_type"],
+      "recommended_payload": ["activation_id", "surface", "input_type", "result_type", "duration_ms", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "signup_started",
+      "category": "signup",
+      "source": "frontend",
+      "confirmation_source": "frontend",
+      "umami_delivery": "browser",
+      "required_when": "A signup, registration, account creation, or lead-capture form exists.",
+      "firing_rule": "Fire when a visitor intentionally enters the signup flow.",
+      "required_payload": ["product_slug", "path", "surface"],
+      "recommended_payload": ["entrypoint", "activation_id", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "signup_submitted",
+      "category": "signup",
+      "source": "frontend",
+      "confirmation_source": "frontend",
+      "umami_delivery": "browser",
+      "required_when": "A signup form can be submitted.",
+      "firing_rule": "Fire immediately before or at form submit after client-side validation passes.",
+      "required_payload": ["product_slug", "path", "surface"],
+      "recommended_payload": ["activation_id", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "signup_completed",
+      "category": "signup",
+      "source": "backend_confirmed",
+      "confirmation_source": "backend",
+      "umami_delivery": "browser_after_backend_confirmation",
+      "required_when": "Signup creates a durable account, registration row, subscriber row, or accepted lead-capture row.",
+      "firing_rule": "Confirm only after the durable write succeeds. The backend is the source of truth for completion, then the browser emits the Umami event so it joins the signup session timeline.",
+      "required_payload": ["product_slug", "path", "surface"],
+      "recommended_payload": ["account_id", "activation_id", "duplicate", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "email_verified",
+      "category": "email",
+      "source": "backend",
+      "confirmation_source": "backend",
+      "umami_delivery": "browser_after_backend_confirmation_or_backend_direct",
+      "required_when": "The product requires email verification or magic-link confirmation.",
+      "firing_rule": "Fire when a verification token is accepted and the account/email state becomes verified. Prefer browser delivery on the verification result page; use backend direct only for out-of-session verification handling.",
+      "required_payload": ["product_slug", "path"],
+      "recommended_payload": ["account_id", "verification_method", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "paywall_view",
+      "category": "monetization",
+      "source": "frontend",
+      "confirmation_source": "frontend",
+      "umami_delivery": "browser",
+      "required_when": "The product has a paywall, pricing gate, upgrade gate, or paid-plan prompt.",
+      "firing_rule": "Fire when the paywall or paid prompt becomes visible.",
+      "required_payload": ["product_slug", "path", "surface", "paywall_id"],
+      "recommended_payload": ["plan_name", "price_cents", "currency", "activation_id", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "checkout_started",
+      "category": "monetization",
+      "source": "backend_confirmed",
+      "confirmation_source": "backend",
+      "umami_delivery": "browser_after_backend_confirmation",
+      "required_when": "A real checkout session, payment link redirect, deposit, or paid-pilot checkout starts.",
+      "firing_rule": "Confirm when the product successfully creates a dynamic checkout session or real checkout URL. Emit the Umami event from the browser before redirect or queue it and flush before navigation.",
+      "required_payload": ["product_slug", "path", "checkout_type"],
+      "recommended_payload": ["checkout_session_id", "price_id", "plan_name", "amount_cents", "currency", "activation_id", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "purchase",
+      "category": "revenue",
+      "source": "backend_confirmed",
+      "confirmation_source": "webhook_or_backend",
+      "umami_delivery": "browser_after_backend_confirmation",
+      "required_when": "A Stripe checkout/payment event confirms successful payment for the product.",
+      "firing_rule": "Confirm from the payment webhook or backend status check after idempotently accepting a paid Stripe event. Expose a pending descriptor to the owning checkout-success browser and emit the canonical Umami event there. Use Stripe/OS payment metrics, not server-only Umami delivery, for complete financial totals.",
+      "required_payload": ["product_slug", "stripe_event_id", "amount_cents", "currency"],
+      "recommended_payload": ["checkout_session_id", "payment_intent_id", "subscription_id", "customer_id", "plan_name", "visitor_id", "visit_id"]
+    },
+    {
+      "name": "subscription_renewed",
+      "category": "revenue",
+      "source": "backend",
+      "confirmation_source": "webhook",
+      "umami_delivery": "backend_direct",
+      "required_when": "The product supports subscriptions and receives renewal/payment lifecycle events.",
+      "firing_rule": "Fire when a subscription renewal invoice is paid and applied idempotently.",
+      "required_payload": ["product_slug", "stripe_event_id", "subscription_id", "amount_cents", "currency"],
+      "recommended_payload": ["invoice_id", "customer_id", "plan_name", "billing_interval"]
+    },
+    {
+      "name": "subscription_canceled",
+      "category": "retention",
+      "source": "backend",
+      "confirmation_source": "backend_or_webhook",
+      "umami_delivery": "browser_after_backend_confirmation_or_backend_direct",
+      "required_when": "The product supports subscriptions and receives cancellation/deletion lifecycle events.",
+      "firing_rule": "Fire when a cancellation is accepted and entitlement state changes or is scheduled to end. Use browser delivery for user-initiated cancel flows; use backend direct for webhook/admin/system cancellations.",
+      "required_payload": ["product_slug", "stripe_event_id", "subscription_id"],
+      "recommended_payload": ["customer_id", "plan_name", "cancel_at_period_end", "canceled_at"]
+    },
+    {
+      "name": "refund",
+      "category": "revenue_adjustment",
+      "source": "backend",
+      "confirmation_source": "webhook_or_backend",
+      "umami_delivery": "backend_direct",
+      "required_when": "The product and payment gateway support refund lifecycle events.",
+      "firing_rule": "Fire only when a refund is confirmed and applied idempotently.",
+      "required_payload": ["product_slug", "stripe_event_id", "refund_id", "amount_cents", "currency"],
+      "recommended_payload": ["payment_intent_id", "checkout_session_id", "customer_id", "reason"]
+    }
+  ],
+  "validation_policy": {
+    "setup": "Verify the analytics site exists and OS tracking config is available.",
+    "wiring": "Verify the app shell contains the tracking snippet or public analytics env wiring.",
+    "behavior": "Drive real product flows and intercept/mock analytics delivery to verify canonical event names and payloads without writing synthetic product events to production stats.",
+    "observed": "Use real stats from real users for reporting and channel-level iteration decisions."
+  }
+}

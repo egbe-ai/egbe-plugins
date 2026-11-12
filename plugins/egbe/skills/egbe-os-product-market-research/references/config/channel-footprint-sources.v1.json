@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "description": "Versioned provider capabilities, bounded collection samples for Channel Footprint. Native date/activity scopes are conservative: a query country never narrows global ad-level dates. A response may supply explicit native country scope; source/API documentation must justify that field.",
+  "actors": {
+    "google_ads": {
+      "actor": "scrapesage/google-ads-transparency-scraper",
+      "batch_domains": 5,
+      "ads_per_domain": 40,
+      "note": "Domain-keyed Google Ads Transparency Center rows (destination-verified by construction).",
+      "max_ads_per_domain": 80,
+      "capabilities": {
+        "country_filter": "region",
+        "delivery_dates": "native",
+        "native_date_scope": "global",
+        "activity_status": false,
+        "pagination": false,
+        "complete_library": false,
+        "placement": "explicit native placement only; VIDEO/IMAGE are formats"
+      }
+    },
+    "meta_ads": {
+      "actor": "curious_coder/facebook-ads-library-scraper",
+      "batch_domains": 1,
+      "ads_per_domain": 30,
+      "note": "Public Meta Ad Library page search, one brand per run: the actor serves one search URL per run reliably (observed live 2026-10-02); identity verified by destination domain or page name.",
+      "max_ads_per_domain": 60,
+      "capabilities": {
+        "country_filter": "search URL country",
+        "delivery_dates": "native ad-level start/end",
+        "native_date_scope": "global",
+        "activity_status": true,
+        "pagination": false,
+        "complete_library": false
+      }
+    },
+    "linkedin_ads": {
+      "actor": "interactapps/linkedin-ad-library-scraper",
+      "batch_domains": 5,
+      "ads_per_domain": 30,
+      "note": "LinkedIn Ad Library by company page URL (slug read from the competitor's own site, brand token as fallback); rows are attributed by the query they came from and checked against the advertiser name.",
+      "max_ads_per_domain": 60,
+      "capabilities": {
+        "country_filter": null,
+        "delivery_dates": false,
+        "native_date_scope": "unknown",
+        "activity_status": false,
+        "pagination": false,
+        "complete_library": false,
+        "listing_history": true
+      }
+    },
+    "tiktok_ads": {
+      "actor": "whoareyouanas/tiktok-ad-scraper",
+      "batch_domains": 1,
+      "ads_per_domain": 30,
+      "note": "EU/EEA transparency examples by advertiser; check each explicit supported target country; unsupported markets remain gaps, not proxies.",
+      "max_ads_per_domain": 60,
+      "capabilities": {
+        "country_filter": "EU country",
+        "delivery_dates": "native",
+        "native_date_scope": "global",
+        "activity_status": true,
+        "pagination": false,
+        "complete_library": false,
+        "supported_country_group": "EU"
+      }
+    },
+    "reddit_ads": {
+      "actor": "memo23/reddit-ad-inspiration-scraper",
+      "batch_domains": 1,
+      "ads_per_domain": 30,
+      "note": "Inspiration examples only. Zero or old examples leave current campaigns not_verifiable; operator found no accessible campaign library.",
+      "capabilities": {
+        "country_filter": null,
+        "delivery_dates": false,
+        "native_date_scope": "unknown",
+        "activity_status": false,
+        "pagination": false,
+        "complete_library": false,
+        "inspiration_only": true
+      }
+    },
+    "traffic_mix": {
+      "actor": "thedataloom/similarweb-scraper",
+      "batch_domains": 10,
+      "note": "Public Similarweb overview per domain: monthly visits and the traffic-source share split. Used only while the SimilarWeb tools provider is not configured."
+    },
+    "pixel_detector": {
+      "actor": "smart-digital/website-tags-pixels-detector",
+      "batch_domains": 5,
+      "note": "Headless fallback for sites whose HTML cannot be fetched directly; opt-in through --pixel-actor-fallback."
+    }
+  },
+  "budget": {
+    "retry_reserve_factor": 1,
+    "money_estimate": null,
+    "note": "Default cumulative cap equals the bounded plan including scoped sample expansion and a separate retry reserve; metered starts and retries persist across invocations."
+  }
+}

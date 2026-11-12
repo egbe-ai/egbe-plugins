@@ -1,0 +1,4 @@
+interface:
+  display_name: "Organic Trend Watch"
+  short_description: "Research and adapt TikTok and Reels evidence"
+  default_prompt: "Use $egbe-os-organic-trend-watch to answer a short-video research question for this product using TikTok and Instagram Reels evidence."

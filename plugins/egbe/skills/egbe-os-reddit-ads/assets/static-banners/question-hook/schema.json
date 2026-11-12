@@ -1,0 +1,51 @@
+{
+  "name": "question-hook",
+  "description": "Provocative question fills the top half, answer + CTA in the bottom. Triggers 'helpful reply' mental model instead of 'ad'. Best for subreddit-targeted campaigns.",
+  "canvas": { "width": 1080, "height": 1350 },
+  "universality": "HIGH",
+  "fields": {
+    "question": {
+      "type": "string",
+      "maxLines": 3,
+      "maxChars": 80,
+      "required": true,
+      "accentSpan": "optional",
+      "description": "The hook question — must be genuinely relatable to the target subreddit. Use <span class=\"accent\">word</span> to color one key word/phrase (max one span). Write colloquially, not like a marketer."
+    },
+    "answer": {
+      "type": "string",
+      "maxLines": 3,
+      "maxChars": 120,
+      "required": true,
+      "accentSpan": "forbidden",
+      "description": "The product-as-answer. Stay conversational — one clear sentence that connects the question to what you offer."
+    },
+    "cta": {
+      "type": "string",
+      "maxChars": 18,
+      "required": true,
+      "description": "Verb-led CTA, 2-3 words. Good: 'Try It Free', 'See an Example'. Bad: 'Learn More', 'Click Here'."
+    },
+    "brand": {
+      "type": "string",
+      "maxChars": 20,
+      "required": false,
+      "description": "Brand name — subtle, right side of CTA row"
+    }
+  },
+  "style": {
+    "accentColor": "#ff6b35",
+    "description": "Override accentColor to match product brand. It sets --accent CSS custom property which themes CTA button, accent spans, and any colored elements."
+  },
+  "rendering": "Read template.html from this directory and replace {{placeholders}} with field values. Replace {{accentColor}} in the :root CSS variable. Use <span class=\"accent\">word</span> for accent-colored text. Do NOT generate HTML from scratch — the template contains exact font sizes, spacing, and flex layout that must be preserved.",
+  "forbidden": [
+    "gradient backgrounds or decorative shapes",
+    "feature lists or bullet points — this is question-and-answer only",
+    "marketing buzzwords in the question — write like a real person asking",
+    "more than one accent span in question",
+    "subtitle or secondary text blocks between question and answer",
+    "images, screenshots, or product UI",
+    "large logos — brand is a subtle text label only",
+    "inline style color overrides — use <span class=\"accent\"> instead"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "catalog_version": 1,
+  "app_slug": "",
+  "plans": [
+    {
+      "plan_key": "free",
+      "display_name": "Free",
+      "summary": "The product free plan.",
+      "kind": "free",
+      "amount_cents": 0,
+      "currency": "usd",
+      "interval": null,
+      "entitlements": [],
+      "selectable": true
+    }
+  ]
+}

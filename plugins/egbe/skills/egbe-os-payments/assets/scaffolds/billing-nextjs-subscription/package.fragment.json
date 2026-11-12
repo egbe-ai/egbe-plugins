@@ -1,0 +1,12 @@
+{
+  "agentsMarker": "EGBE:BILLING-FOUNDATION",
+  "expectedScripts": {
+    "start": "npm run db:migrate && next start"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "billing:sync": "npm run db:migrate && node scripts/billing-sync.mjs",
+    "billing:test": "node --test src/lib/egbe-billing/*.test.mjs"
+  }
+}

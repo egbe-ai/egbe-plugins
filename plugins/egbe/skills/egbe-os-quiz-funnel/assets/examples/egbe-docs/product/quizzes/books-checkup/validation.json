@@ -1,0 +1,21 @@
+{
+  "contract": "quiz-funnel-validation-v1",
+  "status": "ready",
+  "validated_on": "2026-09-28",
+  "quiz_slug": "books-checkup",
+  "route": "/quiz/books-checkup",
+  "goal": "call",
+  "destination": "booking_url",
+  "spec_sha256": "a3946e5fcd22004dac3fe0b947d29d5d9b5fff237b7ace2a704a8953802a0276",
+  "public_sha256": "f39a0e7cd9fcf851539aeca5b0951a87ae62546d1113bb89327bfcd661004450",
+  "counts": {
+    "screens": 8,
+    "questions": 6,
+    "interstitials": 2,
+    "results": 5,
+    "proof": 2
+  },
+  "consent_geographies": [],
+  "reachability": "checked",
+  "warnings": []
+}

@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "taxonomy_version": "creative-taxonomy.v1",
+  "purpose": "One vocabulary for classifying competitor ads (POST /v1/media/classify-creative, Creative Patterns section) and for describing our own variants (ads campaign pack). Pattern keys use the closed values below so that the same pattern converges across competitors; verbatim excerpts carry the detail.",
+  "platforms": ["google", "meta", "linkedin", "tiktok", "reddit", "youtube"],
+  "dimensions": {
+    "hook_type": {
+      "cardinality": "one",
+      "pattern_key": true,
+      "description": "How the ad earns the first second of attention.",
+      "values": {
+        "pain_problem": "Opens on the problem or pain the viewer has.",
+        "desired_outcome": "Opens on the result the viewer wants.",
+        "before_after_bridge": "Contrasts life before and after, the product is the bridge.",
+        "identity_callout": "Names who the ad is for (For marketers, Developers who...).",
+        "curiosity_gap": "Withholds the answer so the viewer wants to read on.",
+        "social_proof": "Leads with numbers of users, reviews, logos or testimonials.",
+        "value_framing": "Leads with one concrete number and outcome (10 minutes a day, 40% off).",
+        "contrarian": "Challenges a common belief or the usual way of doing it.",
+        "challenge": "Dares the viewer to test themselves or prove something.",
+        "direct_offer": "Leads with the offer itself (free trial, discount, demo).",
+        "announcement": "Leads with news: launch, new feature, new course, event.",
+        "other": "A clear hook that fits none of the above.",
+        "unknown": "The evidence does not show the hook."
+      }
+    },
+    "message_shape": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "The rhetorical shape of the main text.",
+      "values": {
+        "question": "Asks the viewer a question.",
+        "statistic": "States a number or data point.",
+        "first_person_story": "Tells a personal story or testimonial in the first person.",
+        "comparison": "Compares with alternatives or the old way.",
+        "bold_claim": "One strong statement.",
+        "list_steps": "Lists features, steps or reasons.",
+        "plain_statement": "Plain descriptive sentence.",
+        "other": "Another shape.",
+        "unknown": "No readable text."
+      }
+    },
+    "pain_kind": {
+      "cardinality": "one",
+      "pattern_key": true,
+      "description": "The problem the ad says it removes.",
+      "values": {
+        "cost": "Spending too much money.",
+        "delay": "Things take too long; slow progress.",
+        "manual_effort": "Tedious manual work, hours lost.",
+        "complexity": "Too complicated, confusing, hard to start.",
+        "risk": "Fear of failure, mistakes, security or compliance risk.",
+        "missed_opportunity": "Falling behind, missing growth, career or market chances.",
+        "skill_gap": "Lacking a skill, knowledge or qualification.",
+        "poor_results": "Current tools or methods give bad results.",
+        "price": "Alternatives are too expensive; price sensitivity.",
+        "trust": "Distrust of vendors, billing, hidden fees.",
+        "none": "The ad names no pain.",
+        "other": "A pain that fits none of the above.",
+        "unknown": "The evidence does not show it."
+      }
+    },
+    "promise_benefit": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "The main benefit promised.",
+      "values": {
+        "outcome": "A concrete result (get hired, build an app, more leads).",
+        "speed": "Faster results or time saved.",
+        "savings": "Money saved.",
+        "ease": "Simple, effortless, no experience needed.",
+        "risk_reduction": "Safer, guaranteed, less risk.",
+        "quality": "Better quality or performance.",
+        "status_identity": "Recognition, belonging, becoming a certain kind of person.",
+        "other": "Another benefit.",
+        "unknown": "No clear promise."
+      }
+    },
+    "claim_strength": {
+      "cardinality": "many",
+      "pattern_key": false,
+      "description": "Claims that need proof when copied.",
+      "values": {
+        "quantified": "Contains a number or measurable result.",
+        "comparative": "Compares with others (better than, vs).",
+        "superiority": "Claims to be the best, first or only.",
+        "guarantee": "Promises a guaranteed result or refund.",
+        "none": "No strong claim."
+      }
+    },
+    "proof_kinds": {
+      "cardinality": "many",
+      "pattern_key": false,
+      "description": "Evidence the ad shows for its claims.",
+      "values": {
+        "count": "Number of users, students, customers.",
+        "fact": "A checkable fact about the service.",
+        "logo": "Customer, partner or employer logos.",
+        "statistic": "A data point or study result.",
+        "testimonial": "A quote or story from a customer.",
+        "rating": "Star rating or review score.",
+        "demonstration": "Shows the product working.",
+        "benchmark": "A comparison benchmark.",
+        "ranking": "A ranking or award.",
+        "authority": "An expert, institution or certification.",
+        "case_study": "A named customer result.",
+        "founder_story": "The founder or team story.",
+        "integration_partner": "Integrations or partners named.",
+        "ugc": "User-made style content.",
+        "none": "No proof shown."
+      }
+    },
+    "offer_kind": {
+      "cardinality": "one",
+      "pattern_key": true,
+      "description": "The deal the ad asks the viewer to accept. Not the button: 'Sign up' alone is a CTA, not an offer.",
+      "values": {
+        "free_trial": "Time-limited free use of the paid product.",
+        "freemium": "A free plan or free tier.",
+        "free_tool": "A free standalone tool or calculator.",
+        "free_sample": "A free lesson, chapter or sample.",
+        "lead_magnet": "A guide, template, checklist or report for contact details.",
+        "quiz_assessment": "A quiz, test or assessment.",
+        "webinar_event": "A webinar, workshop or event.",
+        "call_booking": "Book a demo, call or consultation.",
+        "discount": "A price cut, promo code or sale.",
+        "direct_purchase": "Buy now at the stated price.",
+        "paid_pilot": "A paid pilot or trial project.",
+        "app_install": "Install the app.",
+        "waitlist": "Join a waitlist or early access.",
+        "content": "Read or watch content with no ask.",
+        "none": "No offer.",
+        "other": "Another offer.",
+        "unknown": "The evidence does not show it."
+      }
+    },
+    "guarantees": {
+      "cardinality": "many",
+      "pattern_key": false,
+      "description": "Risk reversal shown.",
+      "values": {
+        "money_back": "Money-back guarantee.",
+        "cancel_anytime": "Cancel anytime.",
+        "no_card_required": "No credit card required.",
+        "none": "None shown."
+      }
+    },
+    "urgency": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "Scarcity or time pressure.",
+      "values": {
+        "none": "No urgency.",
+        "deadline": "Ends on a date or soon.",
+        "limited_quantity": "Limited spots or stock.",
+        "countdown": "A countdown.",
+        "former_price": "A crossed-out former price.",
+        "unknown": "Unclear."
+      }
+    },
+    "segment_buyer_type": {
+      "cardinality": "one",
+      "pattern_key": true,
+      "description": "Who the ad addresses.",
+      "values": {
+        "consumer": "Individuals for personal use.",
+        "student": "Students and learners.",
+        "job_seeker": "Career changers and job seekers.",
+        "professional": "Working professionals upskilling for their job.",
+        "creator": "Creators and freelancers.",
+        "developer": "Software developers and technical users.",
+        "smb": "Small businesses and their owners.",
+        "mid_market": "Mid-size companies.",
+        "enterprise": "Large organisations.",
+        "team": "Teams or managers buying for a team.",
+        "mixed": "Several segments at once.",
+        "unknown": "Not shown."
+      }
+    },
+    "segment_callout": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "How the segment is named.",
+      "values": {
+        "explicit": "The segment is named in the ad.",
+        "implied": "The segment is implied by the situation.",
+        "none": "No segment cue."
+      }
+    },
+    "emotion": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "Dominant emotional tone; descriptive only.",
+      "values": {
+        "frustration": "Frustration with the status quo.",
+        "curiosity": "Curiosity.",
+        "humor": "Humor.",
+        "anxiety": "Worry or fear.",
+        "aspiration": "Aspiration and ambition.",
+        "relief": "Relief.",
+        "pride_status": "Pride or status.",
+        "belonging": "Belonging to a group.",
+        "neutral": "Neutral and informative.",
+        "unknown": "Unclear."
+      }
+    },
+    "format_kind": {
+      "cardinality": "one",
+      "pattern_key": true,
+      "description": "The creative format; the runner sets it from platform metadata when the platform reports it.",
+      "values": {
+        "static_image": "A single image.",
+        "carousel": "Several cards or images.",
+        "video": "A video.",
+        "text_only": "A text ad without media.",
+        "dynamic": "A dynamic or catalog ad assembled by the platform.",
+        "meme": "A meme-style image.",
+        "promoted_post": "A native post promoted as an ad.",
+        "document": "A document or lead-form ad.",
+        "chat_card": "A card inside an AI chat answer.",
+        "other": "Another format.",
+        "unknown": "Not known."
+      }
+    },
+    "visual_treatment": {
+      "cardinality": "many",
+      "pattern_key": false,
+      "description": "What the visual shows.",
+      "values": {
+        "lifestyle_scene": "People or scenes from life.",
+        "text_on_surface": "Text written on a surface (note, sticky, notebook).",
+        "question_card": "A question as the main visual.",
+        "stat_card": "A number or statistic as the main visual.",
+        "native_post": "Looks like a native post or screenshot of one.",
+        "comparison_list": "A comparison or checklist.",
+        "bold_text": "Large bold text.",
+        "product_screenshot": "A screenshot or UI of the product.",
+        "before_after": "A before and after visual.",
+        "talking_head": "A person talking to the camera.",
+        "illustration": "Illustration or animation.",
+        "logo_only": "Mostly the logo or brand.",
+        "other": "Something else.",
+        "none": "No visual (text ad)."
+      }
+    },
+    "cta_intent": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "What the button or call to action asks; the runner sets it from the platform CTA code when one exists.",
+      "values": {
+        "learn_more": "Learn more.",
+        "see_how": "See how it works, watch.",
+        "sign_up": "Sign up or create an account.",
+        "start_trial": "Start a free trial.",
+        "book": "Book a demo, call or seat.",
+        "shop": "Shop or buy.",
+        "download": "Download.",
+        "register": "Register for an event.",
+        "install": "Install the app.",
+        "take_quiz": "Take a quiz or test.",
+        "get_offer": "Get the offer or claim the deal.",
+        "contact": "Contact or message.",
+        "none": "No call to action.",
+        "unknown": "Not shown."
+      }
+    },
+    "landing_page_type": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "Where the click lands, judged from the landing URL and the ad.",
+      "values": {
+        "homepage": "The site homepage.",
+        "dedicated_landing": "A campaign landing page.",
+        "product_page": "A product, course or catalog page.",
+        "pricing_page": "The pricing page.",
+        "feature_page": "A feature page.",
+        "signup_page": "A signup or trial form.",
+        "checkout": "A checkout page.",
+        "lead_form": "A lead form on the site.",
+        "booking_page": "A booking or calendar page.",
+        "quiz": "A quiz funnel.",
+        "native_lead_form": "A lead form inside the ad platform.",
+        "webinar_registration": "Webinar registration.",
+        "content_article": "An article or blog post.",
+        "app_store": "An app store listing.",
+        "marketplace_listing": "A marketplace listing.",
+        "other": "Another page.",
+        "unknown": "Not known."
+      }
+    },
+    "search_intent": {
+      "cardinality": "one",
+      "pattern_key": false,
+      "description": "For Google search text ads only: the intent of the keyword the ad was shown for.",
+      "values": {
+        "job_seeking": "Looking for jobs or careers.",
+        "free_intent": "Looking for something free.",
+        "informational": "Learning about a topic.",
+        "vendor_seeking": "Looking for a provider or course.",
+        "tool_seeking": "Looking for a tool or app.",
+        "competitor_alternative": "Looking for an alternative to a named brand.",
+        "pricing": "Looking for prices.",
+        "not_applicable": "Not a search ad.",
+        "unknown": "Unclear."
+      }
+    }
+  },
+  "texts": {
+    "hook_text": {"max_length": 160, "description": "The words that carry the hook, verbatim."},
+    "pain_text": {"max_length": 200, "description": "The words that name the pain, verbatim."},
+    "promise_text": {"max_length": 200, "description": "The words that make the promise, verbatim."},
+    "proof_text": {"max_length": 200, "description": "The proof as shown, verbatim (numbers are never copied)."},
+    "offer_text": {"max_length": 160, "description": "The words that state the offer, verbatim."}
+  },
+  "offer_details": {
+    "price_amount": "Number shown as the price, or null.",
+    "price_currency": "ISO currency code of that price, or null.",
+    "price_period": "monthly | annual | one_time | per_unit | null",
+    "trial_days": "Length of the free trial in days, or null.",
+    "discount_percent": "Percent off shown, or null."
+  },
+  "pattern_levels": {
+    "combo": ["segment_buyer_type", "pain_kind", "offer_kind", "format_kind"],
+    "hook": ["hook_type", "offer_kind"]
+  },
+  "aliases": {
+    "format_kind": {
+      "google:TEXT": "text_only",
+      "google:IMAGE": "static_image",
+      "google:VIDEO": "video",
+      "meta:IMAGE": "static_image",
+      "meta:VIDEO": "video",
+      "meta:CAROUSEL": "carousel",
+      "meta:DCO": "dynamic",
+      "meta:DPA": "dynamic",
+      "meta:MEME": "meme",
+      "linkedin:image": "static_image",
+      "linkedin:video": "video",
+      "linkedin:text": "text_only",
+      "linkedin:document": "document"
+    },
+    "cta_intent": {
+      "meta:LEARN_MORE": "learn_more",
+      "meta:SIGN_UP": "sign_up",
+      "meta:SHOP_NOW": "shop",
+      "meta:BOOK_TRAVEL": "book",
+      "meta:BOOK_NOW": "book",
+      "meta:DOWNLOAD": "download",
+      "meta:INSTALL_MOBILE_APP": "install",
+      "meta:USE_APP": "install",
+      "meta:GET_OFFER": "get_offer",
+      "meta:CONTACT_US": "contact",
+      "meta:SEND_MESSAGE": "contact",
+      "meta:APPLY_NOW": "sign_up",
+      "meta:SUBSCRIBE": "sign_up",
+      "meta:WATCH_MORE": "see_how",
+      "meta:REGISTER_NOW": "register",
+      "meta:GET_QUOTE": "contact",
+      "meta:NO_BUTTON": "none",
+      "linkedin:LEARN_MORE": "learn_more",
+      "linkedin:SIGN_UP": "sign_up",
+      "linkedin:DOWNLOAD": "download",
+      "linkedin:REGISTER": "register",
+      "linkedin:REQUEST_DEMO": "book"
+    }
+  }
+}

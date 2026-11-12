@@ -1,0 +1,65 @@
+{
+  "run_key": "<new-run-key>",
+  "agent_id": "<local-agent-id>",
+  "product": {
+    "name": "<existing-product-name>"
+  },
+  "segment": {
+    "name": "<chosen-audience>"
+  },
+  "offer": {
+    "headline": "<accepted-offer>"
+  },
+  "campaign": {
+    "name": "<campaign-name>",
+    "schedule": {
+      "name": "<schedule-label>",
+      "timing": {
+        "from": "<HH:MM>",
+        "to": "<HH:MM>"
+      },
+      "days": {
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "saturday": false,
+        "sunday": false
+      },
+      "timezone": "<IANA-zone>"
+    },
+    "daily_limit": null,
+    "email_list": [
+      "<owned-cold-mailbox>"
+    ],
+    "activate_on_launch": false,
+    "stop_on_reply": true,
+    "stop_on_auto_reply": true,
+    "insert_unsubscribe_header": true,
+    "open_tracking": false,
+    "link_tracking": false,
+    "verify_leads_on_import": true,
+    "wait_for_verification": true,
+    "allow_unverified_activation": false
+  },
+  "sequence": {
+    "steps": [
+      {
+        "delay_days": 0,
+        "subject": "<chosen-subject>",
+        "body": "<accepted-message>"
+      }
+    ]
+  },
+  "monitoring": {
+    "autopause_on_risk": true,
+    "thresholds": {
+      "max_bounce_rate": null
+    }
+  },
+  "lead_replenishment": {
+    "enabled": false
+  },
+  "leads_file": "./leads.json"
+}

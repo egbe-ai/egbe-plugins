@@ -1,0 +1,41 @@
+{
+  "name": "bold-statement",
+  "description": "Single arresting sentence fills the canvas. The simplest possible template — pure message testing with zero visual noise.",
+  "canvas": { "width": 1080, "height": 1350 },
+  "universality": "HIGH",
+  "fields": {
+    "headline": {
+      "type": "string",
+      "maxLines": 3,
+      "maxChars": 60,
+      "required": true,
+      "accentSpan": "recommended",
+      "description": "One complete thought. Use <span class=\"accent\">phrase</span> on the most surprising/specific part. The accent span carries the punch."
+    },
+    "cta": {
+      "type": "string",
+      "maxChars": 18,
+      "required": true,
+      "description": "Verb-led CTA, 2-3 words. Good: 'Try It Free', 'See an Example'. Bad: 'Learn More', 'Click Here'."
+    },
+    "brand": {
+      "type": "string",
+      "maxChars": 20,
+      "required": false,
+      "description": "Brand name — subtle, right side of CTA row"
+    }
+  },
+  "style": {
+    "accentColor": "#ff6b35",
+    "description": "Override accentColor to match product brand. It sets --accent CSS custom property which themes CTA button and accent spans."
+  },
+  "rendering": "Read template.html from this directory and replace {{placeholders}} with field values. Replace {{accentColor}} in the :root CSS variable. Use <span class=\"accent\">phrase</span> for accent-colored text. Do NOT generate HTML from scratch — the template contains exact font sizes (92px headline), spacing, and flex layout that must be preserved.",
+  "forbidden": [
+    "subtitle or secondary text — headline only",
+    "multiple accent spans — one carries the punch",
+    "gradient backgrounds or decorative shapes",
+    "feature lists or bullet points",
+    "images, screenshots, or product UI",
+    "large logos — brand is a subtle text label only"
+  ]
+}

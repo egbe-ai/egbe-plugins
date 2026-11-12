@@ -1,0 +1,4 @@
+interface:
+  display_name: "Quiz Funnel"
+  short_description: "Build a quiz page that leads to a call, signup or payment"
+  default_prompt: "Use $egbe-os-quiz-funnel to build a quiz page for this product, segment, and offer. The quiz should lead to: <a call, a signup, or a payment>."

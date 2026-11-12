@@ -1,0 +1,14 @@
+{
+  "name": "egbe",
+  "owner": {
+    "name": "Egbe"
+  },
+  "description": "Egbe's plugins for Claude.",
+  "plugins": [
+    {
+      "name": "egbe",
+      "source": "./plugins/egbe",
+      "description": "Give Claude your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe."
+    }
+  ]
+}

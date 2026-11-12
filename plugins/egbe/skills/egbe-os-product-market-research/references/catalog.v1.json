@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "workflows": {
+    "recommendations": "references/workflows/recommendations.md",
+    "preview": "references/workflows/preview.md"
+  },
+  "sections": [
+    {
+      "id": "market_size_dynamics",
+      "label": "Market size and dynamics",
+      "heading": "Market size and dynamics",
+      "workflow": "references/workflows/market-size-and-dynamics.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "How big the market is, how it is segmented, and how demand is changing."
+    },
+    {
+      "id": "target_audience",
+      "label": "Target audience",
+      "heading": "Target audience",
+      "workflow": "references/workflows/target-audience.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "Who the first buyers are, their pains, buying context, and decision criteria."
+    },
+    {
+      "id": "competitive_landscape",
+      "label": "Competitive landscape",
+      "heading": "Competitive landscape",
+      "workflow": "references/workflows/competitive-landscape.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "Direct and indirect alternatives, their positioning, pricing, strengths, and gaps."
+    },
+    {
+      "id": "value_proposition",
+      "label": "Value proposition",
+      "heading": "Value proposition",
+      "workflow": "references/workflows/value-proposition.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "The outcome buyers want, what they use today, and what would make this offer credible."
+    },
+    {
+      "id": "pricing_monetization",
+      "label": "Pricing and monetization",
+      "heading": "Pricing and monetization",
+      "workflow": "references/workflows/pricing-and-monetization.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "How similar products charge, typical price points, and willingness-to-pay signals."
+    },
+    {
+      "id": "acquisition_channels",
+      "label": "Acquisition channels",
+      "heading": "Acquisition channels",
+      "workflow": "references/workflows/acquisition-channels.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "Where the first customers can be reached and what similar products pay to acquire them."
+    },
+    {
+      "id": "demand_validation",
+      "label": "Demand validation",
+      "heading": "Demand validation",
+      "workflow": "references/workflows/demand-validation.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "Public evidence that people already search for, pay for, and keep using products like this."
+    },
+    {
+      "id": "unit_economics",
+      "label": "Unit economics",
+      "heading": "Unit economics",
+      "workflow": "references/workflows/unit-economics.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "A per-customer model: expected revenue, direct costs, contribution, and payback."
+    },
+    {
+      "id": "keyword_economics",
+      "label": "Keyword economics",
+      "heading": "Keyword economics",
+      "workflow": "references/workflows/keyword-economics.md",
+      "tag": "Live data",
+      "estimated_minutes": 7,
+      "description": "Real search queries, their volume, cost-per-click, and who bids on them — from search services and independent aggregators."
+    },
+    {
+      "id": "competitor_set",
+      "label": "Competitor set",
+      "heading": "Competitor set",
+      "workflow": "references/workflows/competitor-set.md",
+      "tag": "Live data",
+      "estimated_minutes": 120,
+      "internal": true,
+      "description": "A bounded comparison sample with sourced profiles, caller-classified roles and separate advertising observations."
+    },
+    {
+      "id": "channel_footprint",
+      "label": "Channel footprint",
+      "heading": "Channel footprint",
+      "workflow": "references/workflows/channel-footprint.md",
+      "tag": "Live data",
+      "estimated_minutes": 12,
+      "internal": true,
+      "description": "Where competitors buy traffic — tracking tags on their pages, ad-library presence and age across platforms, traffic-source split, partner signals."
+    },
+    {
+      "id": "creative_patterns",
+      "label": "Creative patterns",
+      "heading": "Creative patterns",
+      "workflow": "references/workflows/creative-patterns.md",
+      "tag": "Live data",
+      "estimated_minutes": 15,
+      "internal": true,
+      "description": "Observed competitor creative patterns, native dates, current activity, comparison roles and coverage; observations do not establish performance."
+    },
+      {"id": "funnel_teardown", "label": "Funnel teardown", "heading": "Funnel teardown", "workflow": "references/workflows/funnel-teardown.md", "tag": "Live data", "estimated_minutes": 45, "internal": true, "description": "Browser walks of every distinct funnel behind the shared creative inspection sample, grouped by market, channel and competitor campaign: screenshots, offers, results, approved conversion forms and same-day email. Partial paths, advertising observations and own-product comparison remain explicit; resume unfinished walks."},
+      {"id": "lifecycle_capture", "label": "Lifecycle capture", "heading": "Lifecycle capture", "workflow": "references/workflows/lifecycle-capture.md", "tag": "Live data", "estimated_minutes": 15, "internal": true, "description": "What the competitors send after a sign-up: research subscriptions from plus-addressed aliases of the claw mailbox, then the harvested sequences with cadence, offers, discounts and deadlines."},
+    {
+      "id": "competitor_ads",
+      "label": "Competitor ads",
+      "heading": "Competitor ads",
+      "workflow": "references/workflows/competitor-ads.md",
+      "tag": "Live data",
+      "estimated_minutes": 7,
+      "description": "Which competitors pay for ads, where, for how long, and with what offers — from public ad archives."
+    },
+    {
+      "id": "review_mining",
+      "label": "Competitor reviews",
+      "heading": "Competitor reviews",
+      "workflow": "references/workflows/review-mining.md",
+      "tag": "Live data",
+      "estimated_minutes": 7,
+      "description": "What competitors' paying customers love, complain about, and why they switch — from public review platforms."
+    },
+    {
+      "id": "community_demand",
+      "label": "Communities analysis",
+      "heading": "Communities analysis",
+      "workflow": "references/workflows/community-demand.md",
+      "tag": "Live data",
+      "estimated_minutes": 7,
+      "description": "Real posts where people ask for, complain about, or price tools like this — from Hacker News, Reddit, and YouTube."
+    },
+    {
+      "id": "fleet_prior",
+      "label": "Fleet benchmarks",
+      "heading": "Fleet benchmarks",
+      "workflow": "references/workflows/fleet-prior.md",
+      "tag": "Live data",
+      "estimated_minutes": 7,
+      "internal": true,
+      "description": "Past experiments from our own launches judged genuinely comparable to this product — internal section."
+    },
+    {
+      "id": "organic_trend_watch",
+      "label": "TikTok/Reels market trend research for this product",
+      "heading": "TikTok/Reels market trend research for this product",
+      "workflow": "references/workflows/tiktok-reels-market-trends.md",
+      "tag": "Live data",
+      "estimated_minutes": 30,
+      "description": "What is trending around this product's topic on TikTok and Instagram Reels, and which angles are gaining traction."
+    },
+    {
+      "id": "geography_comparison",
+      "label": "Geography comparison",
+      "heading": "Geography comparison",
+      "workflow": "references/workflows/geography-comparison.md",
+      "tag": "AI deep research",
+      "estimated_minutes": 10,
+      "description": "Compare plausible countries for the next market test, including reachability, adaptation costs and evidence gaps."
+    }
+  ]
+}
