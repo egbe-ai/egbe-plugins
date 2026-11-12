@@ -16,7 +16,7 @@ for (const failure of ["lead-read", "ambiguous-import"]) {
       if (endpoint.endsWith("/leads")) {
         return {
           status: firstRun && failure === "lead-read" ? 404 : 200,
-          data: { items: !firstRun && failure === "ambiguous-import" ? [{ id: "l1", email: leads[0].email }] : [] },
+          data: { items: !firstRun && failure === "ambiguous-import" ? [{ id: "l1", campaign: "c", email: leads[0].email }] : [] },
         };
       }
       if (endpoint.endsWith("/leads/add") && req.method === "POST") {

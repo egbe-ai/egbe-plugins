@@ -16,6 +16,7 @@ does not replace server ownership. Never use a name match or tag to adopt anothe
 project's campaign.
 
 The bundled client wraps provider POST/PATCH bodies as `{"payload": {...}}`.
+The semantic exclusion call below uses its own fixed intent body.
 Bodyless activate/pause calls have no body. Use the client or supported scripts;
 raw provider-shaped writes to OS can fail 422.
 
@@ -184,3 +185,46 @@ resource (Registry default 500/day); project configuration controls the current
 limit. Pause is not blocked by campaign-update quota. A cleanup timeout/5xx may
 already have changed the provider: read back before repeating. Cleanup is not
 recipient suppression and does not erase confirmed opt-out events.
+
+
+## Recipient exclusion
+
+Relative to `$OS_URL/outreach/instantly`:
+
+- `GET /campaigns/{campaign_id}/leads/{lead_id}/exclusion` reads fresh owned
+  evidence. It is available with `outreach:read` / project read access.
+- `POST` to the same resource accepts only `{"intent":"confirmed_opt_out"}`.
+  It requires existing privileged outreach writer access; read-only keys cannot
+  mutate. The bundled client exposes `getRecipientExclusion` and `excludeRecipient`.
+
+Tools checks Registry campaign ownership before native lead access and verifies
+ID/campaign identity. In the supported profile it sets only native
+`lt_interest_status=-1` via exact lead-ID PATCH and verifies Completed (3) /
+Not Interested (-1). Reply/contact/history data remain retained. Existing generic
+lead PATCH stays limited to personalization. This safety operation, like scoped
+pause, is independent of the ordinary campaign-update quota.
+
+Inspect `state`: `confirmed` is observed native main-sequence exclusion;
+`eligible` is a GET result that still needs action; `unsupported`, `rejected` and
+`unknown` do not authorize resuming. `scope`, `observed_at`, `lead_status`,
+`interest_status` and `write_attempted` describe the bounded observation, not
+permanent suppression. The initial profile requires complete empty subsequences,
+automation and webhook collections; an omitted lead attachment field by itself
+is insufficient. Global collection details are never returned to the project.
+
+There is no fallback to email-based interest updates (which can propagate to
+other campaigns), a global blocklist, deletion or activation. A timeout/5xx may
+follow a committed PATCH: use GET for recovery before considering another write.
+Neither the client nor Tools automatically retries that write. HTTP success
+without `state: confirmed` is not proof. Read failures expose safe status and
+bounded numeric `retry_after` where available, without provider response bodies.
+The shared request deadline is 22 seconds, including ownership; native attempts
+are bounded to 5 seconds each. This does not cancel queued/in-flight mail or
+qualify active subsequences; retain containment for unverified cases.
+
+`listLeadRows` and `listLeadEmails` follow native continuation even on short pages,
+reject invalid identity/duplicate IDs/repeated cursors and report incomplete reads
+as `ok: false`. Multiple same-email IDs are retained and assessed individually.
+Legacy responses without an explicit cursor use last-ID continuation on full
+pages; they do not gain a recipient-exclusion exception without new semantic
+readback. The old/new server transition therefore remains contained.

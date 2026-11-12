@@ -1,5 +1,6 @@
-// Known project opt-outs only. No organisation blocklist or provider status
-// mutation: existing project-scoped reads/pause are the available stop surface.
+// Known local project opt-outs only; owned exact-ID exclusion with scoped
+// campaign containment when native exclusion cannot be confirmed.
+const { assessRecipient } = require("./recipient-exclusion");
 const fs = require("fs");
 const path = require("path");
 const { DatabaseSync } = require("node:sqlite");
@@ -142,16 +143,6 @@ function checkKnownOwnership(campaign, ownership, campaignId) {
     assertCampaignNotForeign(campaign, ownership, `campaign ${campaignId}`);
 }
 
-async function recipientInCampaign(client, campaignId, email) {
-  // The client's complete-pagination contract distinguishes absent from unknown.
-  try {
-    const result = await client.listLeadEmails(campaignId);
-    return { complete: result.ok, present: result.emails.has(email) };
-  } catch (_) {
-    return { complete: false, present: false };
-  }
-}
-
 async function stopConfirmedRecipient(client, runDir, email) {
   email = normalizeEmail(email);
   const history = readOptOutHistory(runDir);
@@ -173,11 +164,12 @@ async function stopConfirmedRecipient(client, runDir, email) {
       checkKnownOwnership(response.body, run.ownership, campaignId);
       result.settings = campaignSafetyReadback(response.body);
       result.campaign_status = response.body?.status ?? null;
-      const membership = await recipientInCampaign(client, campaignId, email);
-      result.membership = membership.complete ? (membership.present ? "present" : "absent") : "unknown";
-      if (membership.complete && !membership.present) {
+      const exclusion = await assessRecipient(client, campaignId, email, { confirmed: true, mutate: true });
+      result.recipient_exclusion = exclusion;
+      result.membership = exclusion.state === "absent" ? "absent" : exclusion.evidence?.length ? "present" : "unknown";
+      if (["absent", "excluded"].includes(exclusion.state)) {
         result.stopped = true;
-        result.action = "recipient_absent";
+        result.action = exclusion.state === "absent" ? "recipient_absent" : "recipient_excluded";
         continue;
       }
       if (response.body?.status === 2) {
@@ -185,8 +177,8 @@ async function stopConfirmedRecipient(client, runDir, email) {
         result.action = "campaign_already_paused";
         continue;
       }
-      // Settings alone do not prove this lead stopped, especially in another
-      // run. No verified per-recipient stop field exists in current fixtures.
+      // Settings alone do not prove this lead stopped. Unsupported or uncertain
+      // native exclusion still requires containment of this owned campaign.
       // Unknown membership is conservatively contained by pausing this owned
       // campaign too; no global campaign/account pause is performed.
       try {
@@ -209,7 +201,7 @@ async function stopConfirmedRecipient(client, runDir, email) {
     }
   }
   return { email, ok: results.length > 0 && results.every((result) => result.stopped), campaigns: results,
-    limitation: "Known local project campaigns only; campaign pause is not provider-wide recipient suppression" };
+    limitation: "Known local project campaigns only; main-sequence exclusion does not cancel in-flight mail; campaign pause is containment, not provider-wide suppression" };
 }
 
 module.exports = { readOptOutHistory, filterConfirmedOptOuts, assertRecipientNotOptedOut,

@@ -113,7 +113,8 @@ function mockClient(email, overrides = {}) {
     pauses, statuses,
     getCampaign: async (id) => ({ status: 200, body: { id, status: statuses[id],
       stop_on_reply: true, stop_on_auto_reply: false, insert_unsubscribe_header: true } }),
-    listLeadEmails: async () => ({ ok: true, emails: new Set([email]) }),
+    listLeads: async (id) => ({ status: 200, body: { items: [{ id: `lead-${id}`, campaign: id, email }] } }),
+    getRecipientExclusion: async () => ({ status: 404 }),
     pauseCampaign: async (id) => { pauses.push(id); statuses[id] = 2; return { status: 200 }; },
     ...overrides,
   };
@@ -123,8 +124,7 @@ test("opt-out in A checks and pauses A and B, excludes absent C, and retries wit
   const f = fixture(t);
   confirm(f);
   for (const suffix of ["b", "c"]) store.upsertRun(f.db, { run_key: `run-${suffix}`, campaign_id: `campaign-${suffix}` });
-  const client = mockClient(f.email, { listLeadEmails: async (id) => ({ ok: true,
-    emails: new Set(id === "campaign-c" ? [] : [f.email]) }) });
+  const client = mockClient(f.email, { listLeads: async (id) => ({ status: 200, body: { items: id === "campaign-c" ? [] : [{ id: `lead-${id}`, campaign: id, email: f.email }] } }) });
   const first = await guards.stopConfirmedRecipient(client, f.run, f.email);
   assert.equal(first.ok, true);
   assert.deepEqual(client.pauses, ["campaign-a", "campaign-b"]);
@@ -137,7 +137,7 @@ test("opt-out in A checks and pauses A and B, excludes absent C, and retries wit
 test("incomplete lead reads pause only the known owned campaign and require readback", async (t) => {
   const f = fixture(t);
   confirm(f);
-  const client = mockClient(f.email, { listLeadEmails: async () => { throw new Error("read timed out"); } });
+  const client = mockClient(f.email, { listLeads: async () => { throw new Error("read timed out"); } });
   const result = await guards.stopConfirmedRecipient(client, f.run, f.email);
   assert.equal(result.ok, true);
   assert.equal(result.campaigns[0].membership, "unknown");
@@ -182,4 +182,33 @@ test("gateway ownership works for DB-only runs without local tag metadata", asyn
   };
   assert.equal((await guards.stopConfirmedRecipient(client, f.run, f.email)).ok, true);
   assert.deepEqual(client.pauses, ["campaign-a"]);
+});
+
+
+test("confirmed refusal uses owned exclusion without pausing, unsupported retains containment", async (t) => {
+  const f = fixture(t);
+  confirm(f);
+  let calls = 0;
+  const client = mockClient(f.email, {
+    getRecipientExclusion: async (campaignId, leadId) => ({ status: 200, body: {
+      state: calls ? "confirmed" : "eligible", campaign_id: campaignId, lead_id: leadId,
+      scope: "main_campaign_sequence", lead_status: calls ? 3 : 1, interest_status: calls ? -1 : null,
+      observed_at: "2026-11-12T12:00:00Z",
+    } }),
+    excludeRecipient: async (campaignId, leadId) => { calls++; return { status: 200, body: {
+      state: "confirmed", campaign_id: campaignId, lead_id: leadId, scope: "main_campaign_sequence",
+      lead_status: 3, interest_status: -1, observed_at: "2026-11-12T12:00:00Z",
+    } }; },
+  });
+  const result = await guards.stopConfirmedRecipient(client, f.run, f.email);
+  assert.equal(result.ok, true);
+  assert.equal(result.campaigns[0].action, "recipient_excluded");
+  assert.deepEqual(client.pauses, []);
+  assert.equal(calls, 1);
+  await guards.stopConfirmedRecipient(client, f.run, f.email);
+  assert.equal(calls, 1);
+  client.getRecipientExclusion = async () => ({ status: 200, body: { state: "unsupported" } });
+  const contained = await guards.stopConfirmedRecipient(client, f.run, f.email);
+  assert.equal(contained.campaigns[0].action, "campaign_paused");
+  assert.equal(contained.campaigns[0].recipient_exclusion.state, "unknown");
 });

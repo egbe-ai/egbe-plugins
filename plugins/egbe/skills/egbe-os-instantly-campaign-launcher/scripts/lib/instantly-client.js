@@ -1,3 +1,4 @@
+const { listLeadRows } = require('./recipient-exclusion');
 const connectionHeaders = require('./connection-identity');
 const http = require('http');
 const https = require('https');
@@ -202,29 +203,24 @@ class InstantlyClient {
    * complete list could not be read (#3790), so the caller cannot tell "empty"
    * from "unknown" and must not treat the set as complete.
    */
+  listLeadRows(campaignId) {
+    return listLeadRows(this, campaignId);
+  }
+
   async listLeadEmails(campaignId) {
-    const emails = new Set();
-    const cursors = new Set();
-    let cursor = undefined;
-    for (let page = 0; page < MAX_LEAD_PAGES; page++) {
-      const res = await this.listLeads(campaignId, { limit: 100, starting_after: cursor });
-      // An unreadable page leaves the set incomplete: report it as unknown.
-      if (!(res.status >= 200 && res.status < 300)) return { ok: false, emails };
-      const items = Array.isArray(res.body) ? res.body : res.body?.items;
-      if (!Array.isArray(items)) return { ok: false, emails };
-      if (!items.length) return { ok: true, emails };
-      if (items.some((lead) => typeof lead?.email !== 'string' || !lead.email.trim())) return { ok: false, emails };
-      for (const lead of items) emails.add(lead.email.trim().toLowerCase());
-      const lastId = items[items.length - 1]?.id;
-      if (items.length < 100) return { ok: true, emails };
-      if (!lastId) return { ok: false, emails };
-      // The same page again means the cursor was ignored: the list cannot be
-      // trusted, and following it would never end.
-      if (cursors.has(lastId)) return { ok: false, emails };
-      cursors.add(lastId);
-      cursor = lastId;
-    }
-    return { ok: false, emails };
+    const result = await this.listLeadRows(campaignId);
+    return { ok: result.ok, emails: new Set(result.rows.map(row => row.email.trim().toLowerCase())) };
+  }
+
+  getRecipientExclusion(campaignId, leadId) {
+    return this.request('GET', `/campaigns/${campaignId}/leads/${leadId}/exclusion`, null, null, 0, { retryOn: [] });
+  }
+
+  excludeRecipient(campaignId, leadId) {
+    // Semantic OS contract, not the generic provider payload wrapper. Never
+    // automatically replay a write with an uncertain outcome.
+    return this.request('POST', `/campaigns/${campaignId}/leads/${leadId}/exclusion`,
+      { intent: 'confirmed_opt_out' }, null, 0, { retryOn: [] });
   }
 
   /**

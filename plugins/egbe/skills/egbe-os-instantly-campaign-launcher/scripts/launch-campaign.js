@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { assessCampaignOptOuts } = require("./lib/recipient-exclusion");
 const fs = require("fs");
 const path = require("path");
 const { InstantlyClient } = require("./lib/instantly-client");
@@ -2010,14 +2011,12 @@ async function main() {
   // earlier pass. Filtering a new input file alone cannot make activation safe.
   const history = readOptOutHistory(runDir);
   if (spec.campaign.activate_on_launch === true || history.emails.size) {
-    const members = await readMembers(campaignId);
-    if (!members.ok) {
-      activationBlocked = "campaign_membership_unavailable";
+    const assessment = await assessCampaignOptOuts(client, campaignId, history.emails);
+    if (!assessment.ok) {
+      activationBlocked = assessment.reason || "confirmed_opt_out_exclusion_unconfirmed";
       await containOptOuts(history.emails);
-    }
-    else if ([...history.emails].some(email => members.emails.has(email))) {
-      activationBlocked = "confirmed_opt_out_still_in_campaign";
-      await containOptOuts([...history.emails].filter(email => members.emails.has(email)));
+      // Containment may establish exclusion for a later explicit rerun. This
+      // launch attempt stays blocked rather than activating as part of recovery.
     }
   }
   if (gateDecision.warning) {

@@ -14,6 +14,7 @@ const { makeRun, startServer, replenish } = require("./replenish-test-harness");
 function sentLead(i) {
   return {
     id: `l${i}`,
+    campaign: "c",
     email: `sent${i}@example.test`,
     status: 1,
     timestamp_last_contact: "2026-10-20T15:00:00.000Z",
@@ -21,7 +22,7 @@ function sentLead(i) {
   };
 }
 function unsentLead(i) {
-  return { id: `u${i}`, email: `unsent${i}@example.test`, status: 1, status_summary: {} };
+  return { id: `u${i}`, campaign: "c", email: `unsent${i}@example.test`, status: 1, status_summary: {} };
 }
 
 test("isContactedLead reads the Instantly v2 contact fields", () => {
@@ -94,7 +95,7 @@ for (const c of cases) {
       }
       if (endpoint.endsWith("/leads/add") && req.method === "POST") {
         posts++;
-        campaignLeads.push({ id: "n1", email: carryOver[0].email, status: 1 });
+        campaignLeads.push({ id: "n1", campaign: "c", email: carryOver[0].email, status: 1 });
         return { data: { leads_uploaded: 1 } };
       }
       return null;

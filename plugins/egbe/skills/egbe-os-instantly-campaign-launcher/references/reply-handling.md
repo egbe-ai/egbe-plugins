@@ -48,24 +48,38 @@ missing from the DB or confirmed queue events missing from it require restoratio
 and checking. A new run/upsert or run cleanup does not erase an earlier refusal.
 
 Local filtering cannot stop a recipient already imported. The command checks
-all known project campaigns from DB and recovery artifacts, via tenant-authorized
-gateway reads. It reads stop-on-reply/auto-reply/unsubscribe-header settings, but
-these settings alone do not prove that this recipient stopped. With current
-read surfaces, a present or unknown membership is contained by scoped campaign
-pause unless pause is already confirmed; readback must show status 2. Complete
-membership proving absence requires no pause. No global account/campaign action
-or foreign-campaign access is attempted.
+all known project campaigns from DB and recovery artifacts through owned gateway
+reads and complete, validated lead pagination. Absence needs no provider write.
+For each retained copy it reads the semantic recipient exclusion resource; a
+confirmed main-sequence result can preserve the lead and history without pausing
+the other recipients. An eligible copy uses only the exact-ID exclusion operation.
+Settings such as stop-on-reply alone do not establish recipient exclusion.
 
-The queue retains `opt_out_confirmed: true` and `opt_out_provider` evidence.
-A nonzero exit or `provider.ok: false` means the local refusal was saved but
-provider containment is unresolved. Report that unfinished action. Repeating the
-same `--mark opt_out` safely retries the check without duplicating the event;
-already-paused campaigns are not paused again. Do not resume a contained campaign
-until the opted-out recipient's future sending is resolved.
+The initial supported profile requires no attached or campaign subsequences and
+complete empty workspace automation/webhook collections, checked internally by
+Tools. Nonempty, unreadable or incomplete coverage remains unsupported/unknown.
+The command then preserves the existing scoped campaign pause (readback status 2).
+A pause proves containment, not per-recipient exclusion. No global blocklist,
+email-based interest update, foreign campaign or automatic activation is used.
 
-This protects known local project refusals only. It is not a provider-wide
-blocklist and does not promise coverage of header/link opt-outs, unsynchronized
-copies or other projects. The gateway has no new recipient-suppression endpoint.
+The queue retains `opt_out_confirmed: true` and `opt_out_provider` evidence,
+including per-campaign `recipient_exclusion`. A nonzero exit or `provider.ok: false`
+means local refusal was saved but containment is unresolved. Repeating the same
+`--mark opt_out` rechecks without duplicating the local event; confirmed native
+3/-1 copies need no write and already-paused campaigns need no repeat pause.
+An uncertain mutation is recovered by GET, never automatically replayed.
+
+Before a separately authorized activation, the launcher checks every retained
+confirmed refusal against fresh owned main-sequence evidence. Missing local
+history, partial/invalid pages, unsupported coverage or unknown results block.
+A recovery attempt that had to establish exclusion leaves that launch attempt
+blocked; a later explicit rerun rechecks all gates. The exclusion operation does
+not itself activate a campaign.
+
+This covers known local project refusals and the supported native main-sequence
+state only. It does not cancel in-flight mail, qualify active subsequences or
+promise workspace-wide suppression, header/link opt-outs, unsynchronized copies
+or other projects. See [the endpoint contract](instantly-ops.md#recipient-exclusion).
 Keep sensitive client files/credentials out of cold-email replies; use a suitable
 protected product path if those inputs are actually needed.
 

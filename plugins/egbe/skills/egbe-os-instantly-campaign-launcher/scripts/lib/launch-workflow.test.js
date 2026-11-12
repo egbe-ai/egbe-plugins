@@ -21,7 +21,8 @@ async function fixture(t) {
     const url = new URL(req.url, "http://mock");
     let text = "";
     for await (const chunk of req) text += chunk;
-    const payload = text ? JSON.parse(text).payload : null;
+    const rawBody = text ? JSON.parse(text) : null;
+    const payload = rawBody?.payload ?? rawBody;
     const route = url.pathname.replace("/outreach/instantly", "");
     state.calls.push({ method: req.method, route, payload });
     const send = (status, body) => { res.writeHead(status, { "content-type": "application/json" }); res.end(JSON.stringify(body)); };
@@ -55,15 +56,28 @@ async function fixture(t) {
       if (state.pauseChangesStatus) state.campaign.status = 2;
       return send(200, { status: 2 });
     }
+    if (/^\/campaigns\/campaign-1\/leads\/[^/]+\/exclusion$/.test(route)) {
+      const row = state.leads.find(lead => lead.id === route.split("/")[4]);
+      if (!row) return send(404, {});
+      if (req.method === "POST" && state.exclusionSupported) Object.assign(row, { status: 3, lt_interest_status: -1 });
+      return send(200, { campaign_id: "campaign-1", lead_id: row.id, scope: "main_campaign_sequence",
+        observed_at: new Date().toISOString(), lead_status: row.status, interest_status: row.lt_interest_status,
+        state: !state.exclusionSupported ? "unsupported" : row.status === 3 && row.lt_interest_status === -1 ? "confirmed" : "eligible" });
+    }
     if (route === "/leads" && req.method === "GET") {
       state.membershipReads++;
       if (state.membershipDisconnects) return req.socket.destroy();
       return state.membershipReadable && state.membershipReads <= state.membershipFailsAfter
-        ? send(200, { items: state.leads }) : send(403, { error: "unreadable" });
+        ? (() => {
+          const cursor = url.searchParams.get("starting_after");
+          const offset = cursor ? state.leads.findIndex(row => row.id === cursor) + 1 : 0;
+          const items = state.leads.slice(offset, offset + 100);
+          return send(200, { items, next_starting_after: offset + 100 < state.leads.length ? items.at(-1).id : null });
+        })() : send(403, { error: "unreadable" });
     }
     if (route === "/leads/add") {
       const added = payload.leads.filter(lead => !state.leads.some(item => item.email === lead.email));
-      state.leads.push(...added.map((lead, i) => ({ id: `lead-${state.leads.length + i}`, verification_status: 1, ...lead })));
+      state.leads.push(...added.map((lead, i) => ({ id: `lead-${state.leads.length + i}`, verification_status: 1, campaign: payload.campaign_id, status: 1, ...lead })));
       return send(200, { leads_uploaded: added.length });
     }
     return send(404, { error: `unexpected local mock route ${req.method} ${route}` });
@@ -153,7 +167,7 @@ test("an already imported confirmed opt-out cannot be reactivated", async t => {
   f.spec.campaign.activate_on_launch = true;
   result = await f.execute();
   assert.equal(result.status, 2, result.stderr);
-  assert.equal(f.summary().launch_status, "confirmed_opt_out_still_in_campaign");
+  assert.equal(f.summary().launch_status, "confirmed_opt_out_exclusion_unconfirmed");
   assert.equal(f.activations().length, 0);
   assert.equal(f.state.campaign.status, 2);
 });
@@ -235,4 +249,30 @@ test("membership lost immediately before a new import still contains an active r
   assert.equal(f.state.calls.slice(callsBefore).some(call =>
     call.route === "/leads/add" || call.route.endsWith("/activate")), false);
   assert.equal(f.summary().opt_out_stop_results[0].ok, true);
+});
+
+
+test("retained 3/-1 refusal preserves 126 rows/history and allows only explicit activation", async t => {
+  const f = await fixture(t);
+  assert.equal((await f.execute()).status, 0);
+  confirmOptOut(initDb(f.runDir), { run_key: "small-test", email: "lead@buyer.test",
+    message_id: "retained-history", campaign_id: "campaign-1" });
+  f.state.exclusionSupported = true;
+  Object.assign(f.state.leads[0], { status: 3, lt_interest_status: -1, email_reply_count: 1,
+    timestamp_last_reply: "2026-11-03T18:00:00Z" });
+  for (let i = 1; i < 126; i++) f.state.leads.push({ id: `other-${i}`, email: `other-${i}@buyer.test`,
+    campaign: "campaign-1", status: 1, verification_status: 1 });
+  f.state.campaign.status = 2;
+  const retained = JSON.stringify(f.state.leads);
+  const before = f.state.calls.length;
+  assert.equal((await f.execute()).status, 0);
+  assert.equal(f.state.campaign.status, 2);
+  assert.equal(f.activations().length, 0);
+  assert.equal(JSON.stringify(f.state.leads), retained);
+  assert.equal(f.state.calls.slice(before).some(call => call.method !== "GET" && /exclusion|pause|leads\/add/.test(call.route)), false);
+  f.spec.campaign.activate_on_launch = true;
+  const activated = await f.execute();
+  assert.equal(activated.status, 0, activated.stderr);
+  assert.equal(f.activations().length, 1);
+  assert.equal(JSON.stringify(f.state.leads), retained);
 });

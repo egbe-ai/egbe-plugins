@@ -109,7 +109,7 @@ test("fresh membership count cannot exceed authored cap despite stale lead_stats
   const server = await startServer((endpoint) => {
     if (endpoint.endsWith("/campaigns/c")) return { data: { id: "c", lead_stats: { total: 1 } } };
     if (endpoint.endsWith("/analytics")) return { data: { contacted_count: 1 } };
-    if (endpoint.endsWith("/leads")) return { data: { items: [{ id: "a", email: "a@example.test" }, { id: "b", email: "b@example.test" }] } };
+    if (endpoint.endsWith("/leads")) return { data: { items: [{ id: "a", campaign: "c", email: "a@example.test" }, { id: "b", campaign: "c", email: "b@example.test" }] } };
     if (endpoint.endsWith("/leads/add")) { posts++; return { data: { leads_uploaded: 1 } }; }
   });
   try {

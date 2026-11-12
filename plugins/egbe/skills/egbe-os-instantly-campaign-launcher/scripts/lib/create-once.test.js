@@ -44,10 +44,10 @@ test("reads are still retried on 503", async () => {
 });
 
 test("listLeadEmails pages through the campaign", async () => {
-  const page1 = Array.from({ length: 100 }, (_, i) => ({ id: `l${i}`, email: `P${i}@Example.test` }));
+  const page1 = Array.from({ length: 100 }, (_, i) => ({ id: `l${i}`, campaign: "c", email: `P${i}@Example.test` }));
   const { srv } = await server((req) => ({
     status: 200,
-    body: { data: { items: req.url.includes("starting_after") ? [{ id: "l100", email: "last@example.test" }] : page1 } },
+    body: { data: { items: req.url.includes("starting_after") ? [{ id: "l100", campaign: "c", email: "last@example.test" }] : page1 } },
   }));
   try {
     const present = await clientFor(srv).listLeadEmails("c");
@@ -76,7 +76,7 @@ test("only leads not yet in the campaign are sent", () => {
 });
 
 test("a server that ignores the cursor does not loop forever", async () => {
-  const page = Array.from({ length: 100 }, (_, i) => ({ id: `l${i}`, email: `p${i}@example.test` }));
+  const page = Array.from({ length: 100 }, (_, i) => ({ id: `l${i}`, campaign: "c", email: `p${i}@example.test` }));
   const { srv, seen } = await server(() => ({ status: 200, body: { data: { items: page } } }));
   try {
     const client = clientFor(srv);
