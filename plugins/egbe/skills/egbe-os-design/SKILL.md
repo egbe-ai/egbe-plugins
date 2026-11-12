@@ -10,20 +10,24 @@ metadata:
 ---
 
 <!-- egbe-mcp-connection:v1 -->
-This skill was delivered through the Egbe MCP connection. Make every Egbe API
-call it describes with the `egbe_request` tool: pass the HTTP method, the API
-path (for example `/me/limits`), query parameters in `query` and the JSON body
-in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
-`egbe-curl.py` and catalog update checks; the connection authenticates and
-identifies the request. Also pass the `business` that `egbe_setup` returned.
-Read a referenced file with
-`egbe_skill(name=<skill>, resource=<relative path>)`.
+This skill comes with the Egbe plugin. Make every Egbe API call it describes with
+the Egbe connector's `egbe_request` tool: pass the HTTP method, the API path (for
+example `/me/limits`), query parameters in `query` and the JSON body in `body`.
+For these calls leave out `OS_URL`, the Authorization header, `.env.local` and
+`egbe-curl.py`, and skip catalog update checks; the connection authenticates and
+identifies the request.
+Also pass the `business` that `egbe_setup` returned. Files this skill refers to
+are next to this `SKILL.md`, except any listed under "Files downloaded on demand".
 
-A step that needs a local project key or a bundled script, such as a git push or
-a local deploy command, needs the standard workspace setup. In a persistent
-project workspace that is not set up yet, call `egbe_local_setup` and follow it.
-Without such a workspace, or if it refuses, tell the founder that this step needs
-an agent with a set-up project folder, and continue with the rest of the work.
+A step that needs a local project key, such as a git push or a local deploy
+command, works only in a persistent project workspace. There, if the project's
+Git-ignored `.env.local` has no `OS_API_KEY` yet, call `egbe_local_setup` once
+and save its `OS_URL` and `OS_API_KEY` there, preserving other entries. Use only
+those two values: the plugin already provides Egbe's skills, so do not install
+the Egbe catalog or follow the rest of that result. Never show the key in chat or
+put it in logs, commits or URLs. Without such a workspace, tell the founder that
+this step needs an agent with a project folder, and continue with the rest of
+the work.
 
 
 # Design references

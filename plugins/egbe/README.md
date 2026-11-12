@@ -24,6 +24,10 @@ You need an Egbe account. Manage or disconnect connected assistants at
 
 The plugin has no hooks and runs nothing on your computer by itself.
 
+Claude keeps no Egbe key on your computer unless a step needs one, such as pushing
+code to your project's repository. Then, in a project folder, it saves your
+project's Egbe key in that folder's Git-ignored `.env.local`.
+
 ## What it sends and where
 
 Claude sends the requests it makes on your behalf, such as a page to publish, an
