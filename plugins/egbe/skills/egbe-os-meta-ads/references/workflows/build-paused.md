@@ -17,7 +17,9 @@ Conversion optimization requires the verified product `custom_conversion_id`.
    wallet hold. Resolve returned blockers, not by probing creates.
 2. Preserve the exact clean spec, returned plan and token. Check targeting,
    assets and budget against the authorized inputs. The token does not
-   establish consent.
+   establish consent. A clean plan verifies configuration; its conversion
+   eligibility does not prove live event matching. Use the
+   [pixel checks](../runtime/pixel-install.md#verification) for tracking evidence.
 3. Apply only with required approval and current authorization:
    `POST /ads/meta/apply` with `{"spec": {...}, "plan_token": "...", "approved": true}`.
    OS derives the retry key from this token. Exactly one ad set is supported

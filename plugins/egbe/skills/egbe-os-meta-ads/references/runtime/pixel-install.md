@@ -154,6 +154,22 @@ Do not report the pixel as working from code inspection alone:
    `ev=Activation` and the product-scoped payload.
 3. Read `GET $OS_URL/ads/meta/raw/pixels` and check `last_fired_time`.
 
+These browser checks establish outgoing instrumentation, not Meta receipt or
+custom-conversion matching. Record the evidence separately. `eligible` on the
+conversion verifies its configuration only; `eligibility.event_matching` stays
+`unverified`, and a clean plan does not upgrade that result.
+
+If the actual event request lacks `content_name` or `egbe_product_id`, the
+product-scoped rule cannot match that event. Report tracking as `degraded`, naming
+the missing fields and observed pixel/event. Source code passing an object to
+`fbq` does not establish what the browser sent. Do not mark the conversion as
+working from `eligible`, `plan.ok`, a shared-pixel timestamp or an event name alone.
+Use authorized provider diagnostics, when available, to distinguish receipt from
+actual conversion matching. If that evidence is unavailable, report matching as
+unverified. Missing parameters alone do not establish a category restriction;
+check the evidence before naming a provider-side cause. Preserve the product
+rule: event-only or caller-authored domain rules are not supported alternatives.
+
 Two traps when reading Events Manager:
 
 - A newly introduced custom event name does not appear as its own row
@@ -172,8 +188,8 @@ Two traps when reading Events Manager:
 
 | State | Meaning |
 |---|---|
-| `verified` | pixel installed and PageView plus the product's conversion event observed live; a custom conversion also exists when a conversion campaign is planned |
-| `degraded` | pixel installed but the conversion event is not observed yet, or a planned conversion campaign lacks an observed custom conversion |
+| `verified` | outgoing PageView and the product's conversion event observed live with the configured pixel and both product parameters; provider receipt and conversion matching are reported separately |
+| `degraded` | pixel installed but a required event or product parameter is missing, or a planned conversion goal cannot be verified |
 | `not_configured` | no pixel ID in the app environment |
 
 Conversion optimization needs a verified eligible product-scoped custom

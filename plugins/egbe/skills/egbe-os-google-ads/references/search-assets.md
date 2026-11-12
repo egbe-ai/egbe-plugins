@@ -46,6 +46,14 @@ than upserting it. The current schema still requires that group's `name` and
 `cpcBidMicros`, but supplying an id does NOT update its name, bid or status.
 Use [campaign bid controls](campaigns.md) for actual bid changes.
 
+`prohibited_category_guardrail:<category>` is an Egbe content-filter rejection,
+not a Google moderation result. The filter scans ad copy and positive keywords;
+negative keywords remain exclusions. Explicit completed advice disclaimers such
+as `Estimates only, not medical advice` are allowed, but other prohibited claims
+in the same payload still block the request. Report a suspected false positive
+with the submitted text; do not remove a truthful disclaimer to evade the filter.
+Passing this check does not establish provider approval or category eligibility.
+
 Use a key for the exact batch. The successful-response cache is process-local,
 temporary (default 15 minutes) and keyed by key plus payload, not durable
 exactly-once. It does not serialize concurrent requests; changed payload is a

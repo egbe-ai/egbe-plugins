@@ -357,6 +357,15 @@ Each list/detail item includes `eligibility.status`: `eligible`, `ineligible`
 verified). Only `eligible` goals can be bound. Other items remain visible with
 `code`, `message`, `retryable`, and `next_action`; a successful list/read is not
 proof that every goal is usable.
+`eligible` verifies configuration: project/product ownership, shared pixel,
+the exact rule and non-archived state. `eligibility.event_matching` is
+`unverified`: these reads do not verify event delivery or actual rule matches,
+even when `last_fired_time` is present. A clean `/ads/meta/plan` returns the same
+diagnostic in `data.conversion_eligibility` (null unless a conversion's
+configuration was verified; failed checks remain in `blockers`).
+Its `ok` and plan token validate the configuration, not live tracking or provider
+approval. Verify instrumentation and report provider matching separately using
+the [pixel checks](pixel-install.md#verification).
 `POST .../pixels` is intentionally absent from the product workflow: creating a
 pixel is an OS migration operation, not a product launch step.
 
