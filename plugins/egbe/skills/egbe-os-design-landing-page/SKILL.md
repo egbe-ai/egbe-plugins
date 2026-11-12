@@ -85,4 +85,4 @@ When a step uses one, download it to the place that step needs it, for example
 
 | File | URL | SHA-256 |
 | --- | --- | --- |
-| `assets/scaffold/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json | `032233da96e7488f406829f527dece93ad834f4cc7f88143354ba0e3f79d071c` |
+| `assets/scaffold/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json | `ece42978c0f7ac05c03e3e49f556478e6f8ef35b2c701a346454f841372a3682` |

@@ -375,11 +375,24 @@ An empty owned list is not proof that a provider write failed.
 ## Results
 
 `GET /ads/reddit/campaigns/{campaign_id}/results` returns normalized metrics
-plus raw report data. For ad-group or ad-level decisions, use raw reports with
-the needed breakdown and then match object ids client-side.
+for the last 30 days, the campaign's raw rows from every report page and `report`:
+the request window and breakdown, `time_zone_id` (null: none was requested, so
+Reddit's default applies), `pages`, `rows`, `pagination_complete`,
+`incomplete_reason`, `metrics_available`, per-metric `metric_availability`,
+`metrics_updated_at` (oldest page value; null when any page omits it or gives
+no valid timezone-aware time) and fetch-time `retrieved_at`. A metric is null,
+not zero, when traversal repeated a token, reached the page limit, or met an
+unreadable next page or malformed page, or when a selected row lacks that
+field. A failed page request returns that error, not partial totals; retry the
+read later. A complete report with no rows is zero reported delivery for that
+window, not final billing.
+For ad-group or ad-level decisions, use raw reports with the needed breakdown
+and then match object ids client-side.
 
-Retain the request, report timezone, `metrics_updated_at` and every pagination
-page through `next_url: null`. Inspect the **actual returned** `date`/`hour`
+Raw reports return only owned campaign rows, `data.metrics_updated_at` and
+pagination. Retain the request, report timezone, `metrics_updated_at` and every
+pagination page through `next_url: null`. A repeated page token or abandoned
+traversal is incomplete coverage; do not total its pages. Inspect the **actual returned** `date`/`hour`
 buckets before labeling coverage: hourly UTC request syntax does not prove that
 the response contains only those hours. Provider responses can include wider
 calendar dates; use the returned buckets for the intended day/hour comparison
