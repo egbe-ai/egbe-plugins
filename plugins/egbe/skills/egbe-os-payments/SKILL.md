@@ -122,6 +122,18 @@ Evidence is scoped to the current instance and intentionally omits customer
 email values. Use it to verify provider objects; do not copy it into a second
 payment-state artifact.
 
+This GET automatically retries only failures to establish the gateway connection:
+at most four attempts with 0.5/1/2-second backoff, within one 55-second budget.
+Each connection attempt is capped at five seconds or the smaller remaining budget.
+HTTP errors and failures while reading a response are returned without automatic
+replay. Payment writes do not inherit this retry behavior.
+
+An error envelope means provider readiness is unconfirmed; it does not establish
+that Stripe is unconfigured or that a charge failed. After recovery is exhausted,
+a later read may recheck readiness. Preserve the intended integration and the
+reported failure; do not replace unavailable evidence with empty records or
+change credentials based on a transient connection error.
+
 ## Missing product webhook recovery
 
 Products stay active independently of their founder's agent runtime. When a
