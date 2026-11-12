@@ -244,6 +244,7 @@ class ApolloClient {
       catch { return checkpoint(false, this.now() >= this.deadline ? "time_budget" : "network_error"); }
       if (res.status !== 200) {
         state.error_status = res.status;
+        state.error = safeEnrichmentError(res);
         return checkpoint(false, responseStopReason(res));
       }
       if (!Array.isArray(res.body?.matches)) return checkpoint(false, "invalid_response");
@@ -257,6 +258,57 @@ class ApolloClient {
     }
     return checkpoint(true, "completed");
   }
+}
+
+const VALIDATION_MESSAGES = {
+  missing: "Field required.", value_error: "Invalid value.", string_type: "Expected text.",
+  bool_parsing: "Expected a boolean.", int_parsing: "Expected an integer.",
+  list_type: "Expected a list.", dict_type: "Expected an object.", extra_forbidden: "Unexpected field.",
+};
+const VALIDATION_FIELDS = new Set(["body", "query", "details", "id", "first_name", "last_name",
+  "organization_name", "domain", "linkedin_url", "email", "reveal_personal_emails",
+  "reveal_phone_number", "webhook_url"]);
+
+function safeEnrichmentError(response) {
+  // Provider errors may echo contact inputs or secrets. Retain only recognized
+  // diagnostics, never arbitrary messages, headers, input/ctx, or raw bodies.
+  const messages = [], validation = [];
+  let visited = 0;
+  const inspect = (value, depth = 0) => {
+    if (depth > 6 || ++visited > 40) return;
+    if (typeof value === "string") {
+      if (value.length > 8192) return;
+      // Current OS embeds the provider response in its human-readable envelope.
+      // Also accept raw JSON and legacy JSON-encoded error.message wrappers.
+      const wire = value.match(/^outreach upstream: ([\s\S]+)\. GET \/ to see what this gateway offers and how to register\.$/);
+      const text = wire ? wire[1] : value;
+      try { inspect(JSON.parse(text), depth + 1); }
+      catch { messages.push(text); }
+    } else if (Array.isArray(value)) {
+      for (const item of value.slice(0, 20)) inspect(item, depth + 1);
+    } else if (value && typeof value === "object") {
+      if (validation.length < 10 && Array.isArray(value.loc) && value.loc.length <= 8 &&
+          typeof value.type === "string" && Object.hasOwn(VALIDATION_MESSAGES, value.type)) {
+        const loc = value.loc.map((part) => VALIDATION_FIELDS.has(part) ||
+          (Number.isInteger(part) && part >= 0 && part < 10) ? part : "[redacted]");
+        validation.push({ loc, type: value.type, message: VALIDATION_MESSAGES[value.type] });
+      }
+      for (const key of ["error", "message", "detail", "errors", "raw", "data"])
+        if (Object.hasOwn(value, key)) inspect(value[key], depth + 1);
+    }
+  };
+  inspect(response.body);
+  if (messages.some((text) => /^(?:you have insufficient|insufficient(?: lead)?) credits[!.]?(?:\s|$)/i.test(text)))
+    return { code: "insufficient_credits", message: "You have insufficient credits! Upgrade your plan to increase your number of lead credits." };
+  if (isDailyQuotaError(response))
+    return { code: "daily_quota", message: "Egbe Apollo quota is exhausted or not configured." };
+  if (response.status === 429)
+    return { code: "rate_limited", message: "Apollo rate limit reached." };
+  if ([401, 403].includes(response.status))
+    return { code: "authorization", message: "Apollo authorization failed." };
+  if (validation.length)
+    return { code: "validation_error", message: "Apollo rejected enrichment parameters.", validation };
+  return { code: "provider_error", message: "Apollo enrichment failed; unrecognized provider details omitted." };
 }
 
 function responseStopReason(response) {

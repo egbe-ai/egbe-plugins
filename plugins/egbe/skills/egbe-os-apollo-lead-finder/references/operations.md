@@ -116,6 +116,40 @@ automatic re-enrichment. `not_enriched` and `not_enriched_people` describe only
 unprocessed inputs, not unmatched or status-filtered people. Zero results use
 the same fields, rather than a special success shape.
 
+For an HTTP failure during enrichment, SDK results include `error_status` and
+`error`; CLI results and checkpoints keep these as `meta.error_status` and
+`meta.error`, for example:
+
+```json
+{
+  "error_status": 422,
+  "error": {
+    "code": "insufficient_credits",
+    "message": "You have insufficient credits! Upgrade your plan to increase your number of lead credits."
+  }
+}
+```
+
+The message is a safe diagnostic, not an instruction to upgrade or permission to
+spend. Other codes include `validation_error`, `authorization`, `daily_quota`,
+`rate_limited` and `provider_error`. Validation summaries contain at most ten
+allowlisted `loc`/`type` entries with normalized messages; unknown path segments
+are `[redacted]`. A `details` index is relative to the failed request's batch,
+not the complete saved input list. Arbitrary provider text, input echoes, headers and credentials
+are omitted. An unknown error explicitly says its details were omitted, rather
+than claiming the original response was recovered. Search-only errors retain
+their existing status/stop-reason contract.
+
+`insufficient_credits` describes Apollo's shared-account capacity, independently
+of remaining Egbe quota. Report it to Egbe support and preserve the checkpoint;
+do not retry enrichment, purchase credits or request separate keys to diagnose
+it. The existing project workflow must authorize any later continuation.
+`processed_count: 0` and pending inputs are not proof that Apollo processed or
+charged nothing. The diagnostic is not a billing receipt and cannot reconstruct
+an error body discarded by an older SDK. Explicit `enrich --input <partial>`
+continuation clears the prior enrichment error before its first checkpoint;
+a new failure records its own diagnostic and a successful recovery leaves none.
+
 Combined search includes `total_found`, `search_params`, `max_results`,
 `search_complete`, `search_stop_reason`, `search_next_page` and `searched_at`.
 Preview completion describes search only; its `not_enriched` is zero because no

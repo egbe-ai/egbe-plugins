@@ -100,6 +100,7 @@ async function run(mode, argv = process.argv) {
       ...(raw.meta?.search_complete !== undefined ? { search_complete: raw.meta.search_complete,
         search_stop_reason: raw.meta.search_stop_reason, search_next_page: raw.meta.search_next_page } : {}) } };
     delete result.meta.error_status;
+    delete result.meta.error;
   } else {
     const params = searchParams(args);
     const maxResults = positiveInteger(args["max-results"], mode === "search" ? 50 : 100, "--max-results");
@@ -143,6 +144,7 @@ async function run(mode, argv = process.argv) {
       drops: Object.fromEntries(Object.entries(converted.drops).map(([key, value]) => [key, value + (previousDrops[key] || 0)])),
     });
     if (state.error_status !== undefined) result.meta.error_status = state.error_status;
+    if (state.error !== undefined) result.meta.error = state.error;
     checkpoint();
   } });
   return emit();

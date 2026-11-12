@@ -1,7 +1,7 @@
 ---
 name: egbe-os-apollo-lead-finder
 description: Search and enrich Apollo contacts or extract contact candidates from Places business websites through Egbe OS.
-version: 1.1.1
+version: 1.1.2
 user-invocable: true
 argument-hint: "[find-leads --config <file> | search --titles <t> | enrich --input <file> | places-leads --queries <q;q>] --output <leads.json>"
 metadata:

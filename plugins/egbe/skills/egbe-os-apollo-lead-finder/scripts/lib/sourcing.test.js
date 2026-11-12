@@ -40,6 +40,149 @@ async function fixture(t, handler) {
 const person = (id) => ({ id: String(id), first_name: "Alex", last_name: "Example", email: `alex${id}@business.test`,
   email_status: "verified", organization: { name: "Example", primary_domain: "business.test" } });
 const quota = { status: 429, body: { detail: "limit_exceeded:apollo:enrichments" } };
+const creditMessage = "You have insufficient credits! Upgrade your plan to increase your number of lead credits.";
+const creditError = { error: creditMessage };
+const osError = (body) => ({ code: 422, data: null,
+  message: `outreach upstream: ${JSON.stringify(body)}. GET / to see what this gateway offers and how to register.` });
+
+for (const [shape, body] of Object.entries({ raw: creditError, os: osError(creditError),
+  legacy: { ok: false, error: { message: JSON.stringify(creditError) } }, text: { raw: creditMessage } })) {
+  test(`bulk failure retains a safe credit diagnostic from ${shape} without retrying`, async () => {
+    const client = new ApolloClient({ osUrl: "https://os.invalid", osApiKey: "test", maxRetries: 0 });
+    let calls = 0;
+    client.bulkEnrichPeople = async () => { calls++; return { status: 422, body }; };
+    const result = await client.bulkEnrichAll(Array.from({ length: 10 }, (_, i) => ({ id: `p${i}` })));
+    assert.equal(calls, 1);
+    assert.equal(result.error_status, 422);
+    assert.equal(result.stop_reason, "provider_error");
+    assert.equal(result.processed_count, 0);
+    assert.equal(result.not_enriched, 10);
+    assert.deepEqual(result.error, { code: "insufficient_credits", message: creditMessage });
+  });
+}
+
+for (const saved of [false, true]) {
+  test(`enrichment CLI keeps safe failure details in ${saved ? "checkpoint" : "stdout"}`, async (t) => {
+    const sensitive = "FAKE-secret-person-and-key-not-for-output";
+    const f = await fixture(t, () => ({ status: 422, body: osError({ ...creditError,
+      input: { email: sensitive }, authorization: sensitive, stack: sensitive }) }));
+    const input = path.join(f.directory, "people.json");
+    const output = path.join(f.directory, "result.json");
+    fs.writeFileSync(input, JSON.stringify(Array.from({ length: 10 }, (_, i) => ({ id: `p${i}` }))));
+    const run = await f.run("enrich", ["--input", input, ...(saved ? ["--output", output] : [])]);
+    assert.equal(run.code, 2, run.stderr);
+    const text = saved ? fs.readFileSync(output, "utf8") : run.stdout;
+    const result = JSON.parse(text);
+    assert.deepEqual(result.meta.error, { code: "insufficient_credits", message: creditMessage });
+    assert.equal(result.meta.error_status, 422);
+    assert.equal(result.meta.not_enriched, 10);
+    assert.equal(f.calls.length, 1);
+    assert.ok(!text.includes(sensitive) && !run.stderr.includes(sensitive));
+  });
+}
+
+test("validation diagnostics retain safe paths/types without input or free-text echoes", async (t) => {
+  const sensitive = "FAKE-private-person@example.test";
+  const body = { detail: [
+    { type: "missing", loc: ["body", "details", 0, "domain"], msg: "Field required", input: sensitive },
+    { type: "value_error", loc: ["body", "details", 0, sensitive], msg: `Invalid ${sensitive}`, ctx: { key: sensitive } },
+  ], headers: { Authorization: sensitive } };
+  const f = await fixture(t, () => ({ status: 422, body: osError(body) }));
+  const input = path.join(f.directory, "people.json");
+  fs.writeFileSync(input, JSON.stringify([{ id: "p1" }]));
+  const run = await f.run("enrich", ["--input", input]);
+  assert.equal(run.code, 2, run.stderr);
+  const error = JSON.parse(run.stdout).meta.error;
+  assert.equal(error.code, "validation_error");
+  assert.deepEqual(error.validation, [
+    { loc: ["body", "details", 0, "domain"], type: "missing", message: "Field required." },
+    { loc: ["body", "details", 0, "[redacted]"], type: "value_error", message: "Invalid value." },
+  ]);
+  assert.ok(!run.stdout.includes(sensitive) && !run.stderr.includes(sensitive));
+});
+
+test("unknown and malformed failure bodies get a bounded redacted diagnostic", async () => {
+  const client = new ApolloClient({ osUrl: "https://os.invalid", osApiKey: "test", maxRetries: 0 });
+  for (const body of ["<html>FAKE-private-secret</html>", { message: "FAKE-private-secret" },
+    { detail: [{ type: "FAKE-private-secret", loc: ["body", "id"], input: "FAKE-private-secret" }] },
+    { detail: [{ type: { toString: "FAKE-private-secret" }, loc: ["body", "id"] }] }, null]) {
+    client.bulkEnrichPeople = async () => ({ status: 422, body });
+    const result = await client.bulkEnrichAll([{ id: "p1" }]);
+    assert.equal(result.error.code, "provider_error");
+    assert.match(result.error.message, /omitted/);
+    assert.ok(!JSON.stringify(result.error).includes("FAKE-private-secret"));
+    assert.ok(JSON.stringify(result.error).length < 512);
+  }
+});
+
+test("validation diagnostics stay bounded and do not echo unknown path values", async () => {
+  const client = new ApolloClient({ osUrl: "https://os.invalid", osApiKey: "test" });
+  client.bulkEnrichPeople = async () => ({ status: 422, body: { detail: Array.from({ length: 200 }, () => ({
+    type: "missing", loc: ["body", "details", 123456789012, "FAKE-private-secret"], msg: "FAKE-private-secret",
+  })) } });
+  const result = await client.bulkEnrichAll([{ id: "p1" }]);
+  assert.equal(result.error.validation.length, 10);
+  assert.ok(JSON.stringify(result.error).length < 4096);
+  assert.ok(!JSON.stringify(result.error).includes("FAKE-private-secret"));
+  assert.deepEqual(result.error.validation[0].loc, ["body", "details", "[redacted]", "[redacted]"]);
+});
+
+for (const [status, body, code, stop] of [[401, {}, "authorization", "authorization"],
+  [429, {}, "rate_limited", "rate_limited"], [429, quota.body, "daily_quota", "daily_quota"]]) {
+  test(`safe ${code} diagnostic retains the existing ${stop} stop reason`, async () => {
+    const client = new ApolloClient({ osUrl: "https://os.invalid", osApiKey: "test" });
+    client.bulkEnrichPeople = async () => ({ status, body });
+    const result = await client.bulkEnrichAll([{ id: "p1" }]);
+    assert.equal(result.error.code, code);
+    assert.equal(result.stop_reason, stop);
+    assert.equal(result.error_status, status);
+  });
+}
+
+test("partial enrichment preserves diagnostic and explicit resume clears stale legacy errors", async (t) => {
+  let rejected = true;
+  const f = await fixture(t, (call) => rejected && call.body.details[0].id === "10"
+    ? { status: 422, body: osError(creditError) }
+    : { body: { matches: call.body.details.map((p) => person(p.id)) } });
+  const input = path.join(f.directory, "people.json");
+  const output = path.join(f.directory, "result.json");
+  fs.writeFileSync(input, JSON.stringify(Array.from({ length: 11 }, (_, i) => ({ id: String(i) }))));
+  const first = await f.run("enrich", ["--input", input, "--output", output]);
+  assert.equal(first.code, 2, first.stderr);
+  const partial = JSON.parse(fs.readFileSync(output));
+  assert.equal(partial.meta.error.code, "insufficient_credits");
+  assert.equal(partial.meta.processed_count, 10);
+  assert.equal(partial.leads.length, 10);
+  assert.deepEqual(partial.meta.not_enriched_people, [{ id: "10" }]);
+  // Older/custom checkpoints may carry untrusted diagnostics: never carry them
+  // forward into a new operation's first checkpoint or successful result.
+  partial.meta.error = { raw: "FAKE-stale-secret" };
+  fs.writeFileSync(output, JSON.stringify(partial));
+  rejected = false;
+  const resumed = await f.run("enrich", ["--input", output, "--output", output]);
+  assert.equal(resumed.code, 0, resumed.stderr);
+  const text = fs.readFileSync(output, "utf8");
+  const result = JSON.parse(text);
+  assert.equal(result.meta.error, undefined);
+  assert.equal(result.meta.error_status, undefined);
+  assert.equal(result.meta.processed_count, 11);
+  assert.equal(result.leads.length, 11);
+  assert.ok(!text.includes("FAKE-stale-secret"));
+  assert.deepEqual(f.calls.at(-1).body.details.map((p) => p.id), ["10"]);
+  assert.equal(f.calls.length, 3);
+});
+
+test("combined search/enrichment persists the failed enrichment diagnostic", async (t) => {
+  const f = await fixture(t, (call) => call.url.endsWith("/search")
+    ? { body: { people: [person(1)] } } : { status: 422, body: osError(creditError) });
+  const run = await f.run("find-leads", ["--max-results", "1"]);
+  assert.equal(run.code, 2, run.stderr);
+  const result = JSON.parse(run.stdout);
+  assert.equal(result.meta.search_complete, true);
+  assert.equal(result.meta.error.code, "insufficient_credits");
+  assert.equal(result.meta.not_enriched, 1);
+  assert.equal(f.calls.length, 2);
+});
 
 test("bounded transport retries have no second outer rate-limit loop", async (t) => {
   const f = await fixture(t, () => ({ status: 429, headers: { "Retry-After": "1" }, body: { error: "rate limited" } }));
