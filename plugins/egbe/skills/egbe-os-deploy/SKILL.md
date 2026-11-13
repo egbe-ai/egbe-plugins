@@ -262,6 +262,17 @@ whose latest deploy silently failed, compare the two revision fields:
   newest build failed readiness, so an **older** revision still serves — the host
   returns 200 but it is stale), or `failed` (nothing is serving).
 
+The `releases` history in deploy, list and status responses includes
+`source_commit`: the full immutable Git ref submitted to BuildKit for that
+release. It is `null` for historical releases and native branch/tag refs that
+were not resolved to a full SHA. Deploy the full pushed SHA when verification
+needs source correspondence. Match the release `id` to `lastDeploy.release`
+and check the live revision outcome before associating it with a serving update;
+history alone does not prove which revision serves. This is build-input
+provenance, not a server-filesystem attestation or a substitute for deployed
+behavior and configuration checks. Never infer missing provenance from the
+current branch tip or backfill an old release.
+
 So if `latestRevisionLive` is `false` / `outcome` is `not_live`, your last build
 never went live even though the URL works — pull
 `GET /deploy/<slug>/deploys/<deployId>` for the readiness failure and redeploy.
