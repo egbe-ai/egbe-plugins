@@ -61,7 +61,7 @@ then only the relevant workflow. Resolve the existing campaign before writing.
 | Bind UTMs and product analytics | [Tracking](references/workflows/tracking.md) |
 | Build paused objects or recover a partial build | [Build and recovery](references/workflows/build-paused.md) |
 | Activate an approved campaign | [Launch](references/workflows/launch.md) |
-| Inspect performance or edit an existing campaign | [Monitoring and changes](references/workflows/monitoring.md) |
+| Diagnose serving/review blockers, inspect performance or edit an existing campaign | [Monitoring and changes](references/workflows/monitoring.md) |
 | Stop delivery and confirm state | [Pause](references/workflows/pause.md) |
 | Add optional Pixel/server conversions or conversion bidding | [Conversions](references/workflows/conversions.md) |
 | Exact operations, units, errors and readback | [API reference](references/runtime/api-reference.md) |

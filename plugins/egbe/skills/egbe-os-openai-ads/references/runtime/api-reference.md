@@ -101,6 +101,35 @@ Provider market/bid restrictions may exceed the static schema minimum.
 See the [minimum-budget note](../workflows/readiness.md#minimum-daily-budget) before
 proposing a budget; a provider rejection during creation may reveal the current floor.
 
+## Read serving diagnostics
+
+Add `include_serving_issues=true` to GET `/campaigns/{id}`, `/ad-groups/{id}`
+or `/ads/{id}` to request the provider's `serving_issues` alongside the saved
+resource. The same optional boolean works on all three collection GETs with
+`offset` and `limit`; follow `next_offset` until null when inspecting the full
+owned inventory. Omitting it or sending false keeps the usual read behavior.
+Egbe translates it to the provider's `include[]=serving_issues`; do not send
+raw provider query parameters to OS. These are read-only operations and need no
+`Idempotency-Key` or provider credentials.
+
+For a known ad, read its parent group and campaign too, using the returned
+owned parent bindings. OS responses have the usual envelope: a single resource
+is in `data`; a collection has rows in `data.data` and pagination in
+`data.next_offset`. Preserve each resource ID, observed status/review state,
+returned issue codes and fetch time. Codes can include `campaign_not_active`,
+`ad_group_not_active`, `ad_in_review`, `review_not_approved` or
+`landing_page_crawl_issue`, as well as account/payment/budget reasons. Keep
+unrecognized codes as evidence rather than dropping them or guessing a remedy.
+
+A returned empty list means no serving issues were reported for that read;
+it does not guarantee delivery. An absent field means diagnostics are unknown,
+and a failed request remains an error, not an empty list. Saved creative approval
+and target URL describe that saved version: after a rejected URL update they do
+not establish approval of the proposed destination. Serving diagnostics do not
+provide a destination-domain review submission/status endpoint, review ETA or
+proof that manual verification is required. Report those gaps explicitly.
+See [official serving diagnostics](https://developers.openai.com/ads/troubleshooting#serving-issues).
+
 ## Optional conversions
 
 Use only when measurement or conversion optimization is part of the request.

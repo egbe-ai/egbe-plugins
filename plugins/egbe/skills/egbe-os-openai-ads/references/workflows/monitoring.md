@@ -7,7 +7,15 @@ or a standing policy authorizes specific changes and safety stops.
 ## Observe
 
 Resolve exact campaign ID and read previous checks/change-log before acting.
-Retrieve current campaign/child statuses and review/account blockers. Then:
+Retrieve current campaign/child statuses and review/account blockers using the
+[serving diagnostic reads](../runtime/api-reference.md#read-serving-diagnostics).
+Read the affected campaign, groups and ads with `include_serving_issues=true`;
+retain each returned code and distinguish missing diagnostics, an empty list
+and a failed read. For a rejected destination change, compare the currently
+saved URL/review state with the rejected request and preserve its error code.
+Do not turn approval of an old creative into approval of the rejected URL or
+promise a domain-review ETA. Diagnostics alone do not authorize a URL retry,
+recreation, activation or budget/bid change. Then:
 
 1. Read `/campaigns/{id}/results` for the requested Unix time window. Follow all
    pages before totals; preserve currency, timezone, window, fetched time and

@@ -15,6 +15,9 @@ the ad account; it may write local readiness evidence.
    to a keyword planner, audience estimate or competitor library.
 5. Reconcile any existing campaign before creating new objects. Verify the
    approved daily amount against provider constraints without raising it silently.
+   For existing resources, use the [serving diagnostic reads](../runtime/api-reference.md#read-serving-diagnostics)
+   on the campaign, intended groups and ads. Record returned blockers and unknown
+   diagnostics separately from account authentication and destination availability.
 
 ### Minimum daily budget
 
