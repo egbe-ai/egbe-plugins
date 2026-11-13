@@ -114,8 +114,14 @@ specific fields instead of the whole document:
 
 - `503` — the mirror is still warming on a freshly started gateway (first walk
   is ~1 min). Retry in ~30s; after that it is memory-fast and refreshes daily.
+  If `data.last_error` is set, an earlier build failed; treat repeats like `502`.
 - `422` — `style_id` must be a uuid from a search result.
-- `502` — the upstream catalog is unreachable and we have no cached copy.
+- `502` — the upstream catalog is unreachable and we have no cached copy. The
+  message carries the upstream reason; facets, search and browse also return
+  the mirror status (with `last_error`) in `data`, while style detail and
+  `design.md` return `data: null`. Retry about a minute later, at most 2–3
+  times; if it still fails, continue without a catalog reference and tell the
+  user the design catalog is unavailable.
 
 Semantic search never returns an error of its own: no ai-api credential, a
 still-building vector cache, or an embeddings-call failure all degrade silently
