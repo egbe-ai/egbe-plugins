@@ -294,9 +294,9 @@ Does: Assign/move .egbe.app addresses or arrange admin setup of custom domains.
 
 #### egbe-os-errors
 
-When: Use when a product needs error visibility or its existing integration needs checking.
+When: Use when a product has errors to investigate or needs its error reporting connected or checked.
 
-Does: Set up and verify Sentry error reporting for browser and server.
+Does: Set up Sentry error reporting and inspect project-scoped issues, exception traces and event diagnostics.
 
 #### egbe-os-git
 
@@ -452,6 +452,6 @@ Project copy: `egbe-docs/playbooks/market-and-acquisition.md`
 
 ### Product
 
-When: Turn a selected idea into a useful product, improve its offer or experience, investigate results, or take ongoing responsibility for progress toward a business goal.
+When: Turn a selected idea into a useful product, improve its offer or experience, investigate results, or advance a business goal through delivery and follow-through.
 
 Project copy: `egbe-docs/playbooks/product.md`

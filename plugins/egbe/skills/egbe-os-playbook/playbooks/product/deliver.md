@@ -61,9 +61,12 @@ promise or accepted behavior return to the affected requirement and founder deci
 Verify the promised outcome at the level it depends on: code evidence where
 sufficient, and the real serving journey where necessary, including saved work
 and relevant integrations. A page deployed or checkout opened is not proof that
-the customer received the result. Preserve remaining gaps and continuation using
-EGBE's handoff rule. Then use [evaluation](evaluate.md) for observed effect; a
-technically complete repair need not wait for enough customers to prove growth.
+the customer received the result. Preserve remaining gaps using EGBE's handoff
+rule. When delivery serves a business goal, return to [Business Loop](business-loop.md)
+to carry the remaining outcome and next transition in the existing plan; technical
+acceptance completes this stage, not the goal. Use [evaluation](evaluate.md) for
+observed effect; a technically complete repair need not wait for enough customers
+to prove growth.
 
 Make review repeatable for the founder: where to try it, what outcome to expect,
 what access or human action is needed and which limits remain. A private token file

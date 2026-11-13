@@ -1,9 +1,10 @@
 # Keep the business moving
 
-Use this for ongoing responsibility for a business goal, including a recurring
-Business Loop or a manual continuation. Each run resumes decisions and work;
-it does not start a new audit. For a bounded request, keep that scope rather
-than turning it into management of the whole business.
+Use this to connect work to a business result and carry accepted responsibility
+forward, through a recurring Business Loop or manual continuation. Each run
+resumes decisions and work; it does not start a new audit. Proposing the path to
+a goal does not itself authorize every stage. For a bounded request, keep that
+scope rather than turning it into management of the whole business.
 
 ## Establish what we are trying to achieve
 
@@ -51,6 +52,14 @@ choice. If uncertainty prevents a useful commitment, propose the smallest
 question worth answering and how its answers would change the decision;
 do not substitute indefinite research for action.
 
+Connect the desired outcome to an accessible signal, useful work I can do with
+Egbe, and feedback that would change the next action. Explain that connection
+to the founder before narrowing the work to its first deliverable, including when
+feedback can realistically arrive. Use [loop examples](loop-examples.md) when
+the founder needs help choosing a useful cycle; adapt them to the project,
+not a fixed menu. Without customers or usable signals, first create a way to
+learn rather than repeatedly reviewing empty analytics.
+
 ## Turn the decision into work
 
 Use [founder collaboration](collaboration.md) for the recommendation, materials
@@ -60,7 +69,10 @@ unchanged approval or treat silence as one.
 
 Keep the concrete result, owner, scope, significant limits, evidence and next
 checkpoint in the work's existing plan. For experiments, retain the hypothesis
-and evaluation criteria established before execution. Use the applicable
+and evaluation criteria established before execution. If the accepted stage
+ends before the business goal, retain the remaining outcome and proposed next
+action or decision, who would carry it forward, and a useful trigger or checkpoint.
+Distinguish proposed continuation from accepted responsibility. Use the applicable
 delivery or channel method and technical skills to do agreed agent-owned work,
 not merely repeat an offer to begin it.
 
@@ -75,6 +87,9 @@ or changes to the product.
 Tie monitoring to active work: what needs checking, which evidence or condition
 could change the action, who responds and when another check becomes useful.
 Reuse existing observations instead of creating a parallel monitoring plan.
+Check that their metric, cohort, scope and observation window answer the current
+goal; an older or broader monitor may not. Propose the needed adjustment without
+silently replacing a different commitment.
 Campaign stop conditions, urgent failures or replies may need faster checks
 than the overall Business Loop; their results feed the same work and decisions.
 
@@ -96,7 +111,10 @@ restart the original pilot or discard its criteria.
 Use [evaluation](evaluate.md) to distinguish completed work from its effect on
 customers and the business. Inspect the agreed result when it becomes evaluable;
 otherwise state the missing evidence or next useful point of assessment. A
-finished task should not disappear from attention before its effect is considered.
+finished stage is not a finished business goal: carry its remaining outcome and
+next transition forward in the same plan. Close the cycle when the goal is met,
+the hypothesis is deliberately revised, or stopping is agreed—not merely when
+implementation passes, and not by repeating work until a target happens to occur.
 
 Retain the focus while its reasons hold. Reconsider it when results, constraints,
 customer harm or a meaningful market change alter the choice; explain the reason

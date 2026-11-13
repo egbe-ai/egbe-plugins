@@ -31,6 +31,8 @@ an agent with a set-up project folder, and continue with the rest of the work.
 # Useful recurring work
 
 Configure agreed recurring work and keep its execution, context and delivery reliable.
+Execution and scheduling belong to the user's harness; Egbe supplies capabilities
+and guidance, not a managed scheduler.
 
 ## Choose the entry
 
@@ -41,6 +43,9 @@ Business Loop method owns business decisions; `egbe-os-product-report` packages
 its result. Neither a manual loop nor a manual report requires scheduling.
 
 For other recurring work, resolve the requested responsibility and configure it below.
+When assembling or debugging continuation across runs, use the
+[continuation check](references/continuation-check.md). It tests saved work and
+tool behavior, independently of the harness's scheduling mechanism.
 
 ## Resolve the requested responsibility
 

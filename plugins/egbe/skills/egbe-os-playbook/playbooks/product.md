@@ -2,7 +2,7 @@
 title: Product
 description: Shape and deliver your product, then keep work moving toward the founder's goal through evidence, decisions and follow-through.
 category: Product & design
-when: Turn a selected idea into a useful product, improve its offer or experience, investigate results, or take ongoing responsibility for progress toward a business goal.
+when: Turn a selected idea into a useful product, improve its offer or experience, investigate results, or advance a business goal through delivery and follow-through.
 ---
 
 # Product
@@ -21,14 +21,22 @@ A folder with credentials and skills is not a product.
 Reuse valid work; investigate a consequential conflict rather than silently replacing
 the founder's direction. Explain the next outcome and why it matters now.
 
-For a broad business goal, consider delivery, acquisition, monetization and ongoing
-operations together. Some work can proceed in parallel; more development is not
-automatically the priority. A low wallet limits affordable work, not which strategy
-is effective. Keep a narrow requested repair within its scope.
+Distinguish a requested deliverable from the business goal it serves. When the
+founder names a means to a business result, such as selling through a new journey,
+use [Business Loop](product/business-loop.md) before proposing the work. Explain
+the path to that result, detailing the nearest stage and keeping later actions
+conditional where evidence or approval is missing. A local build can be the right
+first stage without being the whole goal; no explicit request for monitoring is
+needed to propose follow-through.
+
+Consider delivery, acquisition, monetization and operations as the goal requires.
+Some work can proceed in parallel; more development is not automatically the
+priority. A low wallet limits affordable work, not which strategy is effective.
+Keep a narrow requested repair within its scope.
 
 | Needed outcome | Start here |
 | --- | --- |
-| Ongoing progress toward a business goal, or continuation of agreed work | [Business Loop](product/business-loop.md) |
+| A business result requiring delivery and follow-through, or continuation of agreed work | [Business Loop](product/business-loop.md) |
 | A direction, customer or offer worth exploring | [Market and acquisition](market-and-acquisition.md); a selected idea does not need rediscovery |
 | An agreed product, useful result and first whole version | [Define value](product/value.md) |
 | A credible offer, price and customer commitments | [Shape the offer](product/offer.md) |
@@ -49,8 +57,7 @@ of treating a full build as the only next step.
 Use the EGBE skill index to find the named skills and other needed capabilities;
 these are task-specific choices, not a checklist to run in full. A known broken
 payment path needs a repair; an untested price or offer needs evidence. Working
-checkout proves capability, not willingness to pay. For ongoing business responsibility,
-use [Business Loop](product/business-loop.md); for a narrower recurring need,
+checkout proves capability, not willingness to pay. For a narrower recurring need,
 use [evaluation](product/evaluate.md#arrange-useful-follow-up) before configuring it.
 
 Keep concrete scope, requirements, decisions, evidence and results in the work's
