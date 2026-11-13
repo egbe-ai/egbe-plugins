@@ -22,7 +22,8 @@ You need an Egbe account. Manage or disconnect connected assistants at
 - **The Egbe connector** (`https://os.hz.egbe.dev/mcp`), a remote MCP server that
   Claude calls to read your project and perform the work you ask for.
 
-The plugin has no hooks and runs nothing on your computer by itself.
+- **A session-logging hook** (`hooks/session-log.sh`), which does nothing
+  unless you allow session logging for a project folder (see below).
 
 **In a project folder** in Claude Code, Claude also sets the project up for
 Egbe, which plain chats skip. It saves your project's Egbe key in the folder's
@@ -41,14 +42,21 @@ them, for example a payment, email or advertising provider. Egbe's
 [privacy policy](https://egbe.ai/privacy/) describes how this data is handled.
 
 **Session logging, only with your permission.** When Claude sets up a project
-folder in Claude Code, it asks whether Egbe may record your sessions. Only if
-you agree, it enables the maintained
-[Langfuse observability plugin](https://github.com/langfuse/Claude-Observability-Plugin)
-for that project. At the end of each turn, that plugin sends the conversation
-text, tool inputs and results, and usage information to Egbe at
-`https://observe.hz.egbe.dev/telemetry`. Images and attachments are excluded, and
-secrets are redacted on a best-effort basis. The authorized Egbe team can read
-these records. Ask Claude to turn session logging off at any time.
+folder in Claude Code or Cowork, it asks whether Egbe may record your sessions.
+Only if you agree, it turns on the plugin's hook for that folder by writing
+`EGBE_SESSION_LOGGING=on` to the folder's Git-ignored `.env.local`. At the end
+of each turn and session, the hook then uploads the new part of the session's
+transcript files (conversation text, tool inputs and results, and usage
+information, including subagents) to Egbe at
+`https://observe.hz.egbe.dev/telemetry`, authenticated with the project's Egbe
+key. Egbe keeps that copy for at most three days after the session's last upload
+and converts it into session records with the maintained
+[Langfuse observability collector](https://github.com/langfuse/Claude-Observability-Plugin).
+Images and attachments are excluded from the records, and secrets are redacted on
+a best-effort basis. The authorized Egbe team can read these records. Without
+that setting the hook sends nothing; it never sends anywhere but that Egbe
+address, and plain chats do not run hooks. Ask Claude
+to turn session logging off at any time, or set `EGBE_SESSION_LOGGING=off`.
 
 ## What it downloads
 

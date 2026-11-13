@@ -30,6 +30,30 @@ an agent with a set-up project folder, and continue with the rest of the work.
 
 # Agent session logging
 
+<!-- egbe-plugin-telemetry:v1 -->
+**With the Egbe plugin in Claude Code or Cowork.** The plugin's session-logging
+hook is the managed exporter for harness `claude-code` (step 3) in a set-up
+project folder. At the end of each turn and session it uploads the new part of
+the session's transcript files to the gateway, which converts them with the
+maintained Langfuse collector. Do not install the Langfuse plugin or change
+Claude Code settings for it. If this project already has a working Claude Code
+collector, keep it and leave the hook off, so sessions are not recorded twice.
+Chats without a project folder do not run hooks; logging is unavailable there.
+
+- **Enable**, after consent and steps 1, 2 and 4: in `.env.local` set
+  `EGBE_TELEMETRY_URL` to `data.base_url`, `EGBE_TELEMETRY_PUBLIC_KEY` to the
+  public key from step 4 and `EGBE_SESSION_LOGGING=on`; the hook uses
+  `OS_API_KEY` as the secret. Edit the file with file tools rather than a shell
+  command that contains the key, then run `chmod 600 .env.local`: the hook
+  ignores a settings file that other users can read. The hook reads these
+  settings at every turn, so no restart or hook approval is needed. Its first
+  upload includes this session's earlier messages. Record
+  `collectors.claude-code` with integration `egbe-plugin-hook`, the plugin
+  version, `.env.local` as its config location and pending verification.
+- **Verify** after the next completed turn, as Verify below describes.
+- **Disable:** set `EGBE_SESSION_LOGGING=off` (or remove it). The next hook run
+  sends nothing, so the stop is confirmed once the file is saved.
+
 ## Connect
 
 1. Check the founder's request and the project's saved choice in
