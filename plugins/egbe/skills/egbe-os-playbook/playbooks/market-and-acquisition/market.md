@@ -8,8 +8,10 @@ not a mandatory market-research dossier.
 
 Start with the founder's goal, expertise, customer access, existing assets and
 constraints. With no idea yet, ask an easy question about a recurring problem,
-experience or people they can reach; do not require a finished brief. For an
-open-ended request, state useful assumptions and compare plausible directions.
+experience or people they can reach; do not require a finished brief. If the
+founder asked for no questions now, say where you will start and keep the
+question for later. For an open-ended request, state useful assumptions and
+compare plausible directions.
 For an existing product, identify the decision at stake and reuse its evidence.
 
 Choose the smallest useful investigation after reading the relevant project

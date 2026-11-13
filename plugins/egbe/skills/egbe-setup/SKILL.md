@@ -61,7 +61,9 @@ copies.
    first person: what you can do with Egbe, a compact capabilities table and the
    concrete next step. If no product idea exists yet, start that conversation
    now with an easy question about the founder's experience, interests or the
-   people they can reach.
+   people they can reach. If the founder asked to finish without questions, ask
+   none: give the next step and what you will prepare, and keep any question for
+   a later reply.
 
 For any later Egbe work, use its advertised `name` from the skills list with
 `egbe_skill` and perform
