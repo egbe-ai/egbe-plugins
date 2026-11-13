@@ -1,5 +1,25 @@
 # Install and synchronize project playbooks
 
+<!-- egbe-plugin-playbooks:v1 -->
+**With the Egbe plugin.** This copy of the guide comes with the Egbe plugin,
+which is this project's catalog: there is no installer or catalog helper to run.
+Read the guide with these substitutions:
+
+- **Delivery**, for the initial installation and later: copy each file under
+  this skill's `playbooks/` folder to the same path under `egbe-docs/playbooks/`
+  when that path does not exist yet. Never replace or delete a project file;
+  report one you could not add.
+- **Catalog check:** nothing to request. The verified source
+  (`playbooks.source_directory`) is this skill's `playbooks/` folder and its
+  release (`playbooks.target`) is `5411b04a0a6d3668a7024e5f8c849c798664190ede0cc4f37364a6187c337df3`. Review is required
+  (`playbooks.review_required`) unless `egbe-docs/playbooks-sync.json` records
+  that `reviewed_version`. Deliver missing files before comparing.
+- **Project guidance:** at the same check, if the project's `EGBE.md` is a
+  regular file that differs from `EGBE.md` in the `egbe-setup` skill's folder,
+  replace it with that copy. Ask the founder first if the project's Git history
+  shows that it changed the file itself.
+- Egbe's skills update with the plugin.
+
 The editable files in `egbe-docs/playbooks/` are the project's active methods.
 Egbe delivers fresh source material separately from skills. Delivery adds missing
 files; it does not replace or delete existing project methods. The agent handles

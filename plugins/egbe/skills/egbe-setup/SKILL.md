@@ -11,11 +11,13 @@ egbe_complete_setup call.
 
 This setup runs from the Egbe plugin, which provides Egbe's skills in every
 session. Read those skills and their files from the plugin; use `egbe_skill`
-only for what the plugin lacks, such as `egbe-os-quickstart` below. Step 2 is
-unchanged: a persistent project workspace still gets the standard setup through
-`egbe_local_setup`, including the project's playbooks, saved credentials and
-session logging. Once a project has its own installed Egbe skills, use those
-rather than the plugin's copies.
+only for what the plugin lacks, such as `egbe-os-quickstart` below. In step 2,
+set up a persistent project workspace that is not set up yet as
+[project setup](references/project.md) describes. It still calls `egbe_local_setup`
+and keeps the standard project setup, including saved credentials, playbooks,
+session logging and the Business Loop, but installs no skills. A project that
+already has its own installed Egbe skills uses those rather than the plugin's
+copies.
 
 1. **Introduce Egbe.** Read
    `egbe_skill(name="egbe-os-quickstart", resource="references/introduction.md")` and the

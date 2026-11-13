@@ -24,11 +24,11 @@ You need an Egbe account. Manage or disconnect connected assistants at
 
 The plugin has no hooks and runs nothing on your computer by itself.
 
-**In a project folder** in Claude Code, Claude sets the project up for Egbe the
-standard way, which plain chats skip. It saves your project's Egbe key in the
-folder's Git-ignored `.env.local`, installs Egbe's skills and editable working
-methods (`egbe-docs/playbooks/`) into the project, and keeps them updated. The
-project's own copies of the skills then take precedence over the plugin's.
+**In a project folder** in Claude Code, Claude also sets the project up for
+Egbe, which plain chats skip. It saves your project's Egbe key in the folder's
+Git-ignored `.env.local` and copies Egbe's project guidance (`EGBE.md`) and
+editable working methods (`egbe-docs/playbooks/`) from the plugin into the
+project. Egbe's skills stay in the plugin and update with it.
 
 ## What it sends and where
 
@@ -52,9 +52,8 @@ these records. Ask Claude to turn session logging off at any time.
 
 ## What it downloads
 
-The plugin itself downloads nothing. When Claude sets up a project folder, it
-downloads Egbe's installer, skills and working methods from https://os.hz.egbe.dev/skills
-and https://os.hz.egbe.dev/playbooks, checks their SHA-256 and later checks there for updates.
+The plugin itself downloads nothing, and setting up a project folder copies
+files that come with the plugin.
 
 Files that exceed the plugin directory's size limits are listed in their
 skill; Claude downloads one from Egbe only when a step needs it and checks its

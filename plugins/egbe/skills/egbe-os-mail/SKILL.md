@@ -21,8 +21,9 @@ Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
 A step that needs a local project key or a bundled script, such as a git push or
-a local deploy command, needs the standard workspace setup. In a persistent
-project workspace that is not set up yet, call `egbe_local_setup` and follow it.
+a local deploy command, needs a set-up project workspace. In a persistent
+project workspace that is not set up yet, set it up as the `egbe-setup` skill's
+project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
 an agent with a set-up project folder, and continue with the rest of the work.
 
