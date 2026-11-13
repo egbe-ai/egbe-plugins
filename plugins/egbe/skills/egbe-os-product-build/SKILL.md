@@ -63,7 +63,7 @@ Use only what the accepted behavior requires; these are not sequential stages.
 | New application foundation or main page | `egbe-os-design-landing-page`: its application-preparation reference; preserve an existing application |
 | Accounts, sessions, protected access | `egbe-os-product-auth` |
 | Purchases, subscriptions, payment state | `egbe-os-payments`: select the workflow matching the accepted model |
-| Outcome and payment measurement | `egbe-os-analytics`: activation-tracking or payment-tracking as applicable |
+| Outcome and payment measurement | `egbe-os-analytics`: activation-tracking or payment-lifecycle-tracking as applicable |
 | Storage, generated output and other integrations | Discover DB, LLM, images or other capabilities through OS |
 | Source control and serving release | `egbe-os-git`, `egbe-os-deploy` within the authorized publication scope |
 
