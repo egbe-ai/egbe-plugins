@@ -28,6 +28,15 @@ write event/order state, grant access, deliver anything or emit analytics.
 Test/preflight headers never bypass signature verification. An unmarked live
 event always follows the real order, amount and durable-application checks.
 
+This one-time test acknowledgement may be stateless: repeating the same signed
+marked event can return the same acknowledgement. A `duplicate` field is not
+required here. The gateway's bounded readback normalizes an omitted field to
+`duplicate: false`; that value alone is not a failed one-time acknowledgement.
+The subscription simulation's duplicate flag and transition requirements below
+do not apply to this contract. Independently verify real one-time event
+deduplication, retry and delivery through isolated durable integration; repeated
+non-mutating acknowledgements do not prove those behaviors.
+
 A `404` or `405` response is interpreted as a missing receiver and blocks
 checkout with `409`; returning order-not-found for this synthetic probe is
 therefore incorrect. This acknowledgement proves only the receiver/signature
