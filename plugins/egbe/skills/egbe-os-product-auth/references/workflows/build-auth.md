@@ -47,7 +47,7 @@ Read the live Egbe OS `egbe-os-deploy` skill. Provision or reuse attached Postgr
 use the injected `DATABASE_URL`.
 
 For a compatible Next.js/custom-Postgres application without an established auth
-implementation, Product Build's `references/foundations.md` exposes the shipped
+implementation, [Product Build's foundations](../../../egbe-os-product-build/references/foundations.md) expose the shipped
 account/session server helpers and canonical migrations through the optional
 local scaffold helper's `--accounts` selection. Preview before applying. It does
 not choose or implement account-entry methods; continue with this workflow.
@@ -60,9 +60,12 @@ session state plus the `(provider, subject)` external-identity authority. Apply
 it as the starting point:
 
 - **Default custom Node/Postgres path** (the common case — this product talks to
-  Postgres with `pg` and raw SQL): copy `assets/db/` into the product repo as
-  `db/`, add `"db:migrate": "node db/migrate.mjs"` to `package.json`, and run it
-  against `DATABASE_URL` during a controlled build/deploy step. Then add only the
+  Postgres with `pg` and raw SQL): the same optional helper's `--auth-db`
+  selection previews/installs these database assets and their package commands,
+  preserving the framework and start command. For manual integration, copy
+  `assets/db/` into the product repo as `db/` and add
+  `"db:migrate": "node db/migrate.mjs"` to `package.json`. Run it against
+  `DATABASE_URL` during a controlled build/deploy step. Then add only the
   product-specific extras below as a *new* migration after `0002`; never edit
   the canonical migrations. Use the baseline's SHA-256 token hash in the
   product's normal request-time session resolver. A

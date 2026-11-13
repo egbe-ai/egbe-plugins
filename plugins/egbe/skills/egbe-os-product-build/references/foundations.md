@@ -1,9 +1,10 @@
 # Reuse shipped product foundations
 
 Inspect the existing application and accepted behavior first. These optional
-foundations fit the bundled Next.js/Postgres stack; another stack or working
-integration should keep its established implementation. Installing code does
-not select an offer, account-entry method or commercial model.
+application and account/session foundations fit the bundled Next.js/Postgres
+stack. The shared auth database assets also support custom Node/Postgres apps.
+Another stack or working integration should keep its established implementation.
+Installing code does not select an offer, account-entry method or commercial model.
 
 The complete skill catalog includes a local helper at
 `<skills-directory>/egbe-os-product-build/scripts/scaffold.py`. It locates sibling
@@ -20,6 +21,7 @@ Select only the required pieces:
 | Option | Installs | Still needs implementation/configuration |
 | --- | --- | --- |
 | `--nextjs` | Blank application from Design landing page | Product UI/behavior, real public observability bindings |
+| `--auth-db` | Shared Node/Postgres auth schema, migration runner and private validation-session helper | Application's account-entry/session resolver, protected access, real attached database and controlled migration step; preserves framework/start command |
 | `--accounts` | Product Auth's Postgres schema, migrations, server account/session helpers and validation-session helper | Selected account-entry/recovery UX, real attached database and protected product paths |
 | `--subscriptions` | Payments' subscription foundation plus its required account foundation | Accepted plan catalog, real provider bindings, account-entry, product entitlements, navigation and verification |
 
@@ -29,6 +31,16 @@ existing Next.js app, omit `--nextjs` and select only the absent foundation.
 The subscription foundation is **not** a one-time purchase engine: use Payments'
 one-time-purchase workflow for that offer instead. A stateless product need not
 add accounts or payments.
+
+For a custom Node/Postgres app with a `package.json`, use
+`plan --target <product-directory> --auth-db`. This reuses the existing raw-SQL
+assets without installing Next.js modules or changing the app's start command.
+It adds `pg`, `db:migrate` and `auth:validation-session`; it does not supply a
+complete auth implementation. Preserve an established ORM/auth library's schema
+and migration ledger instead of installing parallel raw-SQL tables. The full
+`--accounts` and `--subscriptions` options include these same database assets.
+Read the [shared auth database contract](../../egbe-os-product-auth/assets/db/README.md)
+for the schema, session-token contract and private validation-session lifecycle.
 
 Review the preview, then repeat the same arguments with `apply` instead of
 `plan`. The helper merges required package entries, copies missing foundation

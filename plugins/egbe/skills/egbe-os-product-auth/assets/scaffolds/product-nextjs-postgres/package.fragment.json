@@ -3,15 +3,11 @@
   "expectedScripts": {
     "start": "next start"
   },
-  "dependencies": {
-    "pg": "^8.16.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/pg": "^8.15.5"
   },
   "scripts": {
-    "auth:validation-session": "node db/create-validation-session.mjs",
-    "db:migrate": "node db/migrate.mjs",
     "start": "npm run db:migrate && next start"
   }
 }

@@ -40,6 +40,14 @@ Reuse them. Build only the selected account-entry integrations, account UX,
 navigation, continuation, and concrete product bindings;
 do not copy, replace, or create a parallel DB/session core.
 
+For a new custom Node/Postgres integration,
+[Product Build's foundations](../egbe-os-product-build/references/foundations.md)
+describe the optional `--auth-db` installer for the
+same shipped schema, migrations and private validation-session helper without
+Next.js modules. Its `EGBE:AUTH-DATABASE` marker identifies only those database
+assets; the application still owns its request-time session and account-entry
+implementation. Preserve a working library's own schema/migration system.
+
 ## Core Workflow
 
 For every egbe-os-product-auth implementation, read all of these references before changing code:

@@ -64,15 +64,15 @@ def append_marked(existing: str, marker: str, text: str, *, ignore_file=False) -
     return existing.rstrip() + ("\n\n" if existing.strip() else "") + block + "\n"
 
 
-def plan(target: Path, *, base=False, accounts=False, subscriptions=False, skills=None):
+def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptions=False, skills=None):
     skills = skills or Path(__file__).resolve().parents[2]
     if target.is_symlink():
         raise Conflict(f"Symlink destination: {target}")
     root = target.resolve()
     if root.exists() and not root.is_dir():
         raise Conflict(f"Expected a product directory: {root}")
-    if not (base or accounts or subscriptions):
-        raise Conflict("Select --nextjs, --accounts or --subscriptions explicitly")
+    if not (base or auth_db or accounts or subscriptions):
+        raise Conflict("Select --nextjs, --auth-db, --accounts or --subscriptions explicitly")
     files = {}
 
     def add(source, prefix=Path()):
@@ -106,10 +106,12 @@ def plan(target: Path, *, base=False, accounts=False, subscriptions=False, skill
         ).encode()
 
     foundations = []
-    if accounts or subscriptions:
+    if auth_db or accounts or subscriptions:
         auth = skill(skills, "product-auth")
         add(auth / "assets/db", Path("db"))
-        foundations.append(auth / "assets/scaffolds/product-nextjs-postgres")
+        foundations.append(auth / "assets/scaffolds/product-auth-database")
+        if accounts or subscriptions:
+            foundations.append(auth / "assets/scaffolds/product-nextjs-postgres")
     if subscriptions:
         foundations.append(skill(skills, "payments") / "assets/scaffolds/billing-nextjs-subscription")
     original_package = json.loads(package_bytes)
@@ -185,16 +187,18 @@ def main():
     parser.add_argument("command", choices=("list", "plan", "apply"))
     parser.add_argument("--target", type=Path, default=Path.cwd())
     parser.add_argument("--nextjs", action="store_true", help="Copy the blank Next.js starter; for new applications only")
+    parser.add_argument("--auth-db", action="store_true", help="Add shared Node/Postgres auth database assets without Next.js server helpers")
     parser.add_argument("--accounts", action="store_true", help="Add the Postgres account/session foundation")
     parser.add_argument("--subscriptions", action="store_true", help="Add subscription billing and its required account foundation; not one-time purchases")
     args = parser.parse_args()
     if args.command == "list":
         print("--nextjs: blank Next.js application; use only when this stack fits")
+        print("--auth-db: shared Node/Postgres auth schema, migrations and private validation-session helper; preserves framework/start command")
         print("--accounts: Postgres users, identities, sessions and migrations; account-entry UI still needs implementation")
         print("--subscriptions: subscription lifecycle, checkout, billing UI and account foundation; not a one-time purchase engine")
         return
     try:
-        root, edits = plan(args.target, base=args.nextjs, accounts=args.accounts, subscriptions=args.subscriptions)
+        root, edits = plan(args.target, base=args.nextjs, auth_db=args.auth_db, accounts=args.accounts, subscriptions=args.subscriptions)
         if args.command == "apply":
             apply(root, edits)
         print(json.dumps({"target": str(root), "applied": args.command == "apply", "changes": [str(e.path.relative_to(root)) for e in edits]}, indent=2))
