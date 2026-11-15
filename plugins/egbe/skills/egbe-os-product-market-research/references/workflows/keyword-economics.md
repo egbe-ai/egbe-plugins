@@ -67,16 +67,23 @@ provider responses describe the set once. US/UK budgets are alternative
 comparisons, not additive allocations. Null/empty forecasts are unavailable,
 not zero demand; budget-scaled clicks are conditional arithmetic.
 
+The DataForSEO forecast endpoint requires whole-dollar bids. For the automatic
+exploratory forecast, the runner rounds its observed CPC assumption up to the
+next whole USD before the first request (within 1–500), and records the actual
+bid in the evidence and report. Observed CPC measurements remain unchanged.
+
 For an explicitly chosen homogeneous scenario, pass `--scenario <file.json>`:
 
 ```json
-{"keywords":["example service","example pricing"],"location_code":2840,"language_code":"en","match":"phrase","bid":2.5,"rationale":"Bounded exploratory bid assumption","source":"Caller-selected scenario"}
+{"keywords":["example service","example pricing"],"location_code":2840,"language_code":"en","match":"phrase","bid":3,"rationale":"Bounded exploratory bid assumption","source":"Caller-selected scenario"}
 ```
 
-The locale must match the run; one match type and one positive bid (up to 500)
+The locale must match the run; one match type and one whole-dollar bid (1–500)
 apply to at most 1000 unique keywords. Mixed per-keyword bids/matches cannot be
 represented faithfully by this endpoint; do not silently flatten campaign
 assets into a forecast. The scenario never changes a live campaign.
+Fractional explicit bids fail validation before any paid calls. Choose and record
+a whole-dollar scenario; do not silently round a caller-specified bid.
 The evidence adds a bounded `intent_signal` to keyword and SERP rows. It is a
 lexical clue (`vendor_seeking`, `tool_seeking`, `informational`, `job_seeking`,
 `free_intent`, or `unknown`), not an offer-fit or campaign-selection verdict.
@@ -91,6 +98,8 @@ retries the unchanged request with bounded backoff. Do not add manual waits or
 retry wrappers around it. An internal error is not proof of valid input or a
 guarantee of recovery. Validation errors need corrected input; unknown billing
 status is not safe to retry automatically.
+`50301` with `Request contains an invalid argument` is an input rejection, not
+a rate limit; the runner stops rather than repeating it unchanged.
 
 If the runner reports exhausted retries, the section is blocked, not completed.
 Preserve the workspace and report the failed operation, provider code and task

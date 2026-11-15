@@ -37,6 +37,8 @@ def validate_scenario(value: dict, locale: dict) -> dict:
     bid = value["bid"]
     if type(bid) not in (int, float) or not math.isfinite(bid) or not 0 < bid <= 500:
         raise ValueError("scenario bid must be finite, positive and at most 500")
+    if not float(bid).is_integer():
+        raise ValueError("scenario bid must be whole USD (1–500); choose an explicit whole-dollar assumption")
     for key in ("rationale", "source"):
         if not isinstance(value[key], str) or not value[key].strip():
             raise ValueError(f"scenario {key} is required")

@@ -152,6 +152,10 @@ class DataForSeoError(KeywordEconomicsError):
 
 
 def _is_rate_limited(exc: Exception) -> bool:
+    # 50301 also wraps invalid Google Ads input; retrying that cannot recover.
+    message = str(exc.detail.get("message") or "") if isinstance(exc, DataForSeoError) else str(exc)
+    if "invalid argument" in message.lower():
+        return False
     if isinstance(exc, DataForSeoError):
         return exc.detail.get("status_code") == 50301
     text = str(exc)
@@ -170,20 +174,6 @@ def _is_unpaid_internal_error(exc: Exception) -> bool:
         and all(type(detail.get(key)) in (int, float) and detail[key] == 0
                 for key in ("cost", "task_cost"))
     )
-
-
-def _is_bid_rejection(exc: Exception) -> bool:
-    if isinstance(exc, DataForSeoError):
-        if (exc.http_status != 400 or exc.detail.get("error") != "dataforseo_task_error"
-                or exc.detail.get("status_code") != 40501):
-            return False
-        message = str(exc.detail.get("message") or "")
-    else:
-        # Compatibility with older OS gateways, which stringify the error.
-        message = str(exc)
-        if not all(marker in message for marker in ("HTTP 400", "dataforseo_task_error", "40501")):
-            return False
-    return bool(re.search(r"\binvalid field\s*:\s*[\"'`]?bid[\"'`]?(?:[.!\s]|$)", message, re.I))
 
 
 # ── bundled-script loading (same pattern as the other section runners) ─────
@@ -1252,30 +1242,18 @@ def run_pipeline(client: ToolsClient, inputs: RunInputs) -> dict[str, Any]:
     bid = median([r.get("cpc_high") for r in sim_rows]) or median(
         [r.get("cpc") for r in sim_rows]
     ) or 1.0
-    bid = round(float(bid), 2)
-    bid = scenario["bid"] if scenario else min(bid, 500)
+    # The forecast endpoint requires whole USD, unlike observed auction CPCs.
+    # Choose a valid exploratory assumption before spending, never after failure.
+    bid_normalized_to_int = not scenario and float(bid) != math.ceil(float(bid))
+    # Preserve the numeric representation used by existing successful cache keys.
+    bid = scenario["bid"] if scenario else float(max(1, min(math.ceil(float(bid)), 500)))
     match = scenario["match"] if scenario else "exact"
-    # Live evidence (2026-08-18) shows the endpoint accepts fractional bids
-    # despite the docs declaring an integer; keep the precise bid but fall
-    # back to whole dollars once if the upstream ever enforces the documented
-    # contract (review finding #3).
-    bid_normalized_to_int = False
     budget_rows: list[dict[str, Any]] = []
     if sim_keywords:
-        try:
-            ad_traffic = client.call(
-                "ad-traffic",
-                {"keywords": sim_keywords, "bid": bid, "match": match, **locale},
-            )
-        except KeywordEconomicsError as exc:
-            if scenario or not _is_bid_rejection(exc):
-                raise
-            bid = float(math.ceil(bid)) or 1.0
-            bid_normalized_to_int = True
-            ad_traffic = client.call(
-                "ad-traffic",
-                {"keywords": sim_keywords, "bid": bid, "match": match, **locale},
-            )
+        ad_traffic = client.call(
+            "ad-traffic",
+            {"keywords": sim_keywords, "bid": bid, "match": match, **locale},
+        )
         budget_rows = build_budget_rows(
             sim_keywords, bid, ad_traffic.get("result") or [], inputs.test_budget_usd
         )
