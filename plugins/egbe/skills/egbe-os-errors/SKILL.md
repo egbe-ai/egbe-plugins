@@ -5,7 +5,7 @@ metadata:
   egbe-when: "Use when a product has errors to investigate or needs its error reporting connected or checked."
   egbe-visible: "true"
   egbe-title: "Error monitoring"
-  egbe-description: "Connect your app to Sentry so your agent can investigate real browser and server errors."
+  egbe-description: "Connect your app to error monitoring so your agent can investigate real browser and server errors."
   egbe-category: "Development & hosting"
 ---
 
