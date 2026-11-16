@@ -131,3 +131,29 @@ After that real account-entry proof, prepare the workflow's private reusable
 validation identity when dependent Product or Billing work needs it, through the
 product's authoritative server-side session mechanism. This is authenticated
 setup, not proof of Auth behavior and never a public test-login path.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-product-auth/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-product-auth/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-product-auth/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `assets/db/create-validation-session.mjs` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/db/create-validation-session.mjs | `e94daef5a173dfa9b3628356bbd87562ea1fbca9681038ae0fe22de1483ef208` |
+| `assets/db/migrate.mjs` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/db/migrate.mjs | `734b0a11a408cc2af77992227abd81d90471ce4db538dd6a6c4867348ca10546` |
+| `assets/db/migrations/0001_auth.sql` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/db/migrations/0001_auth.sql | `986185d1424f1e2f0ee7f94ef9d4357b82275f8f105869ce908b40f50489aacf` |
+| `assets/db/migrations/0002_auth_identities.sql` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/db/migrations/0002_auth_identities.sql | `1789beda746f9c6285f636da4b1d80579254e7c12651295a39cecfd31898b1d6` |
+| `assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/db.ts` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/db.ts | `9f4be1466a9255fde9db113123d51913d548903358e41dc5cfe088c4b42a5ad3` |
+| `assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/identity.ts` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/identity.ts | `0c91ee41810320951a471d07b4e98f254699fa84aa692a3b26ea12a64ee3eec7` |
+| `assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/index.ts` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/index.ts | `9041be89265812c2004f5dc32c9456306210ffe3a7264bf37be119b6619b13e5` |
+| `assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/session.ts` | https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/assets/scaffolds/product-nextjs-postgres/src/lib/egbe-product/session.ts | `085e1fa871b94568bc5a844b305a915829c885a51617ffc62063e7eedfb16cc3` |

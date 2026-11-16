@@ -89,3 +89,28 @@ Never use creates to probe an API schema or broaden rejected targeting silently.
 
 `scripts/validate-reddit-artifacts.py` checks saved operation evidence locally;
 it is not authorization, a marketing validator or proof of live freshness.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-reddit-ads/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-reddit-ads/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-reddit-ads/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `assets/static-banners/bold-statement/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/bold-statement/template.html | `bb60b26c259ada4765c3c3e579ab52335970878b7e926f342aa05f7ab1156d87` |
+| `assets/static-banners/data-proof/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/data-proof/template.html | `4ff2b2dc8bcdca4e9feeecfaf554f7103cf48fdb509e2e137c8c5327bd3f0914` |
+| `assets/static-banners/honest-breakdown/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/honest-breakdown/template.html | `add05a2330836e49b98f938706fbd6aed58c63c25ddeecad06d49b9b323be8c2` |
+| `assets/static-banners/question-hook/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/question-hook/template.html | `34a6fff76aff55a9eb23e8e2be082741133a1051f20a5743549233c7004f5d7a` |
+| `assets/static-banners/reddit-post-style/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/reddit-post-style/template.html | `2defc73f5047bebf570f03d4d66192050a159edca5c661f139a92b1d0bace138` |
+| `scripts/capture-ad.sh` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/capture-ad.sh | `c72f1e393519a2f9ea46891e9dc6fc3433f4cea2d1e65cd27ec376a0a6d19a02` |
+| `scripts/validate-reddit-artifacts.py` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/validate-reddit-artifacts.py | `d2c7917ae0d8e27da735114fbf604b0ebceac3ddc23254f75024af3aa07fc0c3` |

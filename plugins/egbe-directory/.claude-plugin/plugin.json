@@ -17,7 +17,7 @@
     "analytics",
     "marketing"
   ],
-  "icon": "./assets/icon.svg",
+  "icon": "./assets/icon.png",
   "documentationUrl": "https://os.hz.egbe.dev/plugins/egbe",
   "supportUrl": "https://os.hz.egbe.dev/plugins/egbe/support",
   "privacyPolicyUrl": "https://egbe.ai/privacy/",

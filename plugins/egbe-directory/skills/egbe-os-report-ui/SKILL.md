@@ -117,3 +117,25 @@ Return a local link to the HTML file.
 
 Keep preview fixtures separate from real reports; do not publish a report or
 change the underlying product as part of rendering it.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-report-ui/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-report-ui/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-report-ui/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `assets/egbe-wordmark.svg` | https://os.hz.egbe.dev/skills/egbe-os-report-ui/resources/assets/egbe-wordmark.svg | `d5d2f0e92c131d89cdfa73c05bb5ad52058ac11926e7021763d66a3192cba3ba` |
+| `assets/examples/components.html` | https://os.hz.egbe.dev/skills/egbe-os-report-ui/resources/assets/examples/components.html | `f6eeb7957c41d5837a522cd085dd2e08b09d608196804ce8ad531308123de21c` |
+| `assets/examples/editorial.html` | https://os.hz.egbe.dev/skills/egbe-os-report-ui/resources/assets/examples/editorial.html | `30de33e0be09360adf0f22f79d93e25070d64514ab3c20686efcc5ac5efc37b5` |
+| `assets/scaffold.html` | https://os.hz.egbe.dev/skills/egbe-os-report-ui/resources/assets/scaffold.html | `983f04ad54e01d00c8b9cc7ebfe65d7daf1a6ba226eddbcce0df72262ba98931` |

@@ -79,3 +79,34 @@ A provider status such as `verified` or `likely`, or a scraped `unverified`
 address, does not establish current deliverability, relevance, consent or
 authorization to send. These commands neither launch campaigns nor replace
 downstream import verification.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-apollo-lead-finder/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-apollo-lead-finder/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-apollo-lead-finder/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `scripts/enrich.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/enrich.js | `9211c7c9a5034ffae7f96ed709d8d06e18ff6d70af25fd9b396853e97c91cc5e` |
+| `scripts/enrich.sh` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/enrich.sh | `e7b5712d62a849906586f49902da1248df567d37fcca448fc0d12b24dd49b1c9` |
+| `scripts/find-leads.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/find-leads.js | `e9d2eca7084ff5f712dc34c5c3574ce466c8dc74e73239edf2e6389fdb78845d` |
+| `scripts/find-leads.sh` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/find-leads.sh | `f4915aa46cf72598bb0c9435041abbd4dd412532a41be8adb5a955796adee189` |
+| `scripts/lib/apollo-client.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/lib/apollo-client.js | `4eac5e5ee791c137cdc001ea006d129d85ab02a7dc18fd9c0abf2fb901a54a3d` |
+| `scripts/lib/connection-identity.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/lib/connection-identity.js | `a23f252b73559814ff1697c5dcac5e6cd7b18d794244245d4fcf484e63e5708c` |
+| `scripts/lib/helpers.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/lib/helpers.js | `ea229b2bc015394e372bee2926dea7987d6af32a5a6de6b25765e393039391f0` |
+| `scripts/lib/places-filters.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/lib/places-filters.js | `1e562e83f551d2f954239768842d8bb536b73c89a0a35d46460b2ac640657d97` |
+| `scripts/lib/sourcing.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/lib/sourcing.js | `41cb5de0929bc56469c93bf9a6a9c998425adade2069b83fb1fd1ad85c92d1d4` |
+| `scripts/places-leads.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/places-leads.js | `5d9e16d77a7837109dba88afd355401df100ee9fce4e1ad4c476b368f103dcdb` |
+| `scripts/places-leads.sh` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/places-leads.sh | `34a4fef7440b50fc9303fac220db4747116dd727c8b0ce48ca39713fca8fa5d7` |
+| `scripts/search.js` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/search.js | `b2f64047c60f99d02e098414bf78d803e782772840a983c5b572928b69ef4cf3` |
+| `scripts/search.sh` | https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/scripts/search.sh | `fb569b3d7fd7d6632a810a1ac80569ca5074adb4e48570ff08551fa511f02765` |

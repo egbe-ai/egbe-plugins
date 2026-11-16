@@ -163,3 +163,42 @@ notice does not grant an entitlement or complete delivery. Expired checkout
 notices may be acknowledged after the repair notice is durably recorded.
 Retries share one unread notice; another failure after it is read reopens the
 action. Marking a notice read does not resolve or repair the webhook.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-payments/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-payments/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-payments/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `assets/scaffolds/billing-nextjs-subscription/db/migrations/1000_egbe_billing.sql` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/db/migrations/1000_egbe_billing.sql | `0632ebdaa6740709654c690b36c858a9b5f8ce0c5b025e09cf469bf1c93eac18` |
+| `assets/scaffolds/billing-nextjs-subscription/scripts/billing-sync.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/scripts/billing-sync.mjs | `4aff533b0dac6a956b77e92db3be46aefea4cc33c9059097c39c482d9bd2aea7` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/error.tsx` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/error.tsx | `0c008ae4fbc9efced8b3a8d1ac69230d70cc3493c2f08bcdf9634fe0c74838cc` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/loading.tsx` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/loading.tsx | `89b47b6c909aac59e7b80b9689eaf385943bbe57854845ea3890b81487848f84` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/page.tsx` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/account/billing/page.tsx | `f73b7d19f2e593cc2e11c69063d1c6dbcb6205da144d1f48a38ed67aa124060e` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/checkout/route.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/checkout/route.ts | `e36088ac5ed108d32f7dc3682c89a5fd79c2fa90bdd586cc323a8f69832bff7e` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/portal/route.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/portal/route.ts | `31b0ce9e424ff59e1e8c62f9891507647914b35c02ebc248de1acc29c96c65a8` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/status/route.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/api/billing/status/route.ts | `1ec8efdf4725a899fded5516e4969b2e91e7cfec18ba1aaabecb2a5e93e81fee` |
+| `assets/scaffolds/billing-nextjs-subscription/src/app/api/payments/webhook/route.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/app/api/payments/webhook/route.ts | `40d24dd15faba2f666ffba0783aaca7281a1f61be0f41384b0296db7db9716d1` |
+| `assets/scaffolds/billing-nextjs-subscription/src/components/egbe-billing/plan-badge.tsx` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/components/egbe-billing/plan-badge.tsx | `f84d3988509459a83942300bf0eeb420530d5f104d8e917d6bbed998f8358d28` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/billing-sync.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/billing-sync.test.mjs | `1b31a444b196c3eb1a98e2110822c1e194e225526dd9e93c4f9faa89be283dc3` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/catalog.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/catalog.ts | `aa224f75898679fdc7d9f9d62166754a5db3d6ce4849211cc8e9d0e67016790f` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/checkout-payload.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/checkout-payload.ts | `2f27af5cf4d96646fb855e5cf686776dfbf8b8acd9e5ef410136ecc19ecf56b3` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/foundation-contract.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/foundation-contract.test.mjs | `9e8c2af7d4546c39956d499ce446f4971ddc42760abb13bbd2a69e0aef3b443f` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.d.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.d.ts | `886892ebe02048313079f0b887b9d0de4378277fcfb149beade0609e514208ab` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.mjs | `32b81a9a6e6ef4297fc447b4468395faf3401cfd035c5cf9990cf93ee9005611` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/lifecycle.test.mjs | `c28a6372f765e44c84be9aa5f81a41a26aaf1f933d0e31771b6544e84860333f` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/os-client.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/os-client.ts | `de9bedb29137232e6e33c3d1607de98f5f3329d01abb9831349322af3c3ebdbe` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/repository.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/repository.ts | `868e8f277ae47f148f7b262006753d6a331026b5af458f91c370ec0a3e6618d8` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/signature.d.ts` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/signature.d.ts | `0a60e3251368f572e2949e57e780bccbfe378eea2f2641746c4c74b87ef313a7` |
+| `assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/signature.mjs` | https://os.hz.egbe.dev/skills/egbe-os-payments/resources/assets/scaffolds/billing-nextjs-subscription/src/lib/egbe-billing/signature.mjs | `bb02abeacebc7a2838dd34ea9136076787b2be7a9f2d56a9bd9181dd99a8cdb9` |

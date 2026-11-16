@@ -89,3 +89,22 @@ Read accepted product decisions by meaning, not a prescribed PRD heading. Accoun
 entry, a public preview and payment are independent choices, not universal gates.
 Do not recreate missing planning artifacts merely to satisfy a capability's example.
 Keep the real producer, consumer and integration proof connected across domain work.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-product-build/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-product-build/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-product-build/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `scripts/scaffold.py` | https://os.hz.egbe.dev/skills/egbe-os-product-build/resources/scripts/scaffold.py | `78f308073b396398c36193855da62d5795eb26ae368e2842741aa8c117495c31` |

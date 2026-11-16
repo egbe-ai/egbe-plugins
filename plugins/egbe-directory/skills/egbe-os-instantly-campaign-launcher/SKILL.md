@@ -91,3 +91,43 @@ incomplete actions before reporting success. Preserve contacts/messages/state
 in the access-controlled project repository, credentials outside Git, and one
 active executor when transferring work. Keep the current plan and decisions in
 the existing project context, without a second preflight/log/lessons package.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-instantly-campaign-launcher/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-instantly-campaign-launcher/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-instantly-campaign-launcher/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `scripts/conclude-campaign.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/conclude-campaign.js | `9e5ff3f4bbcbb16032dd59b3efe760c381be082adb3adbf8f78b32ede26bdc3b` |
+| `scripts/install-crons.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/install-crons.js | `0b2e308e285bf60ea9cccf76417a76456a59f438b91bacd2e81f0567efa0a620` |
+| `scripts/launch-campaign.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/launch-campaign.js | `2d6f78b66997d2a4758716389a5fa5a019329f005481e5ec838ebb4fde116d22` |
+| `scripts/lib/campaign-metrics.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/campaign-metrics.js | `d1eab288d3ef20b55c7608e4cb1e3573254a0808387c881ed98a7d08050bec56` |
+| `scripts/lib/confirmed-opt-outs.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/confirmed-opt-outs.js | `c418ee1fc67213f1646ab1a7a3abdd99d32c91f98d2a8a258edbb9f6111ed12d` |
+| `scripts/lib/connection-identity.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/connection-identity.js | `a23f252b73559814ff1697c5dcac5e6cd7b18d794244245d4fcf484e63e5708c` |
+| `scripts/lib/create-once.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/create-once.js | `f8e69155643c3a2ff11b528081fea40ed4b10d5129041766667a7084711d78b8` |
+| `scripts/lib/gtm-identity.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/gtm-identity.js | `787587835b2e744dbafefeff4a333425bcf355cb7e758ecba23a808d2cba7692` |
+| `scripts/lib/helpers.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/helpers.js | `5ad78af4112e8cb7d1a7a9f98b08ba6152b4b87a457d72201c55b4f7de06de5a` |
+| `scripts/lib/instantly-client.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/instantly-client.js | `32f3048a770057c280dc2ccde22c4ae37a48f506c82d42affd7e5e923f513e8b` |
+| `scripts/lib/outreach-db.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/outreach-db.js | `fe2ebc2af7c967a0fa726ee7d9cb5387129ea978ca1e7758bd18afbbcf0483b8` |
+| `scripts/lib/recipient-exclusion/index.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/recipient-exclusion/index.js | `a0c236996f6089d9c62a54b580709f4c02e811749ebacea45cc468925a6819dc` |
+| `scripts/lib/replenish-test-harness.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/replenish-test-harness.js | `5fb72d8824c8e1b34f2a4795d98acf39d178e81e60b9caf93ed85992c2cd689c` |
+| `scripts/lib/reply-queue.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/reply-queue.js | `18381342fd354d85d4608c7f44329bb586760920016c417eb48dc95f6aacc71b` |
+| `scripts/lib/run-config.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/run-config.js | `291883bd439935eaef9bf4e5957515b381911c3bd963aebb68dc3955fd3a7bb4` |
+| `scripts/lib/sender-selection.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/sender-selection.js | `f97fe20fae7c3687266d77b74cdbf9076f364b49ccab14091cb70dcbb2eafef0` |
+| `scripts/monitor-campaign.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/monitor-campaign.js | `91420d662108c5722cb52034fb59d36d6a416b4bc867db85416e9316c4f9d254` |
+| `scripts/outreach-report.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/outreach-report.js | `02adae18f09d915321bf44a1c155c64b876df4fd2757cf3899d2d32fe6d0f6e0` |
+| `scripts/replenish-leads.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/replenish-leads.js | `b16d8f5287763c890b05ec2b95da7f13efc5b16e128126c4c153e3562839a145` |
+| `scripts/reply-worker.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/reply-worker.js | `596862bcece04fb5197676bef6447470e69677cf2e56aae4d868532034357683` |
+| `scripts/run-cron-job.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/run-cron-job.js | `aeeeb4a68beecd588cbc75e40aa7863459055ab6ab3d21a1f2a2739eb8ec6b5c` |
+| `scripts/send-reply.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/send-reply.js | `f4c200dbb0d33eb53531fe733c2058b501e05aa6ecadcec5f07d2ae9a3c9182d` |

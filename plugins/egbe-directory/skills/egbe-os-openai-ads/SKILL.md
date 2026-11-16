@@ -128,3 +128,22 @@ operation and its saved recovery key; never include credentials or customer data
 No raw provider passthrough, lifetime budgets, product feeds, custom audiences,
 automatic payment-gateway events, fleet scheduling or Dashboard integration.
 Scheduling is external to these API operations.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-openai-ads/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-openai-ads/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-openai-ads/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `scripts/validate-openai-artifacts.py` | https://os.hz.egbe.dev/skills/egbe-os-openai-ads/resources/scripts/validate-openai-artifacts.py | `a0c4efe5e58f8caabb5babe17fa1596894ce8ca8d8587be95bb5b6918d862600` |

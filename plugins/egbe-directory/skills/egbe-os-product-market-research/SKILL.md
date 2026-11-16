@@ -123,3 +123,71 @@ the existing research artifacts. Their receipts remain evidence provenance, not
 a requirement to produce a preview or a new product-definition input file.
 Link findings into the caller's current requirements or plan; do not copy a new
 master report between stages.
+
+## Files downloaded on demand
+
+This skill's scripts and code templates are not bundled with the Egbe plugin
+from Claude's directory. They need a persistent project workspace; without one,
+tell the founder that the step needs it and continue with the rest of the work.
+
+In a project workspace, before a step that runs or copies one of these files,
+download it into `.egbe/skills/egbe-os-product-market-research/` at the same relative path, for example
+`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-product-market-research/<file>`, and check that its SHA-256
+matches. Also download the files it uses from the same folder, such as the
+modules a script imports. Wherever this skill names one of these files by its
+path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-product-market-research/<file>`;
+where it writes `<skills-directory>`, use `.egbe/skills`.
+Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+
+| File | URL | SHA-256 |
+| --- | --- | --- |
+| `scripts/build-organic-trend-context.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/build-organic-trend-context.py | `057c0b55dbfbf733759f40d86a27c2c3e24e81b662b0b3f6296a74d232119090` |
+| `scripts/build-preview-context.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/build-preview-context.py | `8e8bcc82170d74e15cc81186a76b7a4679ccb4ef67be8c03814235ef9fe2eefa` |
+| `scripts/build-research-query.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/build-research-query.py | `32db9abbe7b2aada1304fd58a911c835e26c3ace1d7668e9bc43e66e88eddf45` |
+| `scripts/channel-footprint-model.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/channel-footprint-model.py | `ac3ceb355a203d829658f446e4d189135142db9b130060eb6f4284936e6535f9` |
+| `scripts/connection_identity.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/connection_identity.py | `32851ccf3431289e470cd83c5ec649515cafe374a589a38beae353e167e726b5` |
+| `scripts/creative-model.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/creative-model.py | `f18b0b1ee07b8bde0e73581df2689f8fafae2b65ebf7fed665994b49c82be8ba` |
+| `scripts/creative-selection.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/creative-selection.py | `957b294536ce0d545ef2cfeb62d06b7df7de5309377344c49db67eb2a28f32f6` |
+| `scripts/creative-semantics.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/creative-semantics.py | `794c5deb69fb4e4080d66241cb6b0f1bd022a7531c715b0fb90ca1ce63bf36e7` |
+| `scripts/creative-video.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/creative-video.py | `2d18c77614de38238179d8768c5294320c3c7b160d36651ceeed8747139c124d` |
+| `scripts/egbe_artifacts.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/egbe_artifacts.py | `292df7b2d1b0863d9bed85d166ba66e6798ebc66b90ec0a3c89d018102ddbe3a` |
+| `scripts/finalize-organic-trend-watch.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/finalize-organic-trend-watch.py | `7364ecc342a4dfabee9d4ba7156f24b67303a26865dbba80c8e1b6b8d667834a` |
+| `scripts/funnel-email-review.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/funnel-email-review.py | `d075f27b50e2a19dd4af5d9cac0635de383ee5dab13423df05ee028d7149473a` |
+| `scripts/funnel-model.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/funnel-model.py | `c6b2cd629ce44a8eace66e2624418f9d0c2921e78b74fd9213414d2dd40f6258` |
+| `scripts/funnel_features.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/funnel_features.py | `19f09cf26155bb6e847b992cfb95a02e7acb3dfb75d36859d070cc7eef60a955` |
+| `scripts/geography-comparison-contract.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/geography-comparison-contract.py | `edcf13b7a6e3a6ce983e57c315a7635b365ad8f8473c039069c585aaf48aaa30` |
+| `scripts/geography-comparison.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/geography-comparison.py | `187e2133755a0806bce05347df8e4f11f3dfce63d00bb917f9773fd8308399f7` |
+| `scripts/keyword-forecast.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/keyword-forecast.py | `dc2a628dbc1efed3140b00e102a2590d6ac78a6534feeacea961e0662a6a6fcc` |
+| `scripts/keyword-locale-publication.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/keyword-locale-publication.py | `c79a0d2a1b9e476fdc6da94900146d2d5b8046403f5ffafa428bc844de119f86` |
+| `scripts/lifecycle-start.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/lifecycle-start.py | `0d802309c1cdf712876d475d31e141796915a5e142ac951b620a7696e325ea76` |
+| `scripts/persist-research-report.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/persist-research-report.py | `bac564afe806903a9ee7e60c6ab04ae76a4b4cbe47814177821d9d26618184be` |
+| `scripts/research-artifact-io.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research-artifact-io.py | `e46571d81843ccccf1e334cbf332ee4a623bbf6d1099e5bd4505ca1ba76d58a8` |
+| `scripts/research-evidence.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research-evidence.py | `3711c2764a797f25d584fb70b7f9698100023dbea5d8376c9ca9cfe211d77af3` |
+| `scripts/research-policy.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research-policy.py | `a8759cc8c060018ff4883fb5bdce9087f13eed4a4e842cb7be2fa059d739d8a9` |
+| `scripts/research-section-runtime.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research-section-runtime.py | `adee175ab857213535aa0bb5a238b23f056d9be1ed9964371e2bd876a14cafd8` |
+| `scripts/research-section-workflow.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research-section-workflow.py | `ac2dc4518b4a3d69111ed6ed4021c8984f1294b7693873fdbb4e8e8742a3fcde` |
+| `scripts/research_integrity.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/research_integrity.py | `9b871afc4757b2ab040466e8db91d5f8d28df19e1f6df055168d5b72b1e29ec9` |
+| `scripts/review-research-completion.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/review-research-completion.py | `67d900dbb05083f3b69c309599894c2994dc215d80cacd3a080a76ddeca2770f` |
+| `scripts/run-acquisition-channels.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-acquisition-channels.py | `461e5b5ad73b25190190a66a302e4385a93cf6c38e924626628725310833ff0e` |
+| `scripts/run-channel-footprint.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-channel-footprint.py | `ad391c961c012b8d02d922b296ef974cdc8ba0f4f6d53396b13ec49634a11aed` |
+| `scripts/run-community-demand.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-community-demand.py | `d55bb8562f1e36faf39b724809e103204dd23735b6a8d09d8a851c03817f1670` |
+| `scripts/run-competitive-landscape.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-competitive-landscape.py | `a93d05331f2b7615aed44abc39761df59bab2ccfa379202368bc3e82c803cc3f` |
+| `scripts/run-competitor-ads.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-competitor-ads.py | `2a0b4afc2e1e09b1670a464ccfa7f9a416b4296e803b1611d54a2b1a026ffce3` |
+| `scripts/run-competitor-set.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-competitor-set.py | `0bbe162607e69d303657170cdece98cf2659c00b1aa02d83ae3a8a3bd3d4ccb1` |
+| `scripts/run-creative-patterns.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-creative-patterns.py | `58fb7d07a425cf30ad230fffc521eea12eaf2d1eb07099cad06e410e80208429` |
+| `scripts/run-demand-validation.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-demand-validation.py | `d6b26615946ad5686c2c1d02450af8af57ed18a213df7bcd703fbb2e14b240a2` |
+| `scripts/run-fleet-prior.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-fleet-prior.py | `af02f5999a81047457546c847df09c406460a176d6cc453dc42b344ed3c83bff` |
+| `scripts/run-funnel-teardown.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-funnel-teardown.py | `3e2f0dbc5699d2c0559b8e567b395de15cb6e0760f7e60994a0ed73d6948aec7` |
+| `scripts/run-keyword-economics.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-keyword-economics.py | `d9553f3acf7ea439ca8fcd79d1978eb66cad2f8fa6cacf465a3bc25d1eb3311b` |
+| `scripts/run-lifecycle-capture.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-lifecycle-capture.py | `f9f37e683f572a2e21d3150d60cea9523eb5b6e3ed4fe47704c5fbfb477f8fa2` |
+| `scripts/run-market-size-and-dynamics.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-market-size-and-dynamics.py | `9d2275f67d9ca5078d7bf5d7c7e93a88ebdd97bafcb757ee753bace6d99c3fd7` |
+| `scripts/run-os-research.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-os-research.py | `349b2162f33f83109caa695ed292b15adc87ab8385b5e306e5fc5c064a954b37` |
+| `scripts/run-pricing-and-monetization.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-pricing-and-monetization.py | `31dfb71c258e7d9e74e45c12a352462bd81afa0476ae8d8e47cb5734be3c04cb` |
+| `scripts/run-review-mining.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-review-mining.py | `61ce7f124a328ff91a5050862cd6c8b2a9fed1cc98e2a9451d7f4f57f1d8b4dd` |
+| `scripts/run-target-audience.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-target-audience.py | `e920015c4399d61ea427a1cd2080b97b70f135ef4388cb65fd1d82208f8ccb46` |
+| `scripts/run-unit-economics.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-unit-economics.py | `3af86ce4bb8c8926c8821ebd9e08b460c81128e926375fae8eb607e5bd6b9093` |
+| `scripts/run-value-proposition.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/run-value-proposition.py | `a4711e9de27025bee881019e7d3f14fbc2afead0887d82013f7999f1aaee0c25` |
+| `scripts/upsert-markdown-section.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/upsert-markdown-section.py | `2cfbe24385c7a085e0a1c50ca94418356cc6db3a85298d6dd9ff53c2c83eec76` |
+| `scripts/walk-funnels.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/walk-funnels.py | `c7f4668ae0aaa5a0a4137ff0871bb5f2d3e44b381dbe686273e084a6fd584876` |
+| `scripts/write-preview.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/write-preview.py | `f76ef20ceb660d5cf91111dd9f918ca3ed13e7ef7ad9addf488dffed0d343a41` |
+| `scripts/write-recommendations.py` | https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/scripts/write-recommendations.py | `677329daccca8985c690ffb9b08e744192469f1edcd14beb40574e4cefb71763` |

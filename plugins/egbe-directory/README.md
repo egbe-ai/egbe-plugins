@@ -71,11 +71,26 @@ these records. Ask Claude to turn session logging off at any time.
 The plugin itself downloads nothing, and setting up a project folder copies
 files that come with the plugin.
 
-Files that exceed the plugin directory's size limits are listed in their
-skill; Claude downloads one from Egbe only when a step needs it and checks its
-SHA-256:
+This plugin bundles each skill's instructions. A skill's scripts and code
+templates are listed in that skill with their SHA-256: in a project folder,
+Claude downloads one into `.egbe/skills/` from Egbe only when a step needs it and
+checks its digest before using it.
 
-- `egbe-os-design-landing-page/assets/scaffold/package-lock.json` from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json
+- `egbe-os-analytics`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-analytics/resources/
+- `egbe-os-apollo-lead-finder`: 13 files from https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/
+- `egbe-os-design-landing-page`: 21 files from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/
+- `egbe-os-instantly-campaign-launcher`: 22 files from https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/
+- `egbe-os-meta-ads`: 2 files from https://os.hz.egbe.dev/skills/egbe-os-meta-ads/resources/
+- `egbe-os-openai-ads`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-openai-ads/resources/
+- `egbe-os-organic-trend-watch`: 15 files from https://os.hz.egbe.dev/skills/egbe-os-organic-trend-watch/resources/
+- `egbe-os-payments`: 21 files from https://os.hz.egbe.dev/skills/egbe-os-payments/resources/
+- `egbe-os-playbook`: 7 files from https://os.hz.egbe.dev/skills/egbe-os-playbook/resources/
+- `egbe-os-product-auth`: 8 files from https://os.hz.egbe.dev/skills/egbe-os-product-auth/resources/
+- `egbe-os-product-build`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-product-build/resources/
+- `egbe-os-product-market-research`: 50 files from https://os.hz.egbe.dev/skills/egbe-os-product-market-research/resources/
+- `egbe-os-quiz-funnel`: 15 files from https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/
+- `egbe-os-reddit-ads`: 7 files from https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/
+- `egbe-os-report-ui`: 4 files from https://os.hz.egbe.dev/skills/egbe-os-report-ui/resources/
 
 ## Support
 
