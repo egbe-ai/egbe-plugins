@@ -1,0 +1,11 @@
+.git
+.gitignore
+.next
+node_modules
+coverage
+build
+out
+.env*
+*.log
+Dockerfile*
+/egbe-docs/

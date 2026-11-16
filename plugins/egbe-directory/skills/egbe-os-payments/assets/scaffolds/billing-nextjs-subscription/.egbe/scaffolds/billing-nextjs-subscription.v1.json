@@ -1,0 +1,5 @@
+{
+  "id": "billing-nextjs-subscription.v1",
+  "requires_runtime_env": ["DATABASE_URL", "OS_URL", "OS_API_KEY", "EGBE_PAYMENT_WEBHOOK_SECRET"],
+  "webhook_path": "/api/payments/webhook"
+}

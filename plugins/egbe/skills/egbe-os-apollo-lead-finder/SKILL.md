@@ -6,7 +6,6 @@ user-invocable: true
 argument-hint: "[find-leads --config <file> | search --titles <t> | enrich --input <file> | places-leads --queries <q;q>] --output <leads.json>"
 metadata:
   egbe-when: "Use for contact discovery, Apollo enrichment, or Places website sourcing."
-  openclaw: {"emoji":"🔍","requires":{"bins":["node"],"env":["OS_URL","OS_API_KEY"],"os":["linux","darwin"]},"primaryEnv":"OS_URL"}
   egbe-visible: "true"
   egbe-title: "Lead discovery"
   egbe-description: "Search business contacts and return source status, enrichment progress and contact candidates."

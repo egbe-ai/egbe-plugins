@@ -1,0 +1,87 @@
+{
+  "name": "reddit-post-style",
+  "description": "Mimics an organic Reddit post in dark mode. Highest native feel but highest policy risk. Always shows 'Promoted' label per Reddit ad disclosure policy.",
+  "canvas": { "width": 1080, "height": 1350 },
+  "universality": "MEDIUM",
+  "fields": {
+    "subredditInitial": {
+      "type": "string",
+      "maxChars": 1,
+      "required": true,
+      "description": "Uppercase letter for subreddit avatar circle (e.g. 'S', 'P')"
+    },
+    "subreddit": {
+      "type": "string",
+      "maxChars": 24,
+      "required": true,
+      "description": "Subreddit name with r/ prefix (e.g. 'r/startups')"
+    },
+    "author": {
+      "type": "string",
+      "maxChars": 24,
+      "required": true,
+      "description": "Username with u/ prefix (e.g. 'u/founder_anon')"
+    },
+    "timeAgo": {
+      "type": "string",
+      "maxChars": 5,
+      "required": true,
+      "description": "Time ago string (e.g. '3h', '1d', '2w')"
+    },
+    "title": {
+      "type": "string",
+      "maxLines": 3,
+      "maxChars": 140,
+      "required": true,
+      "accentSpan": "forbidden",
+      "description": "Post title — first-person, specific, sounds like an organic Reddit post. NOT an ad headline."
+    },
+    "body": {
+      "type": "string",
+      "maxLines": 4,
+      "maxChars": 280,
+      "required": true,
+      "accentSpan": "recommended",
+      "description": "Post body. Use <span class=\"accent\">outcome metric</span> on the key result. Write conversationally — stats, personal experience, specific claims."
+    },
+    "upvotes": {
+      "type": "string",
+      "maxChars": 6,
+      "required": true,
+      "description": "Upvote count (e.g. '847', '1.2k'). Keep realistic: 200-2000 range."
+    },
+    "comments": {
+      "type": "string",
+      "maxChars": 5,
+      "required": true,
+      "description": "Comment count (e.g. '234'). Keep realistic: 30-500 range."
+    },
+    "cta": {
+      "type": "string",
+      "maxChars": 18,
+      "required": true,
+      "description": "Verb-led CTA, 2-3 words. Good: 'Try It Free', 'See an Example'. Bad: 'Learn More', 'Click Here'."
+    },
+    "brand": {
+      "type": "string",
+      "maxChars": 20,
+      "required": false,
+      "description": "Brand name shown subtly below the post card"
+    }
+  },
+  "style": {
+    "accentColor": "#ff4500",
+    "description": "Default is Reddit orange (#ff4500). Override to product brand color. Themes avatar, upvote icon, accent spans, and CTA button."
+  },
+  "rendering": "Read template.html from this directory and replace {{placeholders}} with field values. Replace {{accentColor}} in the :root CSS variable. Use <span class=\"accent\">phrase</span> for accent-colored text in body. Do NOT generate HTML from scratch — the template contains exact Reddit post card layout, Promoted badge, and flex structure that must be preserved.",
+  "forbidden": [
+    "fake personas without disclosure — Promoted label is mandatory",
+    "marketing language in title or body — write like a real user",
+    "multiple accent spans — one on the outcome metric only",
+    "bright or gradient backgrounds — must match Reddit dark mode",
+    "unrealistic upvote/comment counts (keep under 5k/1k)",
+    "CTA inside the post card — it goes below in cta-row",
+    "additional UI elements not present in real Reddit posts",
+    "large logos or brand-heavy elements"
+  ]
+}

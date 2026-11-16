@@ -5,7 +5,6 @@ version: 1.3.4
 user-invocable: true
 metadata:
   egbe-when: "Use for Instantly campaign preparation, activation, replies, observation or recovery."
-  openclaw: {"requires":{"env":["OS_URL","OS_API_KEY"]},"primaryEnv":"OS_URL","emoji":"📬","os":["linux","darwin"]}
   egbe-visible: "true"
   egbe-title: "Email outreach"
   egbe-description: "Operate scoped email campaigns, imports, reply queues and factual campaign observations."

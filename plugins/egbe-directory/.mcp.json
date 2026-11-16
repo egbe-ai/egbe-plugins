@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "egbe": {
+      "type": "http",
+      "url": "https://os.hz.egbe.dev/mcp"
+    }
+  }
+}

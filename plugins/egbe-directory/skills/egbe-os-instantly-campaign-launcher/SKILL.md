@@ -1,0 +1,93 @@
+---
+name: egbe-os-instantly-campaign-launcher
+description: Prepare, explicitly activate, observe and recover project-owned Instantly email campaigns and reply queues; inspect assigned sender state.
+version: 1.3.4
+user-invocable: true
+metadata:
+  egbe-when: "Use for Instantly campaign preparation, activation, replies, observation or recovery."
+  egbe-visible: "true"
+  egbe-title: "Email outreach"
+  egbe-description: "Operate scoped email campaigns, imports, reply queues and factual campaign observations."
+  egbe-category: "Marketing & growth"
+---
+
+<!-- egbe-mcp-connection:v1 -->
+This skill comes with the Egbe plugin. If this project has its own installed copy
+of the skill, use that copy instead. Otherwise make every Egbe API call it
+describes with the Egbe connector: `egbe_read` for GET and `egbe_write` for POST,
+PUT, PATCH and DELETE (with `method`). Pass the API path (for example
+`/me/limits`), query parameters in `query` and the JSON body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
+`egbe-curl.py` and catalog update checks; the connection authenticates and
+identifies the request. Also pass the `business` that `egbe_setup` returned.
+Files this skill refers to are next to this `SKILL.md`, except any listed under
+"Files downloaded on demand".
+
+A step that needs a local project key or a bundled script, such as a git push or
+a local deploy command, needs a set-up project workspace. In a persistent
+project workspace that is not set up yet, set it up as the `egbe-setup` skill's
+project setup describes.
+Without such a workspace, or if it refuses, tell the founder that this step needs
+an agent with a set-up project folder, and continue with the rest of the work.
+
+If the connector's tools (`egbe_read` and the other `egbe_*` tools) are not
+available, the plugin's connector is not signed in on this Claude account. Tell
+the founder how to connect it, as the `egbe-setup` skill describes, rather than
+saying Egbe is unavailable.
+
+The connector's tools work even where this environment's shell cannot reach
+Egbe: their calls travel through Claude, not through the shell's network. A step
+that runs in the shell, such as a bundled script, a `git push` to Egbe's Git
+endpoint or a deploy upload, needs the shell to reach the Egbe host
+(`os.hz.egbe.dev`). If a proxy or allowlist refuses that request before Egbe
+answers, for example HTTP 403 on CONNECT or curl status `000`, follow the Claude
+network recovery in
+`egbe_skill(name="egbe-os-quickstart", resource="references/environment.md")`:
+the founder allows that host for Claude's code execution or continues in Claude
+Code on their own computer. Until the shell step succeeds, do not report the work
+as published: a Claude Artifact or a local preview is not an Egbe deployment.
+
+
+# Instantly campaign operations
+
+Use the operation the task calls for; preparing a campaign is not authorization
+to activate it, add recipients, reply, or install recurring jobs. Existing
+research, copy, lists and run state are valid inputs. This capability does not
+select a business goal or decide an outcome from reply rate.
+
+Requires Node 24+ (`node:sqlite`), `OS_URL` and `OS_API_KEY`. Use the project
+OS connection, not personal provider keys. Missing credentials are a blocker,
+not permission to send cold outreach through Mailu or a trust-domain mailbox.
+
+Read only the reference needed for the operation:
+
+- [Campaign operations](references/instantly-ops.md): preparation/activation,
+  sender selection and state, pagination, date-filtered reads, rendering, verification,
+  imports and safe cleanup.
+- [Reply handling](references/reply-handling.md): queue actions, confirmed
+  opt-outs, same-thread sends and uncertain-send recovery.
+- [Observation and scheduling](references/observation-and-scheduling.md):
+  factual metrics, configured protection, optional jobs and verification.
+- [Run state](references/run-state.md): executable configuration, artifacts,
+  identity, handoff and replenishment; includes the [spec scaffold](references/run-spec-template.json).
+
+For activation, readiness to continue, or protection recovery, read
+[configured protection](references/observation-and-scheduling.md#configured-operational-protection)
+to check what the bundled monitor supports and what its state actually proves.
+
+Keep the owning run under
+`egbe-docs/marketing/campaigns/instantly/<run_key>/`. Before continuing, read its
+manifest and state files and query the project `outreach.db`, next to the run
+directories, only through the read-only `scripts/outreach-report.js`
+([usage](references/observation-and-scheduling.md#collect-facts-for-one-run)).
+If it reports the database missing, say so; do not search the workspace or open
+SQLite with inline code. Bundled scripts treat missing history after sending as a
+blocker, not something to recreate. JSON checkpoints and queue
+files remain active state, not disposable duplicates. Use only the run's
+campaign IDs. Registry/gateway ownership is the tenant authority; local
+manifest/tags narrow the run and detect conflicts, but do not grant access.
+
+Commands return observations and operation evidence. Check readbacks and
+incomplete actions before reporting success. Preserve contacts/messages/state
+in the access-controlled project repository, credentials outside Git, and one
+active executor when transferring work. Keep the current plan and decisions in
+the existing project context, without a second preflight/log/lessons package.
