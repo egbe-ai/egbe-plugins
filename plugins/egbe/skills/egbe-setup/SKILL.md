@@ -21,7 +21,7 @@ instead.
 # Set up Egbe through this connection
 
 You are connected to the founder's Egbe project through MCP. If this result names
-a `business`, pass it to every later egbe_request, egbe_local_setup and
+a `business`, pass it to every later egbe_read, egbe_write, egbe_local_setup and
 egbe_complete_setup call.
 
 This setup runs from the Egbe plugin, which provides Egbe's skills in every
@@ -82,6 +82,6 @@ copies.
 
 For any later Egbe work, use its advertised `name` from the skills list with
 `egbe_skill` and perform
-its API steps with `egbe_request`. Connection alone does not authorize
+its API steps with `egbe_read` (GET) and `egbe_write` (other methods). Connection alone does not authorize
 development, publishing, spending, outreach or recurring work; ask the founder
 for the missing decision.

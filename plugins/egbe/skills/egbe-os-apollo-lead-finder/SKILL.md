@@ -16,9 +16,9 @@ metadata:
 <!-- egbe-mcp-connection:v1 -->
 This skill comes with the Egbe plugin. If this project has its own installed copy
 of the skill, use that copy instead. Otherwise make every Egbe API call it
-describes with the Egbe connector's `egbe_request` tool: pass the HTTP method,
-the API path (for example `/me/limits`), query parameters in `query` and the JSON
-body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
+describes with the Egbe connector: `egbe_read` for GET and `egbe_write` for POST,
+PUT, PATCH and DELETE (with `method`). Pass the API path (for example
+`/me/limits`), query parameters in `query` and the JSON body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
 `egbe-curl.py` and catalog update checks; the connection authenticates and
 identifies the request. Also pass the `business` that `egbe_setup` returned.
 Files this skill refers to are next to this `SKILL.md`, except any listed under
@@ -31,7 +31,7 @@ project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
 an agent with a set-up project folder, and continue with the rest of the work.
 
-If the connector's tools (`egbe_request` and the other `egbe_*` tools) are not
+If the connector's tools (`egbe_read` and the other `egbe_*` tools) are not
 available, the plugin's connector is not signed in on this Claude account. Tell
 the founder how to connect it, as the `egbe-setup` skill describes, rather than
 saying Egbe is unavailable.

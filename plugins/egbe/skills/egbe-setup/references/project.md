@@ -14,8 +14,8 @@ files that come with the plugin.
      [project files](#project-files) below describes, not through the catalog
      installation.
    - Where quickstart or its connection setup uses the installed request helper
-     (`egbe-curl.py`) or catalog helper (`sync-catalog.py`), use `egbe_request`
-     and `egbe_complete_setup`, passing `business`.
+     (`egbe-curl.py`) or catalog helper (`sync-catalog.py`), use `egbe_read`,
+     `egbe_write` and `egbe_complete_setup`, passing `business`.
 
 ## Project files
 
