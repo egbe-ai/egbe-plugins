@@ -23,9 +23,15 @@ Work from the project root. "This skill's folder" is the folder holding the
 `egbe-setup` skill's `SKILL.md`. Reuse what is already in place; ask the founder
 before replacing a file that differs.
 
+Use file tools to read and write files. Run each shell command on its own, with
+absolute paths: no `&&`, `;` or pipes, no `cd`, no shell variables, and never the
+key in a command. Claude Code then asks for fewer approvals, and a refused
+compound command does not stall setup.
+
 - **Credentials.** Save `OS_URL`, `OS_API_KEY` and this agent's connection ID in
   `.env.local` as quickstart's connection setup ("Save credentials and connection
-  identity") describes, keeping other entries. Give the file permissions 600.
+  identity") describes, keeping other entries. Write the file with the file
+  tools, then run `chmod 600 .env.local` as its own command.
 - **Private files.** Make sure `.gitignore` ignores `.env.local`. Unless
   `.gitignore` already ends with the lines below, append them; they keep private
   working files in `egbe-docs/` out of Git:
@@ -52,15 +58,17 @@ before replacing a file that differs.
 
 - **Playbooks.** Copy the files in the `egbe-os-playbook` skill's `playbooks/`
   folder (`../egbe-os-playbook/playbooks/` from this skill's folder) to the same
-  paths under `egbe-docs/playbooks/`, for example with
-  `rsync -a --ignore-existing <source>/ egbe-docs/playbooks/`. Add only files
+  paths under `egbe-docs/playbooks/` with one command,
+  `rsync -a --ignore-existing <source>/ egbe-docs/playbooks/`, where `<source>` is
+  that folder's absolute path. Add only files
   whose path does not exist yet; never replace or delete a project file, and
   report any file you could not add. These are the project's editable methods.
   Do not create `egbe-docs/playbooks-sync.json`: it records a finished method
   review, not delivery.
 - **Project guidance.** Copy `EGBE.md` from this skill's folder to the project
-  root as a regular file, for example with `rsync`, or by reading it and writing
-  the same text with file tools. Add this exact line to the root `CLAUDE.md`, keeping
+  root as a regular file: read it and write the same text with the file tools.
+  Claude Code treats its plugin folder as protected, so `cp` from there can be
+  refused. Add this exact line to the root `CLAUDE.md`, keeping
   existing instructions and reusing an equivalent entry:
   `Read and apply EGBE.md when working on this project.` Then read the whole
   `EGBE.md` once and use it for the rest of setup.

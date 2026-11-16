@@ -8,8 +8,10 @@ in to Egbe, and a session can't start that sign-in by itself. Tell the founder t
 one step that connects it, then to start a new conversation or session:
 
 - In claude.ai, the Claude app, Cowork and Claude Code cloud sessions: open
-  **Customize → Plugins → Egbe → Connectors**, select **Connect**, sign in to
-  Egbe and approve the business.
+  **Customize → Plugins → Egbe → Connectors** and select **Connect**. The first
+  time, Claude shows **Add custom connector**: keep its settings and select
+  **Add**. When the connector shows **Not connected**, select **Connect** again,
+  sign in to Egbe and approve the business.
 - In Claude Code on their computer: run `/mcp`, select `plugin:egbe:egbe` and
   authenticate.
 

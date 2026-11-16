@@ -7,8 +7,13 @@ web search and scraping, and an LLM, all billed to your Egbe wallet.
 
 ## Get started
 
-1. Install the plugin from Claude's plugin directory, or in Claude Code:
-   `claude plugin install egbe --marketplace egbe-ai/egbe-plugins`.
+1. Install the plugin:
+   - In Claude Code: `claude plugin install egbe --marketplace egbe-ai/egbe-plugins`.
+   - In claude.ai, the Claude app or Cowork: **Customize → Plugins → Add → Add
+     marketplace → Add from a repository**, enter `egbe-ai/egbe-plugins`,
+     select **Sync**, then **Add** on Egbe. To get updates automatically, grant
+     the Claude GitHub App access when Claude asks, then turn on **Sync
+     automatically**.
 2. Ask Claude to set up Egbe, or run `/egbe:egbe-setup` in Claude Code.
 3. Connect the plugin's Egbe connector once: sign in to Egbe, choose the
    business Claude may work on and approve the connection.
@@ -17,7 +22,9 @@ web search and scraping, and an LLM, all billed to your Egbe wallet.
      `plugin:egbe:egbe`.
    - In claude.ai, the Claude app, Cowork and Claude Code cloud sessions, adding
      the plugin doesn't sign you in: open **Customize → Plugins → Egbe →
-     Connectors** and select **Connect**, then start a new conversation.
+     Connectors** and select **Connect**. The first time, keep the settings in
+     **Add custom connector** and select **Add**, then select **Connect** again
+     to sign in. Start a new conversation afterwards.
 
 Claude's code execution in claude.ai, Cowork and cloud sessions may block other
 sites. Steps that run there and reach Egbe directly, such as publishing your app
