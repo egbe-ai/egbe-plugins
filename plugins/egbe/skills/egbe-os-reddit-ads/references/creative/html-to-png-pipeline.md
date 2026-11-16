@@ -15,7 +15,8 @@ intermediate HTML.
 
 The script:
 
-- finds a Chrome/Chromium binary;
+- finds a Chrome/Chromium binary on Linux or macOS (Chrome, Chromium, Canary,
+  Edge or Brave app bundles), or uses `CHROME_PATH` when set to an executable;
 - captures the exact requested dimensions;
 - validates the PNG dimensions with `file`;
 - fails non-zero when output size does not match.
@@ -73,6 +74,7 @@ creatives from the product app or arbitrary public URLs.
 
 ## If Local Capture Is Unavailable
 
-If the runtime has no usable Chrome/Chromium binary, report that rendering is
-blocked and preserve the source HTML. An unrendered template is not an uploadable
-image; do not silently substitute a text-only post.
+If the runtime has no usable Chrome/Chromium binary, the script lists every
+location it searched. Set `CHROME_PATH` to an installed browser executable, or
+report that rendering is blocked and preserve the source HTML. An unrendered
+template is not an uploadable image; do not silently substitute a text-only post.

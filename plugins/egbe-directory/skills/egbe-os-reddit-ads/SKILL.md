@@ -112,5 +112,5 @@ Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
 | `assets/static-banners/honest-breakdown/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/honest-breakdown/template.html | `add05a2330836e49b98f938706fbd6aed58c63c25ddeecad06d49b9b323be8c2` |
 | `assets/static-banners/question-hook/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/question-hook/template.html | `34a6fff76aff55a9eb23e8e2be082741133a1051f20a5743549233c7004f5d7a` |
 | `assets/static-banners/reddit-post-style/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/reddit-post-style/template.html | `2defc73f5047bebf570f03d4d66192050a159edca5c661f139a92b1d0bace138` |
-| `scripts/capture-ad.sh` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/capture-ad.sh | `c72f1e393519a2f9ea46891e9dc6fc3433f4cea2d1e65cd27ec376a0a6d19a02` |
+| `scripts/capture-ad.sh` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/capture-ad.sh | `6f95166e4b09e5744e403cae8b155f5dfe7d0233b7e9dd140ff10de6fdaf6f8b` |
 | `scripts/validate-reddit-artifacts.py` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/validate-reddit-artifacts.py | `d2c7917ae0d8e27da735114fbf604b0ebceac3ddc23254f75024af3aa07fc0c3` |
