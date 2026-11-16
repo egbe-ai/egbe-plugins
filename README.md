@@ -1,4 +1,4 @@
-# Egbe plugins for Claude
+# Egbe plugins for Claude and Gemini CLI
 
 This repository is the [Claude plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces)
 for **Egbe**, an AI co-founder's business stack. Its one plugin, [`egbe`](plugins/egbe),
@@ -25,6 +25,14 @@ There, and in Claude Code cloud sessions, adding the plugin doesn't sign you in:
 open **Customize → Plugins → Egbe → Connectors** and select **Connect**. The
 first time, keep the settings in **Add custom connector**, select **Add**, then
 **Connect** again to sign in. Start a new conversation afterwards.
+
+In Gemini CLI, this repository is also an extension:
+
+```sh
+gemini extensions install https://github.com/egbe-ai/egbe-plugins
+```
+
+Then ask Gemini to set up Egbe. The first time, run `/mcp auth egbe` to sign in.
 
 The plugin's [README](plugins/egbe/README.md) describes what it contains, what it
 sends where, and its optional, consent-based session logging.
