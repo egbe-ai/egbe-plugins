@@ -27,6 +27,23 @@ project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
 an agent with a set-up project folder, and continue with the rest of the work.
 
+If the connector's tools (`egbe_request` and the other `egbe_*` tools) are not
+available, the plugin's connector is not signed in on this Claude account. Tell
+the founder how to connect it, as the `egbe-setup` skill describes, rather than
+saying Egbe is unavailable.
+
+The connector's tools work even where this environment's shell cannot reach
+Egbe: their calls travel through Claude, not through the shell's network. A step
+that runs in the shell, such as a bundled script, a `git push` to Egbe's Git
+endpoint or a deploy upload, needs the shell to reach the Egbe host
+(`os.hz.egbe.dev`). If a proxy or allowlist refuses that request before Egbe
+answers, for example HTTP 403 on CONNECT or curl status `000`, follow the Claude
+network recovery in
+`egbe_skill(name="egbe-os-quickstart", resource="references/environment.md")`:
+the founder allows that host for Claude's code execution or continues in Claude
+Code on their own computer. Until the shell step succeeds, do not report the work
+as published: a Claude Artifact or a local preview is not an Egbe deployment.
+
 
 # LLM
 

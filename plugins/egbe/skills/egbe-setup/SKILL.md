@@ -3,6 +3,19 @@ name: egbe-setup
 description: Set up Egbe for the founder's business through the Egbe connector. Use when the founder asks to set up, connect or start using Egbe.
 ---
 
+**If the `egbe_*` tools are missing.** Installing the plugin doesn't sign Claude
+in to Egbe, and a session can't start that sign-in by itself. Tell the founder the
+one step that connects it, then to start a new conversation or session:
+
+- In claude.ai, the Claude app, Cowork and Claude Code cloud sessions: open
+  **Customize → Plugins → Egbe → Connectors**, select **Connect**, sign in to
+  Egbe and approve the business.
+- In Claude Code on their computer: run `/mcp`, select `plugin:egbe:egbe` and
+  authenticate.
+
+Don't call Egbe unavailable before this step, and don't reach Egbe from the shell
+instead.
+
 # Set up Egbe through this connection
 
 You are connected to the founder's Egbe project through MCP. If this result names

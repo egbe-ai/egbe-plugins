@@ -16,6 +16,10 @@ claude plugin install egbe --marketplace egbe-ai/egbe-plugins
 Then ask Claude to set up Egbe, or run `/egbe:egbe-setup`. You need an Egbe
 account; Claude opens Egbe's sign-in page the first time it uses Egbe.
 
+In claude.ai, the Claude app, Cowork and Claude Code cloud sessions, adding the
+plugin doesn't sign you in: open **Customize → Plugins → Egbe → Connectors**,
+select **Connect**, then start a new conversation.
+
 The plugin's [README](plugins/egbe/README.md) describes what it contains, what it
 sends where, and its optional, consent-based session logging.
 
