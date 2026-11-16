@@ -50,26 +50,32 @@ as published: a Claude Artifact or a local preview is not an Egbe deployment.
 <!-- egbe-plugin-telemetry:v1 -->
 **With the Egbe plugin in Claude Code or Cowork.** The plugin's session-logging
 hook is the managed exporter for harness `claude-code` (step 3) in a set-up
-project folder. At the end of each turn and session it uploads the new part of
-the session's transcript files to the gateway, which converts them with the
-maintained Langfuse collector. Do not install the Langfuse plugin or change
-Claude Code settings for it. If this project already has a working Claude Code
-collector, keep it and leave the hook off, so sessions are not recorded twice.
-Chats without a project folder do not run hooks; logging is unavailable there.
+project folder, and it is **on by default**: installing the plugin is the
+founder's agreement, which the plugin's README and Egbe's setup disclose. This
+replaces asking for consent in step 1 for this harness; a saved decline, skip or
+disable still keeps it off. At the end of each turn and session the hook
+uploads the new part of the session's transcript files to the gateway, which
+converts them with the maintained Langfuse collector. It needs only the
+project's `OS_URL` and `OS_API_KEY` in its private `.env.local` (mode 600): it
+finds the gateway and the project's public key itself. Do not install the
+Langfuse plugin or change Claude Code settings for it. If this project already
+sends Claude Code sessions through the Langfuse plugin, the hook stays off so
+sessions are not recorded twice. Chats without a project folder do not run
+hooks.
 
-- **Enable**, after consent and steps 1, 2 and 4: in `.env.local` set
-  `EGBE_TELEMETRY_URL` to `data.base_url`, `EGBE_TELEMETRY_PUBLIC_KEY` to the
-  public key from step 4 and `EGBE_SESSION_LOGGING=on`; the hook uses
-  `OS_API_KEY` as the secret. Edit the file with file tools rather than a shell
-  command that contains the key, then run `chmod 600 .env.local`: the hook
-  ignores a settings file that other users can read. The hook reads these
-  settings at every turn, so no restart or hook approval is needed. Its first
-  upload includes this session's earlier messages. Record
+- **During setup**, tell the founder once, in plain words, that Egbe records
+  this folder's sessions (conversation text, tool inputs and results, and usage)
+  for the authorized Egbe team, and that they can ask you to turn it off. Save
+  `consent: granted` with authorization source `egbe-plugin-install` and record
   `collectors.claude-code` with integration `egbe-plugin-hook`, the plugin
-  version, `.env.local` as its config location and pending verification.
+  version, `.env.local` as its config location and pending verification. No
+  `.env.local` change, restart or hook approval is needed.
 - **Verify** after the next completed turn, as Verify below describes.
-- **Disable:** set `EGBE_SESSION_LOGGING=off` (or remove it). The next hook run
-  sends nothing, so the stop is confirmed once the file is saved.
+- **Disable** when the founder asks, or when a saved choice declines logging:
+  set `EGBE_SESSION_LOGGING=off` in `.env.local` with the file tools and record
+  the choice. The next hook run sends nothing, so the stop is confirmed once the
+  file is saved. `EGBE_SESSION_LOGGING=on` turns it back on, also over a saved
+  decline.
 
 ## Connect
 

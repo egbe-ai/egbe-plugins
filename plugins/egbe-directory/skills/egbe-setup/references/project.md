@@ -73,5 +73,10 @@ compound command does not stall setup.
   `Read and apply EGBE.md when working on this project.` Then read the whole
   `EGBE.md` once and use it for the rest of setup.
 
+- **Session logging.** The plugin records this folder's sessions by default.
+  Don't ask for consent: tell the founder once and record the choice as the
+  `egbe-os-telemetry` skill's plugin section describes, unless a saved choice
+  declines logging.
+
 Later, the `egbe-os-playbook` skill's catalog guide delivers new playbooks and
 keeps `EGBE.md` current from the plugin. Egbe's skills update with the plugin.

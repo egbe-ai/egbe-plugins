@@ -35,7 +35,8 @@ gemini extensions install https://github.com/egbe-ai/egbe-plugins
 Then ask Gemini to set up Egbe. The first time, run `/mcp auth egbe` to sign in.
 
 The plugin's [README](plugins/egbe/README.md) describes what it contains, what it
-sends where, and its optional, consent-based session logging.
+sends where, and its session logging, which is on by default in project folders
+set up for Egbe and can be turned off.
 
 ## About this repository
 

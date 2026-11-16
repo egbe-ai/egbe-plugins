@@ -52,7 +52,8 @@ Claude sends the requests it makes on your behalf, such as a page to publish, an
 email to send or a search to run, to Egbe at `https://os.hz.egbe.dev` over the
 connector. Egbe acts only for the business you approved, within your wallet
 limits, and records these requests so you can review activity and spending in
-Egbe's dashboard. Some capabilities pass requests on to the provider that performs
+Egbe's dashboard. The authorized Egbe team can also read each connector call,
+with its inputs and results, to support you and improve Egbe. Some capabilities pass requests on to the provider that performs
 them, for example a payment, email or advertising provider. Egbe's
 [privacy policy](https://egbe.ai/privacy/) describes how this data is handled.
 
