@@ -59,12 +59,19 @@ A local branch such as `master`, uncommitted changes, a missing remote or absent
 Vercel/Netlify files are normal setup, not evidence Egbe deployment is blocked.
 Within the founder's existing publishing/deployment authorization:
 
-1. Inspect `git status`, the current branch and `git remote -v`. Preserve existing
-   history and remotes. Initialize Git only if absent. Read `/deploy/skill` for the
+1. Inspect `git status`, the current branch and remote names with `git remote`. Preserve existing
+   history and remotes. Do not print remote URLs or Git config: older remotes may
+   contain credentials. Initialize Git only if absent. Read `/deploy/skill` for the
    Dockerfile/build requirements; configure `.gitignore` and `.dockerignore` before
    staging so `.env.local`, credentials, dependencies and build output stay private.
 2. List repositories with `GET /git/repos`; reuse the intended repository or create
-   an empty private one with `POST /git/repos`. Check HTTP success before proceeding.
+   an empty private one with `POST /git/repos`. Paginate with `page` and `limit`
+   (1–50, default 50) until a page has fewer than `limit` items; match the exact
+   `owner`/`name` or `full_name`, not a substring. Check HTTP success before proceeding.
+   Both operations return clean metadata and `os_http_url`. This URL is available
+   for the authenticated account’s own namespace; it is null for collaborator-owned
+   repositories, whose issues remain accessible according to repository permissions.
+   Do not substitute a same-named repository from another owner.
 3. Check author and committer identities with `git var GIT_AUTHOR_IDENT` and
    `git var GIT_COMMITTER_IDENT`. If missing, choose identities approved for this
    project and save them with `git config --local user.name` / `user.email`.
@@ -82,10 +89,15 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
  -H 'Content-Type: application/json' \
   -d '{"name":"my-app","private":true}' \
   | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["os_http_url"])'
-# Repo creation retains a legacy secret push_url; print only os_http_url.
+# No Forgejo credentials or direct transport addresses are returned.
 
 # Add a dedicated remote without replacing an existing origin.
-git remote add egbe "$OS_URL/git/http/my-app.git"
+REMOTE="$OS_URL/git/http/my-app.git"
+# Replace all fetch and push targets on this dedicated remote. A legacy pushurl
+# otherwise overrides url and can silently push directly to Forgejo.
+git config --local --replace-all remote.egbe.url "$REMOTE"
+git config --local --replace-all remote.egbe.pushurl "$REMOTE"
+git config --local --replace-all remote.egbe.fetch '+refs/heads/*:refs/remotes/egbe/*'
 git var GIT_AUTHOR_IDENT
 git var GIT_COMMITTER_IDENT
 # Review git status/diff, stage intended source files, and commit before pushing.
@@ -99,7 +111,10 @@ unset OS_GIT_AUTH
 git rev-parse HEAD
 ```
 
-If the dedicated remote already exists, verify its URL instead of adding it again.
+For an existing project with a legacy Forgejo origin, select the same repository
+from the paginated list and use its OS URL on the dedicated `egbe` remote above.
+Keep `origin` unchanged; use `egbe` explicitly for push/fetch. Never expose a legacy
+URL while comparing remotes, and do not rotate keys or recreate the repository.
 Preserve the current branch name. For an intentional differently named remote
 branch use `HEAD:<approved-branch>`; do not overwrite unrelated history. On a
 rejected push, fetch and inspect the remote changes or publish a new branch.
@@ -125,16 +140,19 @@ The adapter supports discovery, upload-pack and receive-pack only; Git LFS and
 dumb HTTP are outside this transport. OS keys are valid here, not as direct
 Forgejo passwords.
 
-## Deprecated credential endpoint
+## One OS contract
 
-`GET /git/credentials` is marked deprecated in OpenAPI and returns
-`data.deprecation` with the OS HTTP remote template, authentication/scope and
-this skill's URL. For Git push/clone/fetch, use the OS-key transport above;
-do not fetch a Forgejo token or configure a credential-bearing remote.
-Legacy credential fields remain available for compatibility. Native Forgejo
-REST API operations such as issues/comments still need them until an OS API
-replacement exists; `/git/http` transports Git and cannot accept REST requests.
-Keep returned tokens and legacy authenticated URLs private.
+Repository management, issues and comments use the same OS API and authentication
+in REST and MCP. `GET /git/credentials` returns 410 and no credentials. Refresh
+this skill and use the OS operations; do not request a Forgejo token, construct
+a direct Forgejo URL or send the OS key to Forgejo. Internal credentials stay on
+the server. Existing repositories and saved remotes are not deleted or revoked.
+
+If a shell network policy blocks OS, follow quickstart’s environment recovery for
+`os.hz.egbe.dev` (or the configured OS host). Direct Forgejo access is not required
+and is not the recovery path. MCP can manage repositories/issues/comments, but
+cannot carry Git smart HTTP bytes; push still needs a configured workspace and
+shell access to OS.
 
 Escalate the actual redacted authorization/provisioning/network/build error,
 not missing configuration. A browser-only vault that cannot provide the OS key
@@ -144,5 +162,4 @@ transport does not resolve that constraint. Report that specific limitation.
 ## Product backlog
 
 To read or update issues in this project's repository, follow
-[Repository issues](references/issues.md). It uses these same project
-credentials and Forgejo's native API.
+[Repository issues](references/issues.md). It uses the same OS connection; no direct Forgejo access is needed.
