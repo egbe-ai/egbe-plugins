@@ -85,3 +85,7 @@ For any later Egbe work, use its advertised `name` from the skills list with
 its API steps with `egbe_read` (GET) and `egbe_write` (other methods). Connection alone does not authorize
 development, publishing, spending, outreach or recurring work; ask the founder
 for the missing decision.
+
+To start another business, call `egbe_create_business` with the name the founder
+chose, only when they ask for one or agree to it, then set it up with
+`egbe_setup` and the `business` it returns.
