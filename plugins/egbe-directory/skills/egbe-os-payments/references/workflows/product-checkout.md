@@ -62,8 +62,11 @@ Read before implementation:
    session. New implementations enable customer-entered promotion codes by
    default. Leave automatic discounts absent unless product billing
    configuration selects one through the discounts workflow.
-10. Only after validation succeeds, create the real session through
-    `POST /payments/checkout-sessions`. Reuse the same validated price, mode,
+10. Only after validation succeeds (`data.valid` is true), create the real
+    session through `POST /payments/checkout-sessions`. In this ordinary
+    customer flow the validation response carries no `validation_receipt`, so
+    never require one before creating the session; see
+    [Validate-only contract](#validate-only-contract). Reuse the same validated price, mode,
     owned `customer` or server-bound `customer_email`, stable account
     or order `client_reference_id`, app slug, webhook
     path, same-origin return URLs, first-touch attribution, and the persisted
@@ -158,6 +161,13 @@ Egbe OS responses use the same envelope:
   }
 }
 ```
+
+Egbe OS issues `validation_receipt` only when the request carries both probe
+headers. A normal customer request sends neither header, and its validation
+response is `data.valid: true` with no receipt. Apply the receipt check below
+only inside the validate-only branch; requiring a receipt in the ordinary flow
+makes every real purchase fail with a validation error before Stripe is reached,
+while validate-only probes still pass.
 
 Read provider fields from the decoded envelope's `data`, not from the top-level
 envelope. If the HTTP client itself wraps the decoded body in `response.data`,
