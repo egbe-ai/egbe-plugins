@@ -247,12 +247,6 @@ function markdownLinksToText(body) {
   });
 }
 
-// The first link (bare URL or markdown) in a plain-text body, or null.
-function firstLink(body) {
-  const text = String(body || "");
-  return (text.match(BARE_URL) || text.match(MARKDOWN_LINK) || [null])[0];
-}
-
 // Hosts (without `www.`) of every link in a plain-text body.
 function linkHosts(body) {
   const urls = [];
@@ -268,6 +262,5 @@ module.exports = {
   addUtmTags,
   plainToHtmlBody,
   markdownLinksToText,
-  firstLink,
   linkHosts,
 };

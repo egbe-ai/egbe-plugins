@@ -118,7 +118,7 @@ Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
 | `scripts/lib/create-once.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/create-once.js | `f8e69155643c3a2ff11b528081fea40ed4b10d5129041766667a7084711d78b8` |
 | `scripts/lib/gtm-identity.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/gtm-identity.js | `787587835b2e744dbafefeff4a333425bcf355cb7e758ecba23a808d2cba7692` |
 | `scripts/lib/helpers.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/helpers.js | `5ad78af4112e8cb7d1a7a9f98b08ba6152b4b87a457d72201c55b4f7de06de5a` |
-| `scripts/lib/html-body.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/html-body.js | `1da5c6a50f420fd2fa83bff97381d5bb1eebf93bc2945cdb9aaa125187ad2d2a` |
+| `scripts/lib/html-body.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/html-body.js | `8ffbe8c1f697358e45e69a7c0798cf650404d1a19501c09efaf65a6c309d3139` |
 | `scripts/lib/instantly-client.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/instantly-client.js | `32f3048a770057c280dc2ccde22c4ae37a48f506c82d42affd7e5e923f513e8b` |
 | `scripts/lib/outreach-db.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/outreach-db.js | `fe2ebc2af7c967a0fa726ee7d9cb5387129ea978ca1e7758bd18afbbcf0483b8` |
 | `scripts/lib/recipient-exclusion/index.js` | https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/scripts/lib/recipient-exclusion/index.js | `a0c236996f6089d9c62a54b580709f4c02e811749ebacea45cc468925a6819dc` |
