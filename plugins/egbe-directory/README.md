@@ -8,7 +8,8 @@ web search and scraping, and an LLM, all billed to your Egbe wallet.
 ## Get started
 
 1. Install the plugin:
-   - In Claude Code: `claude plugin install egbe --marketplace egbe-ai/egbe-plugins`.
+   - In Claude Code 2.0.20 or later: `claude plugin marketplace add
+     egbe-ai/egbe-plugins`, then `claude plugin install egbe@egbe`.
    - In claude.ai, the Claude app or Cowork: **Customize → Plugins → Add → Add
      marketplace → Add from a repository**, enter `egbe-ai/egbe-plugins`,
      select **Sync**, then **Add** on Egbe. To get updates automatically, grant

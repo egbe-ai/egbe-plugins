@@ -7,10 +7,12 @@ analytics, payments, advertising, research, search and an LLM.
 
 ## Install
 
-In Claude Code:
+In Claude Code 2.0.20 or later (run `claude update` first if `claude plugin
+install` isn't found):
 
 ```sh
-claude plugin install egbe --marketplace egbe-ai/egbe-plugins
+claude plugin marketplace add egbe-ai/egbe-plugins
+claude plugin install egbe@egbe
 ```
 
 Then ask Claude to set up Egbe, or run `/egbe:egbe-setup`. You need an Egbe
