@@ -16,5 +16,9 @@
    cutoffs; do not promise verbatim full capture or increase preview limits as
    a substitute for verifying it.
 4. Restart the active runtime after common setup, then verify delivery through
-   Egbe. If only the plugin's local SQLite store changes, check the configured
+   Egbe. For a messaging gateway in a Slack thread, ask the founder to send
+   `!restart` in that thread; Slack does not deliver native slash commands such
+   as `/restart` in threads, so those must be sent outside the thread
+   ([Hermes Slack guide](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack)).
+   If only the plugin's local SQLite store changes, check the configured
    backend and active profile; local records are not proof of remote delivery.
