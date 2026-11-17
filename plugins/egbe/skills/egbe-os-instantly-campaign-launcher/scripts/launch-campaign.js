@@ -5,6 +5,7 @@ const path = require("path");
 const { InstantlyClient } = require("./lib/instantly-client");
 const { leadsNotInCampaign } = require("./lib/create-once");
 const { selectSenders } = require("./lib/sender-selection");
+const { plainToHtmlBody } = require("./lib/html-body");
 const { validateLaunchConfig, initialBatchLimit } = require("./lib/run-config");
 const { readOptOutHistory, filterConfirmedOptOuts, campaignSafetyReadback, stopConfirmedRecipient } = require("./lib/confirmed-opt-outs");
 const {
@@ -679,134 +680,6 @@ function buildCampaignName(spec) {
     "Offer",
   );
   return `${product} | ${segment} | ${offer} | ${datePart}`;
-}
-
-function escapeHtml(s) {
-  // Escape `"` and `'` too — bodies are wrapped in `<a href="...">` and could
-  // otherwise be embedded in attribute context, where unescaped quotes break
-  // out of the attribute and form a tiny XSS vector if a lead-supplied token
-  // ever ends up rendered server-side. Cheap to escape, no downside.
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-// Append UTM tracking params to a URL so traffic from cold-email lands as
-// (source=instantly, medium=email, campaign=<run_key>) in product analytics.
-// per-run attribution including purchase signals via Stripe metadata.
-//   - `utm_source=instantly`        — distinguishes cold email from organic / Reddit / ads
-//   - `utm_medium=email`            — canonical medium for outbound email
-//   - `utm_campaign=<run_key>`      — distinguishes runs of the same product
-// Existing UTM values are replaced so live URLs match the immutable binding
-// persisted in manifest.json and conclusion.json.
-function addUtmTags(url, runKey) {
-  if (!runKey || typeof url !== "string") return url;
-  try {
-    const parsed = new URL(url);
-    parsed.searchParams.set("utm_source", "instantly");
-    parsed.searchParams.set("utm_medium", "email");
-    parsed.searchParams.set("utm_campaign", runKey);
-    return parsed.toString();
-  } catch {
-    const hashIndex = url.indexOf("#");
-    const base = hashIndex >= 0 ? url.slice(0, hashIndex) : url;
-    const fragment = hashIndex >= 0 ? url.slice(hashIndex) : "";
-    const sep = base.includes("?") ? "&" : "?";
-    return `${base}${sep}utm_source=instantly&utm_medium=email&utm_campaign=${encodeURIComponent(runKey)}${fragment}`;
-  }
-}
-
-/**
- * Auto-convert a plain-text body (with `\n\n` paragraph breaks and bare URLs)
- * into HTML so Instantly delivers consistent rendering across email clients.
- *
- * Rules (Instantly editor-native markup — the CREATE endpoint rewrites
- * `<p>` blocks into margin-less `<div>`s, collapsing paragraph spacing in
- * the delivered mail, while PATCH keeps `<p>` verbatim; emitting the editor's
- * own format renders identically on both API paths):
- *   - every line → its own `<div>...</div>`
- *   - `\n\n` (blank line) → explicit `<div><br /></div>` separator
- *   - markdown links `[anchor](url)` → `<a href="url+UTMs">anchor</a>` so
- *     marketologist controls the visible CTA wording per product
- *     (e.g. `[try Rolloo free](https://rolloo.app/)`)
- *   - bare http(s):// URLs → `<a href="url+UTMs">url</a>` (display = clean URL,
- *     UTMs hidden in href so the email body stays human-looking)
- *   - merge tokens like `{{firstName}}` are preserved intact (HTML-safe by
- *     virtue of escaping happening before token substitution on Instantly's
- *     side; we never escape the braces themselves).
- *
- * Idempotent: if the body already contains HTML, preserve its markup while
- * reconciling HTTP(S) anchor hrefs to the canonical UTM tuple.
- */
-function plainToHtmlBody(body, runKey) {
-  if (typeof body !== "string" || !body.trim()) return body;
-  // Detect any HTML tag, not just the original short list — `<strong>`, `<em>`,
-  // `<ul>`/`<ol>`/`<li>`, `<h1>..<h6>`, `<blockquote>` etc. all signal that the
-  // body was authored as HTML on purpose. Pre-fix this regex only matched the
-  // original 6 tags and silently re-wrapped richer HTML in extra `<p>`/`<br>`,
-  // which double-escaped the body on send.
-  if (/<\s*\/?\s*[a-zA-Z][\w-]*(\s|\/?\s*>)/.test(body)) {
-    return body.replace(
-      /(<a\b[^>]*\bhref\s*=\s*)(["'])(https?:\/\/[^"']+)\2/gi,
-      (_, prefix, quote, url) =>
-        `${prefix}${quote}${addUtmTags(url, runKey)}${quote}`,
-    );
-  }
-
-  // Two-pass extraction so escapeHtml doesn't corrupt the link markup.
-  // Pass 1: pull markdown links out of body, replace with sentinels we can
-  //         reinsert AFTER escapeHtml runs (so the anchor + href bypass
-  //         escaping). Sentinel uses a private-use Unicode char so no
-  //         possible body content collides.
-  const linkRegistry = [];
-  const SENTINEL_OPEN = "OCLINK";
-  const SENTINEL_CLOSE = "OCLINK";
-  const withSentinels = body.replace(
-    /\[([^\]\n]+)\]\(([^)\s]+)\)/g,
-    (_, anchor, url) => {
-      const idx = linkRegistry.length;
-      linkRegistry.push({ url: addUtmTags(url, runKey), anchor });
-      return `${SENTINEL_OPEN}${idx}${SENTINEL_CLOSE}`;
-    },
-  );
-
-  // Pass 2: paragraphs + escapeHtml + raw-URL linkify (bare URLs stay
-  // displayed as the clean original URL but href carries UTMs).
-  const linkifyBare = (s) =>
-    s.replace(/(https?:\/\/[^\s<>"]+)/g, (url) => {
-      const utmUrl = addUtmTags(url, runKey);
-      // Don't double-escape — escapeHtml already ran on `s`. UTMs were added
-      // after escape so amp/equals stay safe in href context (they are
-      // URL-safe characters that don't need HTML escaping in href values).
-      return `<a href="${utmUrl}">${url}</a>`;
-    });
-
-  const lines = withSentinels
-    .replace(/^\n+/, "")
-    .replace(/\n+$/, "")
-    .replace(/\n{2,}/g, "\n\n")
-    .split("\n");
-  const rendered = lines
-    .map((line) => {
-      if (line.trim() === "") return "<div><br /></div>";
-      return `<div>${linkifyBare(escapeHtml(line))}</div>`;
-    })
-    .join("");
-
-  // Pass 3: substitute markdown-link sentinels back in. escapeHtml turned
-  // SENTINEL_OPEN/CLOSE into themselves (private-use chars are passthrough),
-  // so the regex still matches.
-  return rendered.replace(
-    new RegExp(`${SENTINEL_OPEN}(\\d+)${SENTINEL_CLOSE}`, "g"),
-    (_, idx) => {
-      const entry = linkRegistry[Number(idx)];
-      if (!entry) return "";
-      return `<a href="${entry.url}">${escapeHtml(entry.anchor)}</a>`;
-    },
-  );
 }
 
 // Map run-spec step semantics to Instantly's `delay` semantics:

@@ -106,3 +106,11 @@ Those marks are recovery assertions after evidence, not a way to force a resend.
 An opt-out cannot be marked while a send remains uncertain; resolve that state
 first. Keep the queue and DB together across handoff. Direct Unix cron only
 collects; it does not read messages, compose replies or make these decisions.
+
+## Reply formatting
+
+Write replies as plain text without markdown emphasis. Line breaks, blank lines
+and `- ` list lines are preserved in both text and HTML. Links may be bare URLs
+or `[text](https://...)`. Hosts linked from the campaign steps receive the run's
+UTMs in the link target, while the visible URL stays clean; other hosts remain
+unchanged. If the steps have no web links, reply links remain unchanged.

@@ -30,6 +30,11 @@ const {
   confirmOptOut,
 } = require("./lib/outreach-db");
 const { updateQueue } = require("./lib/reply-queue");
+const {
+  plainToHtmlBody,
+  markdownLinksToText,
+  linkHosts,
+} = require("./lib/html-body");
 const { readOptOutHistory, assertRecipientNotOptedOut, resolveCampaignRecipient,
   stopConfirmedRecipient } = require("./lib/confirmed-opt-outs");
 
@@ -74,6 +79,12 @@ async function main() {
   if (!manifest?.campaign?.id) throw new Error("Run manifest missing campaign ID");
   const campaignId = manifest.campaign.id;
   if (!mark || mark === "opt_out") readOptOutHistory(runDir);
+  // Validate reply attribution input before any queue write. Opt-outs and
+  // recovery marks must remain available even when the run spec is damaged.
+  const spec = !mark ? (
+    readJson(path.join(runDir, "run-spec.json")) ||
+    readJson(path.join(runDir, "state", "resolved-run-spec.json"), {})
+  ) : null;
   const dbPath = initDb(runDir);
   const at = isoNow();
   const record = (status) =>
@@ -161,6 +172,24 @@ async function main() {
     `campaign ${campaignId}`,
   );
 
+  // HTML as for the campaign steps: without it clients that show the HTML
+  // part run the reply into one paragraph, and its links carry no UTMs.
+  // - The reply is plain text even if it has a tag like <b>: escaped, one
+  //   <div> per line.
+  // - The run's UTMs go only on the product's links, i.e. the hosts the
+  //   campaign steps link to; a Calendly or LinkedIn link stays as written.
+  // - Steps without links leave the product unknown: then no link is
+  //   tagged (an extra query parameter can break a signed or third-party URL).
+  // Built before the claim, so a broken run-spec.json fails here instead of
+  // leaving the item "sending".
+  const productHosts = linkHosts(
+    (spec.sequence?.steps || []).map((step) => step.body || "").join("\n"),
+  );
+  const body = {
+    text: markdownLinksToText(text),
+    html: plainToHtmlBody(text, manifest.run_key, { plain: true, utmHosts: productHosts }),
+  };
+
   // Claim the item before calling the API. If this process dies after the
   // send, the item stays "sending" and no later run sends it again.
   const item = claim(runDir, emailId, campaignId, (it) => {
@@ -186,7 +215,7 @@ async function main() {
     reply_to_uuid: emailId,
     eaccount: item.eaccount,
     subject,
-    body: { text },
+    body,
   });
   if (res.status >= 400 && res.status < 500) {
     // Rejected by the API, so nothing was sent: back to the open queue.

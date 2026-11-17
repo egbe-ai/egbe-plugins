@@ -92,6 +92,11 @@ The launcher fingerprints rendered sequence plus senders. A changed fingerprint
 requires an intentional `--allow-sequence-update`; do not add this flag merely
 to silence drift on an existing campaign. Use supported rendering when updating:
 raw `{{senderName}}` in a provider patch is not a provider variable.
+Skill version 1.3.5 fixed step rendering for links followed by punctuation or
+`**`, `&` in a query, `mailto:`/`tel:` links, parentheses in a markdown URL,
+schemeless or relative markdown targets and `<...>` in plain text. Drift that
+comes only from those rendering fixes on a campaign prepared with an earlier
+version is an intended update: rerun with `--allow-sequence-update`.
 
 Create/import calls are not blindly replayed after uncertain outcomes. On a
 create timeout/5xx, inspect scoped campaign IDs and creation times before retrying.

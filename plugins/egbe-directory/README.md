@@ -80,7 +80,7 @@ checks its digest before using it.
 - `egbe-os-analytics`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-analytics/resources/
 - `egbe-os-apollo-lead-finder`: 13 files from https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder/resources/
 - `egbe-os-design-landing-page`: 21 files from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/
-- `egbe-os-instantly-campaign-launcher`: 22 files from https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/
+- `egbe-os-instantly-campaign-launcher`: 23 files from https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher/resources/
 - `egbe-os-meta-ads`: 2 files from https://os.hz.egbe.dev/skills/egbe-os-meta-ads/resources/
 - `egbe-os-openai-ads`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-openai-ads/resources/
 - `egbe-os-organic-trend-watch`: 15 files from https://os.hz.egbe.dev/skills/egbe-os-organic-trend-watch/resources/

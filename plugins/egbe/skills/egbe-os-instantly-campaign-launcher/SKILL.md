@@ -1,7 +1,7 @@
 ---
 name: egbe-os-instantly-campaign-launcher
 description: Prepare, explicitly activate, observe and recover project-owned Instantly email campaigns and reply queues; inspect assigned sender state.
-version: 1.3.4
+version: 1.3.5
 user-invocable: true
 metadata:
   egbe-when: "Use for Instantly campaign preparation, activation, replies, observation or recovery."
