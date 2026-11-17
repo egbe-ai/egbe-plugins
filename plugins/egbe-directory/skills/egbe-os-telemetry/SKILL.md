@@ -53,13 +53,31 @@ as published: a Claude Artifact or a local preview is not an Egbe deployment.
    `egbe-docs/telemetry/setup.json` and project notes **before any setup work**.
    A saved decline, skip or disable takes precedence over a pasted standard
    connection prompt, including its "enable session logging" and authorization
-   text. Keep logging off and return to product work without collector discovery,
-   configuration or installation. Reopen setup only on an explicit request to
-   reverse the previous choice; routine reruns and harness changes do not qualify.
+   text, and over the Egbe plugin's default logging. Keep logging off and return
+   to product work without collector discovery, configuration or installation.
+   Where the plugin's hook applies (below) and `setup.json` does not yet record
+   that choice, save it there as `declined` or `skipped`: the hook reads only
+   that file and `EGBE_SESSION_LOGGING`, not project notes.
+   Reopen setup only on an explicit request to reverse the previous choice;
+   routine reruns and harness changes do not qualify.
 
    Otherwise, reuse applicable permission from the standard prompt or a saved
    grant without asking again. The prompt authorizes conversation text, tool
    inputs/results and usage through Egbe for access by the authorized Egbe team.
+   The Egbe plugin's session-logging hook applies when the plugin's own copy of
+   this skill, whichever copy you follow, carries its route ("With the Egbe
+   plugin in Claude Code or Cowork" below the title; the plugin's directory build
+   has none) and this project folder is set up for Egbe with a private
+   `.env.local`. There,
+   installing the plugin is the applicable permission for harness `claude-code`
+   only, for the same scope, disclosed by its README and Egbe's setup. Do not
+   ask; during setup tell the founder once that Egbe records this folder's
+   sessions and that they can ask you to turn it off, then save authorization
+   source `egbe-plugin-install`. A saved grant from another source keeps its
+   source and scope; add the plugin's collector without overwriting them.
+   Another harness does not reuse an `egbe-plugin-install` grant; it needs its
+   own applicable permission. That hook is the managed exporter (step 3);
+   install no second collector for it.
    Without applicable permission, keep logging off and continue product work;
    silence is not consent. If an explicit logging request leaves its scope
    unresolved, ask only about the missing scope.
@@ -192,10 +210,11 @@ Langfuse-compatible tool is not necessarily a session collector.
 Version `egbe-docs/telemetry/setup.json` with the project. It has no secrets:
 `project_id`, `consent` (`granted`, `declined` or `skipped`), choice date,
 authorization source (for example, the setup request, not a copy containing its
-API key), optional consent scope, `environment`, optional historical `connection_id`,
-and `collectors` keyed by harness. Each collector records `enabled`, integration
-version/config locations and `verification` (`pending` or `verified`). When
-switching harnesses, retain existing entries and configure only the new one.
+API key, or `egbe-plugin-install` for the plugin's hook), optional consent scope,
+`environment`, optional historical `connection_id`, and `collectors` keyed by
+harness. Each collector records `enabled`, integration version/config locations
+and `verification` (`pending` or `verified`). When switching harnesses, retain
+existing entries and configure only the new one.
 After cloning or moving the project, verify the current machine's collector
 and config before treating a saved `verified` status as active here. Keep the
 recorded consent scope; installation elsewhere does not expand authorization.
