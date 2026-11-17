@@ -14,5 +14,5 @@ and an LLM.
   `egbe_setup` with the `business` it returns.
 - Never ask the founder for an Egbe API key; the connection is already
   authenticated. If the Egbe tools report that sign-in is needed, ask the
-  founder to run `/mcp auth egbe` and approve the business in the browser.
+  founder to run `/mcp auth egbe` and approve the connection in the browser.
 - When a call to Egbe fails, quote the result's `request_id` when reporting it.

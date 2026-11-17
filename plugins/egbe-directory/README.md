@@ -15,11 +15,14 @@ web search and scraping, and an LLM, all billed to your Egbe wallet.
      the Claude GitHub App access when Claude asks, then turn on **Sync
      automatically**.
 2. Ask Claude to set up Egbe, or run `/egbe:egbe-setup` in Claude Code.
-3. Connect the plugin's Egbe connector once: sign in to Egbe, choose the
-   business Claude may work on and approve the connection.
-   - In Claude Code on your computer, your browser opens Egbe's sign-in page
-     when Claude first uses Egbe; you can also run `/mcp` and authenticate
-     `plugin:egbe:egbe`.
+3. Connect the plugin's Egbe connector once: sign in to Egbe and approve the
+   connection. It covers all your Egbe businesses; in each conversation Claude
+   works on the business you name.
+   - In Claude Code on your computer, Claude opens Egbe's sign-in page in your
+     browser the first time it needs Egbe (Claude Code may ask you to allow
+     this) and also gives you the link. After you approve, the browser confirms
+     the sign-in and Claude continues in the same session. You can also run `/mcp` and
+     authenticate `plugin:egbe:egbe`.
    - In claude.ai, the Claude app, Cowork and Claude Code cloud sessions, adding
      the plugin doesn't sign you in: open **Customize → Plugins → Egbe →
      Connectors** and select **Connect**. The first time, keep the settings in

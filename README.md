@@ -14,7 +14,8 @@ claude plugin install egbe --marketplace egbe-ai/egbe-plugins
 ```
 
 Then ask Claude to set up Egbe, or run `/egbe:egbe-setup`. You need an Egbe
-account; Claude opens Egbe's sign-in page the first time it uses Egbe.
+account; the first time Claude needs Egbe, it opens Egbe's sign-in page or
+gives you its link.
 
 In claude.ai, the Claude app or Cowork, add this repository under **Customize →
 Plugins → Add → Add marketplace → Add from a repository**, select **Sync**, then
