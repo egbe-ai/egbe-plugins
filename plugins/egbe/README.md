@@ -77,9 +77,15 @@ and converts it into session records with the maintained
 Images and attachments are excluded from the records, and secrets are redacted on
 a best-effort basis. The authorized Egbe team can read these records. The hook
 sends nothing from a folder that is not set up for Egbe, never sends anywhere but
-that Egbe address, and plain chats do not run hooks. To stop, ask Claude to turn
-session logging off, or set `EGBE_SESSION_LOGGING=off` in the folder's
-Git-ignored `.env.local`.
+that Egbe address, and plain chats do not run hooks. Scheduled and other runs on
+your computer are recorded too: a Git worktree of the project and other copies
+of the project use the settings in the project's folder, which the plugin
+remembers (only its location) after it records a session there. Cloud
+scheduled tasks don't run the plugin from your computer, so they aren't
+recorded this way. To stop, ask Claude to turn session logging off, or set
+`EGBE_SESSION_LOGGING=off` in the project folder's Git-ignored `.env.local`;
+this also stops its worktrees and copies. Each run's result is listed in
+`last-run` in the plugin's data folder.
 
 ## What it downloads
 

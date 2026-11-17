@@ -107,6 +107,11 @@ the relevant domain capability for agreed work. Unchanged state
 should be quiet unless the founder requested a periodic digest. An inaccessible source
 is a coverage gap, not proof that the product is healthy.
 
+When the project's session logging is on, check that scheduled runs are logged
+like its other sessions, following the logging setup's verification. If the
+runner can't log them, for example in an environment without the project's
+logging settings, tell the founder that these runs aren't recorded.
+
 Verify that the task is registered with the intended project, schedule and action
 scope. Where feasible, run a read-only first check to confirm access and useful
 output. Report what is configured, what remains unverified and how to pause or

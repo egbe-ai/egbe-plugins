@@ -6,19 +6,74 @@
 # needs the project's Git-ignored, private .env.local with the project's Egbe
 # key, and stays off when that file says EGBE_SESSION_LOGGING=off, when the
 # project's saved choice declines logging, or when the project already sends
-# sessions through the Langfuse plugin. It uploads the new part of this
+# sessions through the Langfuse plugin. Sessions in a Git worktree of the project
+# use the main folder's settings; sessions in another copy of the project on this
+# machine, such as one a scheduled job runs in, use the settings of the project
+# folder the hook last logged in, while it still has them. It uploads the new part of this
 # session's transcript files to Egbe's telemetry gateway, authenticated with the
 # project's own key, and asks the gateway to record the new turns. It never
 # blocks or fails the session: work runs in the background, with short
-# timeouts, and any error leaves the rest for the next turn.
+# timeouts, and any error leaves the rest for the next turn. In a project set up
+# for Egbe, each run adds its result, never a secret, to last-run in the
+# plugin's data folder.
 
 umask 077
 project=${CLAUDE_PROJECT_DIR:-$PWD}
-env_file="$project/.env.local"
-[ -f "$env_file" ] || exit 0
+data="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/egbe}"
+home=$project
+
+note() {
+  [ -f "$home/egbe-docs/telemetry/setup.json" ] || [ -f "$home/.env.local" ] || return 0
+  mkdir -p "$data" 2>/dev/null || return 0
+  printf '%s %s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$project" "$1" >>"$data/last-run" 2>/dev/null
+  tail -n 50 "$data/last-run" >"$data/last-run.tmp" 2>/dev/null && mv "$data/last-run.tmp" "$data/last-run"
+}
+
+project_of() {
+  id=$(sed -n 's/.*"project_id"[[:space:]]*:[[:space:]]*\([1-9][0-9]*\).*/\1/p' "$1/egbe-docs/telemetry/setup.json" 2>/dev/null |
+    head -n 1)
+  case $id in ???????????????????*) ;; *) printf '%s' "$id" ;; esac
+}
+
+# Where this project's settings are: its own folder; the main folder of a Git
+# worktree (a desktop scheduled task or claude --worktree); or, for another copy
+# of the project on this machine, the project folder the hook last logged in,
+# while that folder still has its settings and names the same project. Only that
+# folder's path is remembered, never a key, so its settings and choices apply
+# to the copies as they are now.
+env_file="$home/.env.local"
+source=folder
+if [ ! -f "$env_file" ]; then
+  common=$(cd "$project" 2>/dev/null && git rev-parse --git-common-dir 2>/dev/null) &&
+    main=$(cd "$project" && cd "$common/.." && pwd -P) && [ -f "$main/.env.local" ] &&
+    { home=$main; env_file="$main/.env.local"; source=worktree; }
+fi
+project_id=$(project_of "$home")
+link=
+[ -n "$project_id" ] && link="$data/folders/$project_id"
+if [ ! -f "$env_file" ]; then
+  folder=$(sed -n 1p "$link" 2>/dev/null)
+  if [ -n "$folder" ] && [ "$folder" != "$home" ] && [ -f "$folder/.env.local" ] &&
+    [ "$(project_of "$folder")" = "$project_id" ]; then
+    home=$folder
+    env_file="$folder/.env.local"
+    source=copy
+  else
+    # The project's folder moved, lost its settings or names another project.
+    [ -n "$link" ] && rm -f "$link"
+    note "skipped: no .env.local here, in a main folder or in the project's folder"
+    exit 0
+  fi
+fi
+saved="$home/egbe-docs/telemetry/setup.json"
 # Only the project's private settings count: setup writes .env.local with mode
 # 600, while a copy that came with a cloned repository is readable by others.
-case $(ls -ln "$env_file" | cut -c5-10) in ------) ;; *) exit 0 ;; esac
+case $(ls -ln "$env_file" | cut -c5-10) in ------) ;; *) note "skipped: settings readable by others"; exit 0 ;; esac
+
+off() {
+  note "skipped: $1"
+  exit 0
+}
 
 setting() {
   sed -n "s/^[[:space:]]*\(export[[:space:]][[:space:]]*\)\{0,1\}$1=//p" "$env_file" | tail -n 1 |
@@ -30,8 +85,7 @@ case $choice in
   on) ;;
   '')
     # A choice saved before logging became the default still holds.
-    saved="$project/egbe-docs/telemetry/setup.json"
-    grep -Eqs '"consent"[[:space:]]*:[[:space:]]*"(declined|skipped)"' "$saved" && exit 0
+    grep -Eqs '"consent"[[:space:]]*:[[:space:]]*"(declined|skipped)"' "$saved" && off "logging declined"
     # So does a stop of only this harness's collector: its own "enabled": false
     # or "stop", whatever nested objects it also holds.
     [ -f "$saved" ] && awk '
@@ -52,13 +106,14 @@ case $choice in
           exit !(own ~ /"enabled"[ \t\r]*:[ \t\r]*false/ || own ~ /"stop"[ \t\r]*:/)
         }
         exit 1
-      }' "$saved" && exit 0
+      }' "$saved" && off "claude-code collector stopped"
     # The Langfuse plugin already records this project's sessions; don't send them twice.
-    grep -Eqs 'LANGFUSE_BASE_URL"[^,}]*/ingest/claude-code' "$project/.claude/settings.local.json" "$project/.claude/settings.json" && exit 0
+    grep -Eqs 'LANGFUSE_BASE_URL"[^,}]*/ingest/claude-code' "$home/.claude/settings.local.json" "$home/.claude/settings.json" &&
+      off "sessions go through the Langfuse plugin"
     ;;
-  *) exit 0 ;;
+  *) off "EGBE_SESSION_LOGGING=$choice" ;;
 esac
-command -v curl >/dev/null 2>&1 || exit 0
+command -v curl >/dev/null 2>&1 || { note "skipped: curl not found"; exit 0; }
 os_url=$(setting OS_URL)
 os_url=${os_url%/}
 os_key=$(setting OS_API_KEY)
@@ -75,15 +130,19 @@ esac
 # Sessions go only to Egbe's telemetry gateway, or a loopback gateway in tests.
 case $base in
   https://observe.hz.egbe.dev/* | http://127.0.0.1:[0-9]* | http://localhost:[0-9]*) base=${base%/} ;;
-  *) exit 0 ;;
+  *) note "skipped: no Egbe telemetry gateway in the settings"; exit 0 ;;
 esac
-case $base$os_url in *[!A-Za-z0-9:/._-]*) exit 0 ;; esac
-case $secret in '' | *[!A-Za-z0-9_-]*) exit 0 ;; esac
+case $base$os_url in *[!A-Za-z0-9:/._-]*) note "skipped: unexpected characters in a URL"; exit 0 ;; esac
+case $secret in '' | *[!A-Za-z0-9_-]*) note "skipped: no usable Egbe key"; exit 0 ;; esac
 # Without a saved public key, the project's own is found once with its Egbe key.
 if [ -z "$public" ]; then
-  [ -n "$os_url" ] && [ "$secret" = "$os_key" ] || exit 0
+  [ -n "$os_url" ] && [ "$secret" = "$os_key" ] || { note "skipped: no public key and no Egbe key to find it"; exit 0; }
 else
-  case $public in pk-lf-*[!A-Za-z0-9-]* | pk-lf-) exit 0 ;; pk-lf-*) ;; *) exit 0 ;; esac
+  case $public in
+    pk-lf-*[!A-Za-z0-9-]* | pk-lf-) note "skipped: unusable public key"; exit 0 ;;
+    pk-lf-*) ;;
+    *) note "skipped: unusable public key"; exit 0 ;;
+  esac
 fi
 
 payload=$(cat)
@@ -97,9 +156,8 @@ case $event in Stop | SessionEnd) ;; *) exit 0 ;; esac
 printf '%s\n' "$session" | grep -Eq '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' || exit 0
 [ -f "$transcript" ] || exit 0
 
-data="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/egbe}"
 state="$data/sessions/$session"
-known="$data/projects/$(printf '%s' "$project" | cksum | cut -d ' ' -f 1)"
+known="$data/projects/$(printf '%s' "$home" | cksum | cut -d ' ' -f 1)"
 url="$base/ingest/claude-code/sessions/$session"
 chunk_bytes=4194304
 
@@ -120,6 +178,15 @@ discover() {
   case $id in '' | ???????????????????*) return 1 ;; esac
   public="pk-lf-egbe-$id"
   mkdir -p "${known%/*}" && printf '%s\n' "$public" >"$known"
+}
+
+# Remembers this folder for other copies of the project on this machine, only
+# while its key belongs to the project its setup.json names.
+remember() {
+  [ "$source" = folder ] && [ -n "$link" ] && [ "$public" = "pk-lf-egbe-$project_id" ] || return 0
+  case $home in *'
+'*) return 0 ;; esac
+  mkdir -p "${link%/*}" && printf '%s\n' "$home" >"$link.tmp" && mv "$link.tmp" "$link"
 }
 
 upload() {
@@ -159,13 +226,22 @@ run() {
     waited=$((waited + 1))
   done
   deadline=$(($(date +%s) + 90))
-  discover || { rmdir "$lock"; return; }
+  discover || { rmdir "$lock"; note "$session: the project's key lookup failed"; return; }
+  # Another folder's key serves only the project this copy names.
+  if [ "$source" = copy ] && [ "$public" != "pk-lf-egbe-$project_id" ]; then
+    rmdir "$lock"; note "$session: skipped: the project folder's key belongs to another project"; return
+  fi
   changed=0
   before=$(cat "$state"/*.offset 2>/dev/null | cksum)
+  status=
   upload "$transcript" transcript.jsonl
-  # A rejected discovered key is found again next turn, for example after the
-  # folder was set up for another business.
-  [ "$status" = 401 ] && rm -f "$known"
+  case $status in
+    # A rejected discovered key is found again next turn, for example after the
+    # folder was set up for another business.
+    401) rm -f "$known"; note "$session: upload refused (HTTP 401)" ;;
+    '' | 200 | 409) remember ;;
+    *) note "$session: upload failed (HTTP $status)" ;;
+  esac
   dir=${transcript%.jsonl}
   if [ -d "$dir/subagents" ]; then
     find "$dir/subagents" -type f \( -name 'agent-*.jsonl' -o -name 'agent-*.meta.json' -o -name journal.jsonl \) |
@@ -174,6 +250,7 @@ run() {
   [ "$(cat "$state"/*.offset 2>/dev/null | cksum)" = "$before" ] || changed=1
   rm -f "$state/chunk"
   rmdir "$lock"
+  [ "$changed" = 1 ] && note "$session: sent ($source settings)"
   [ "$changed" = 1 ] || [ "$event" = SessionEnd ] || return
   # A busy gateway answers 429 or 503: ask again for a few minutes, so the
   # session's last turns are recorded even when no later turn follows.

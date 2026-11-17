@@ -70,11 +70,24 @@ hooks.
   `collectors.claude-code` with integration `egbe-plugin-hook`, the plugin
   version, `.env.local` as its config location and pending verification. No
   `.env.local` change, restart or hook approval is needed.
-- **Verify** after the next completed turn, as Verify below describes.
+- **Verify** after the next completed turn, as Verify below describes. The
+  hook also lists each run's result, never a secret, in `last-run` in the
+  plugin's data folder (`~/.claude/plugins/data/egbe-egbe/` in Claude Code).
+- **Scheduled and other runs.** The hook also logs runs on this computer outside
+  the project folder: a Git worktree of the project (a desktop scheduled task
+  or `claude --worktree`) uses the main folder's `.env.local`, and another copy
+  of the project, such as one a cron or launchd job runs `claude -p` in, uses
+  the `.env.local` of the project folder the hook last logged in; the hook
+  remembers only that folder's location. A job started outside a copy of the
+  project or with `--bare` is not logged. Cloud scheduled tasks and Cowork
+  don't run this hook from this computer: only Egbe's own record of the
+  connector's calls covers them. Tell the founder when a schedule you set up
+  runs where sessions aren't logged.
 - **Disable** when the founder asks, or when a saved choice declines logging:
-  set `EGBE_SESSION_LOGGING=off` in `.env.local` with the file tools and record
-  the choice. The next hook run sends nothing, so the stop is confirmed once the
-  file is saved. `EGBE_SESSION_LOGGING=on` turns it back on, also over a saved
+  set `EGBE_SESSION_LOGGING=off` in the project folder's `.env.local` with the
+  file tools and record the choice. The next hook run sends nothing, in the
+  folder, its worktrees and its copies, so the stop is confirmed once the file
+  is saved. `EGBE_SESSION_LOGGING=on` turns it back on, also over a saved
   decline.
 
 ## Connect
