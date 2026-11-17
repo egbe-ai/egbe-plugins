@@ -90,7 +90,7 @@ requested format.
 
 ## Keep project work together
 
-Store Egbe work in the product repository's `egbe-docs/`: current requirements
+Store Egbe work in the project workspace's `egbe-docs/`: current requirements
 and design in `product/`; editable methods in `playbooks/`; independent work in `research/<id>/`,
 `development/<id>/`, `audits/<id>/` and `reports/<id>/`; marketing in
 `marketing/plans/<id>/`, `marketing/packs/<id>/` and
@@ -104,9 +104,11 @@ beside its outputs; keep complete email campaigns, including contacts, messages,
 queues and history, in their campaign folders. Use a repository with appropriate
 access for these data. Shared settings are `egbe-docs/routines.json` and
 `egbe-docs/telemetry/setup.json`; recheck actual scheduler/collector installation
-when changing machines. Before handoff, check that project/global ignore rules
-do not hide required working files and sync through the project's normal Git
-workflow, without a nested docs repo.
+when changing machines. At session start and after a task that changes these files,
+run the installed quickstart's `scripts/sync-artifacts.py` with Python from the
+project root. Another agent connected to the same business can restore the files
+in a fresh workspace. For deletions, moves, read-only connections and conflicts,
+follow the quickstart's `references/artifact-sync.md`.
 
 Reserve Git-ignored `.local/` for credentials and machine/process-only state;
 ignore env secrets, locks and temporary files too. Exclude all `egbe-docs/` from
