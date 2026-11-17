@@ -33,7 +33,8 @@ workflow when adding lifecycle events; analytics is not defined here.
    [../security/webhook-and-entitlements.md](../security/webhook-and-entitlements.md)
    before calling any persistence, entitlement, revenue, or analytics helper.
    The no-side-effect boundary applies to imported helpers as well as
-   route-local code. Invalid, stale, and future signatures must return 4xx;
+   route-local code. Invalid signatures, and signatures timestamped more than
+   60 seconds in the future or older than five minutes, must return 4xx;
    replaying one simulated event id must be reported as a duplicate and remain
    side-effect free. No particular internal action name is required.
 7. Prove durable application and actual Product enforcement separately from

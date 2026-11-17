@@ -6,7 +6,8 @@ The webhook route must read the exact raw request body before JSON parsing.
 Verify `x-egbe-payment-signature` as HMAC-SHA256 over
 `<timestamp>.<raw-body>`, compare in constant time, and reject stale timestamps.
 Parse the comma-separated `t=<unix>,v1=<hex>` fields explicitly. Reject missing,
-duplicate, malformed, non-hex, future, and older-than-five-minutes signatures;
+duplicate, malformed and non-hex signatures, and signatures timestamped more than
+60 seconds in the future (clock-skew allowance) or older than five minutes;
 never compare the expected digest with the entire header string or sign only the
 raw body.
 
@@ -86,7 +87,8 @@ The simulated response contract is:
 }
 ```
 
-Invalid, stale, or future signatures return a 4xx response before the reducer.
+Invalid signatures, and signatures timestamped more than 60 seconds in the
+future or older than five minutes, return a 4xx response before the reducer.
 For a duplicate simulated event, return `duplicate: true`, report the bounded
 subscription state, and apply no side effects. Never trust a client-supplied
 transition.

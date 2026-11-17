@@ -75,3 +75,20 @@ test("signature verification rejects stale and invalid input", () => {
   assert.throws(() => verifyPaymentSignature(body, `t=${now - 301},v1=${digest}`, "secret", now), /Stale/);
   assert.throws(() => verifyPaymentSignature(body, `t=${now},v1=${"0".repeat(64)}`, "secret", now), /Invalid/);
 });
+
+test("signature verification allows 60 seconds of clock skew and five minutes of age", () => {
+  const now = 1_900_000_000;
+  const body = '{"id":"evt_clock_boundary"}';
+  const header = (offset, secret = "secret") => {
+    const timestamp = now + offset;
+    const digest = createHmac("sha256", secret).update(`${timestamp}.${body}`).digest("hex");
+    return `t=${timestamp},v1=${digest}`;
+  };
+  for (const offset of [-300, 0, 1, 60]) {
+    assert.equal(verifyPaymentSignature(body, header(offset), "secret", now), now + offset);
+    assert.throws(() => verifyPaymentSignature(body, header(offset, "other"), "secret", now), /Invalid/);
+  }
+  for (const offset of [-301, 61]) {
+    assert.throws(() => verifyPaymentSignature(body, header(offset), "secret", now), /Stale/);
+  }
+});
