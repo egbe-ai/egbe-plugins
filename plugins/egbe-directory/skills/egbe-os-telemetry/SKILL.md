@@ -139,17 +139,18 @@ published: a Claude Artifact or a local preview is not an Egbe deployment.
    silently replacing it.
 
    For new setup, lost settings or explicitly requested reconfiguration, use the
-   project's existing primary `OS_API_KEY` from its private OS configuration.
+   project's existing `OS_API_KEY` from its private OS configuration: the primary
+   key, or the workspace key that setup through the Egbe connector saved there.
    Verify the project ID through authenticated OS context, for example
-   `GET /me/limits`. Do not use a founder OAuth token, scoped/apps/eval key or
-   shared gateway token as the collector secret. Obtain the nonsecret base URL
+   `GET /me/limits`. Do not use a founder OAuth token, an apps/eval key, a scoped
+   key without the `telemetry` scope or a shared gateway token as the collector secret. Obtain the nonsecret base URL
    from `GET /telemetry` and retained environment/connection metadata from status.
    If status is unavailable, leave setup pending until that context can be checked.
    Use the retained environment when a legacy connection exists. Otherwise use
    production, or test for a designated test project. Select native values:
 
    - Public key: `pk-lf-egbe-<project_id>`; append `-test` for test environment.
-   - Secret key: the existing primary `OS_API_KEY`.
+   - Secret key: that existing `OS_API_KEY`. Revoking or rotating it stops delivery.
 
    There is no registration, new key issuance or fallback pair to request. A
    legacy `connection_id` is optional history, not a setup prerequisite. Reusing
@@ -276,5 +277,5 @@ For the whole project, record `consent: declined` immediately and shut down all
 recorded collectors, including other machines, through their native procedures.
 Keep each unavailable/unconfirmed stop pending and explain any remaining export
 risk. There is no server telemetry enable/disable switch or key-revocation call.
-Never revoke/delete the primary OS key just to stop logging. Stopping collection
+Never revoke/delete the project's OS key just to stop logging. Stopping collection
 does not delete existing Langfuse data; refer a deletion request to the Egbe team.

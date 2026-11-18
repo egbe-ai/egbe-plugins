@@ -91,5 +91,5 @@ connection, record `stop: pending` and keep the last confirmed enabled state.
 Tell the founder that previously loaded hooks may still export at `Stop` or
 `SessionEnd`, and provide the native reload/diagnosed restart step without
 claiming logging has stopped. For a whole-project consent withdrawal, follow the
-common stop procedure for every collector and retain pending shutdowns. Keep the primary OS key for ordinary
+common stop procedure for every collector and retain pending shutdowns. Keep the project's OS key for ordinary
 OS access; there is no remote telemetry kill switch.
