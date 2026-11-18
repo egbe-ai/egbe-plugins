@@ -37,13 +37,17 @@ gemini extensions install https://github.com/egbe-ai/egbe-plugins
 
 Then ask Gemini to set up Egbe. The first time, run `/mcp auth egbe` to sign in.
 
-In OpenClaw 2026.11.5 or later, this repository is also a native plugin:
+In OpenClaw 2026.11.5 or later, install the native Egbe plugin from
+[ClawHub](https://clawhub.ai/plugins/@egbe/openclaw):
 
 ```sh
-openclaw plugins install git:github.com/egbe-ai/egbe-plugins
+openclaw plugins install @egbe/openclaw
 ```
 
-OpenClaw warns that the source is outside ClawHub; confirm to continue. Then
+or send `/plugins install @egbe/openclaw` in a chat with OpenClaw. OpenClaw
+shows what the plugin can do and asks you to confirm it. This repository is the
+plugin's source too (`openclaw plugins install git:github.com/egbe-ai/egbe-plugins`
+installs the same plugin from here). Then
 sign in once: in OpenClaw's Control UI (`openclaw dashboard`), find the `egbe`
 MCP server under Settings, select **Sign in**, sign in to Egbe and approve the
 connection. When OpenClaw runs on a server without a browser, the plugin's

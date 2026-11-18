@@ -18,11 +18,11 @@
 //     `openclaw plugins reload egbe`;
 //   - ClawHub install (`openclaw plugins install @egbe/openclaw`): Gateway RPC
 //     `plugins.install` {source:"clawhub", packageName, version, mode:"update"},
-//     once the release JSON's `clawhub` entry says that version is published there.
+//     once ClawHub's public API reports that version as published.
 // A rejected or ineffective update is rolled back to the previous commit or version.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { loggingSettings, sendTurn, turnTraces } from "./session-log.js";
-import { execFile, spawn } from "node:child_process";
+import { execFile, execFileSync, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync, realpathSync } from "node:fs";
 import fs from "node:fs/promises";
@@ -34,6 +34,7 @@ const PLUGIN_ID = "egbe";
 const CLAWHUB_PACKAGE = "@egbe/openclaw";
 // The repository whose release commits ClawHub installs are verified against.
 const RELEASE_REPOSITORY = "https://github.com/egbe-ai/egbe-plugins.git";
+const CLAWHUB_API = "https://clawhub.ai/api/v1/packages";
 const DEFAULT_RELEASE_URL = "https://raw.githubusercontent.com/egbe-ai/egbe-plugins/main/openclaw-release.json";
 // OpenClaw imports a captured copy of the plugin (~/.openclaw/tmp/plugin-captures/...),
 // so this module's directory tells us which version is *running*; api.rootDir is
@@ -99,10 +100,26 @@ async function writeState(patch) {
   return next;
 }
 
-// Shared across captured module reloads in this process. A restarted container
-// may reuse our PID, but cannot possess a token held by the previous lifetime.
-const lockTokensKey = Symbol.for("egbe.openclaw.updateLockTokens");
-const heldLockTokens = globalThis[lockTokensKey] ??= new Set();
+// This process's lifetime as the operating system records it: module reloads in
+// the same process read the same value, while a restarted container that reuses
+// our PID does not, and clock changes don't move it. A lock from this PID and
+// lifetime is held (by this or a reloaded instance); one from an earlier lifetime
+// of the PID is abandoned. Without an OS record, a same-PID lock counts as held.
+function processLifetime() {
+  try {
+    // Linux: start time in clock ticks since boot (field 22), plus this boot's id.
+    const stat = readFileSync("/proc/self/stat", "utf8");
+    const fields = stat.slice(stat.lastIndexOf(")") + 2).split(" ");
+    return `${readFileSync("/proc/sys/kernel/random/boot_id", "utf8").trim()}:${fields[19]}`;
+  } catch {}
+  try {
+    return execFileSync("ps", ["-o", "lstart=", "-p", String(process.pid)], { encoding: "utf8", timeout: 5_000 }).trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+const PROCESS_LIFETIME = processLifetime();
+const sameLifetime = (owner) => PROCESS_LIFETIME === undefined || owner?.lifetime === PROCESS_LIFETIME;
 
 // Cross-process lock shared by the Gateway service and `openclaw egbe update`.
 async function withLock(fn) {
@@ -128,7 +145,9 @@ async function withLock(fn) {
       const owner = await readJsonState(lock);
       if (!Number.isInteger(owner?.pid) || owner.pid <= 0 || typeof owner.token !== "string") return busy();
       if (owner.pid === process.pid) {
-        if (heldLockTokens.has(owner.token)) return busy();
+        // Without an OS record of lifetimes, only a long-abandoned same-PID lock is recovered.
+        const stale = PROCESS_LIFETIME === undefined && Date.now() - (await fs.stat(lock)).mtimeMs > 30 * 60_000;
+        if (sameLifetime(owner) && !stale) return busy();
       } else {
         try {
           process.kill(owner.pid, 0);
@@ -150,18 +169,13 @@ async function withLock(fn) {
     }
   }
   const token = randomUUID();
-  heldLockTokens.add(token);
   try {
-    await handle.writeFile(JSON.stringify({ pid: process.pid, token }));
+    await handle.writeFile(JSON.stringify({ pid: process.pid, token, lifetime: PROCESS_LIFETIME }));
     return await fn();
   } finally {
-    try {
-      await handle.close();
-      const owner = await readJsonState(lock);
-      if (owner?.pid === process.pid && owner.token === token) await fs.rm(lock, { force: true });
-    } finally {
-      heldLockTokens.delete(token);
-    }
+    await handle.close();
+    const owner = await readJsonState(lock);
+    if (owner?.pid === process.pid && owner.token === token) await fs.rm(lock, { force: true });
   }
 }
 
@@ -212,10 +226,6 @@ async function fetchRelease(url) {
       throw new Error(`release.files entry is invalid: ${p}`);
     }
   }
-  if (rel.clawhub !== undefined &&
-      (rel.clawhub?.package !== CLAWHUB_PACKAGE || !/^\d+\.\d+\.\d+$/.test(String(rel.clawhub?.version)))) {
-    throw new Error("release.clawhub is invalid");
-  }
   return rel;
 }
 
@@ -229,6 +239,19 @@ function surfaceOf(manifest) {
   const out = {};
   for (const k of SURFACE_KEYS) if (manifest?.[k] !== undefined) out[k] = k === "mcpServers" ? Object.keys(manifest[k]).sort() : norm(manifest[k]);
   return JSON.stringify(out);
+}
+
+// Whether ClawHub has finished publishing `version` of the package; anything but
+// an explicit "published" (absent, pending, failed, unknown) is not.
+async function publishedOnClawHub(version) {
+  const res = await fetch(`${CLAWHUB_API}/${encodeURIComponent(CLAWHUB_PACKAGE)}/versions/${version}/publication`, {
+    redirect: "error",
+    signal: AbortSignal.timeout(15_000),
+    headers: { accept: "application/json", "user-agent": `egbe-openclaw/${LOADED_VERSION}` },
+  });
+  if (!res.ok) return false;
+  const body = await res.json().catch(() => ({}));
+  return body?.name === CLAWHUB_PACKAGE && body?.version === version && body?.state === "published";
 }
 
 // Where the plugin came from and how updates are applied to it.
@@ -452,7 +475,7 @@ async function checkForUpdate({ cfg, log, force = false, inGateway, followUp }) 
       if (!force && (st.badVersions ?? []).includes(rel.version)) return { status: "skipped", message: `${rel.version} failed before` };
       log.info(`[egbe] update available ${current} -> ${rel.version} (${rel.commit})`);
       const install = await describeInstall();
-      if (install.kind === "clawhub" && rel.clawhub?.version !== rel.version) {
+      if (install.kind === "clawhub" && !(await publishedOnClawHub(rel.version))) {
         // Published to the repository; ClawHub publication follows shortly.
         await writeState({ lastError: null, lastResult: `waiting for ${rel.version} on ClawHub` });
         return { status: "waiting", message: `${rel.version} is not on ClawHub yet` };
