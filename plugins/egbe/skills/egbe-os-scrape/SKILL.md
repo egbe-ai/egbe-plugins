@@ -17,6 +17,10 @@ PUT, PATCH and DELETE (with `method`). Pass the API path (for example
 `/me/limits`), query parameters in `query` and the JSON body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
 `egbe-curl.py` and catalog update checks; the connection authenticates and
 identifies the request. Also pass the `business` that `egbe_setup` returned.
+Where this skill sends an `Idempotency-Key` header, pass the same value as
+`idempotency_key` and reuse it when retrying. A result with a `continuation`
+holds one part of a long body; read the next part with `egbe_read`, the same
+`path` and `business`, and that `continuation`.
 Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
@@ -90,6 +94,9 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
 The simplest path: `sync` is true by default, so the call blocks and returns the
 scraped rows directly. Keep `limit` small to save credits, and always set the
 actor's own cap field (`maxResults`, `maxPagesPerQuery`, …) inside `input`.
+A synchronous run can wait up to about 5 minutes. Through the Egbe MCP
+connection, start any run that may take over a minute asynchronously (below),
+because the connector's client can stop waiting before a synchronous run returns.
 
 ```bash
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/scrape/apify/run" -s -X POST  \

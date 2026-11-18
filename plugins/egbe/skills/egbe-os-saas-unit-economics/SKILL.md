@@ -25,6 +25,10 @@ PUT, PATCH and DELETE (with `method`). Pass the API path (for example
 `/me/limits`), query parameters in `query` and the JSON body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
 `egbe-curl.py` and catalog update checks; the connection authenticates and
 identifies the request. Also pass the `business` that `egbe_setup` returned.
+Where this skill sends an `Idempotency-Key` header, pass the same value as
+`idempotency_key` and reuse it when retrying. A result with a `continuation`
+holds one part of a long body; read the next part with `egbe_read`, the same
+`path` and `business`, and that `continuation`.
 Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
