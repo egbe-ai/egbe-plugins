@@ -112,27 +112,35 @@ Never use creates to probe an API schema or broaden rejected targeting silently.
 `scripts/validate-reddit-artifacts.py` checks saved operation evidence locally;
 it is not authorization, a marketing validator or proof of live freshness.
 
-## Files downloaded on demand
+## Scripts and templates from Egbe
 
 This skill's scripts and code templates are not bundled with the Egbe plugin
-from Claude's directory. They need a persistent project workspace; without one,
-tell the founder that the step needs it and continue with the rest of the work.
+from Claude's directory. They need a persistent project folder set up for Egbe;
+without one, tell the founder that the step needs it and continue with the rest
+of the work.
 
-In a project workspace, before a step that runs or copies one of these files,
-download it into `.egbe/skills/egbe-os-reddit-ads/` at the same relative path, for example
-`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-reddit-ads/<file>`, and check that its SHA-256
-matches. Also download the files it uses from the same folder, such as the
-modules a script imports. Wherever this skill names one of these files by its
-path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-reddit-ads/<file>`;
-where it writes `<skills-directory>`, use `.egbe/skills`.
-Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+In a set-up project folder, before a step that runs or copies one of them, get
+this skill's whole bundle into `.egbe/skills/egbe-os-reddit-ads/` as
+`egbe_workspace_files(group="scripts")` describes: write that group's files,
+which include Egbe's request helper, then download this skill's listed archive,
+check its SHA-256 and extract it. Never download single files: scripts import
+their sibling files and some use other skills' bundles, which come the same way.
+When the `scripts` release changes, refresh the bundles already there.
 
-| File | URL | SHA-256 |
-| --- | --- | --- |
-| `assets/static-banners/bold-statement/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/bold-statement/template.html | `bb60b26c259ada4765c3c3e579ab52335970878b7e926f342aa05f7ab1156d87` |
-| `assets/static-banners/data-proof/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/data-proof/template.html | `4ff2b2dc8bcdca4e9feeecfaf554f7103cf48fdb509e2e137c8c5327bd3f0914` |
-| `assets/static-banners/honest-breakdown/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/honest-breakdown/template.html | `add05a2330836e49b98f938706fbd6aed58c63c25ddeecad06d49b9b323be8c2` |
-| `assets/static-banners/question-hook/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/question-hook/template.html | `34a6fff76aff55a9eb23e8e2be082741133a1051f20a5743549233c7004f5d7a` |
-| `assets/static-banners/reddit-post-style/template.html` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/assets/static-banners/reddit-post-style/template.html | `2defc73f5047bebf570f03d4d66192050a159edca5c661f139a92b1d0bace138` |
-| `scripts/capture-ad.sh` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/capture-ad.sh | `6f95166e4b09e5744e403cae8b155f5dfe7d0233b7e9dd140ff10de6fdaf6f8b` |
-| `scripts/validate-reddit-artifacts.py` | https://os.hz.egbe.dev/skills/egbe-os-reddit-ads/resources/scripts/validate-reddit-artifacts.py | `d2c7917ae0d8e27da735114fbf604b0ebceac3ddc23254f75024af3aa07fc0c3` |
+Wherever this skill names a file by its path in the skill (for example `scripts/...`
+or `assets/...`), use `.egbe/skills/egbe-os-reddit-ads/<file>`; where it writes `<skills-directory>`, use
+`.egbe/skills`. Run scripts from the project root with
+`OS_AGENT_NAME="<your agent name>"` set inline. Where this skill says a script needs
+`OS_URL` or `OS_API_KEY` in its environment, start it as
+`python3 .egbe/skills/egbe-os-quickstart/scripts/egbe-curl.py --egbe-run <command>`, which loads `.env.local` without
+executing it. Keep `.egbe/skills/` out of Git.
+
+Files in the bundle that this plugin leaves out:
+
+- `assets/static-banners/bold-statement/template.html`
+- `assets/static-banners/data-proof/template.html`
+- `assets/static-banners/honest-breakdown/template.html`
+- `assets/static-banners/question-hook/template.html`
+- `assets/static-banners/reddit-post-style/template.html`
+- `scripts/capture-ad.sh`
+- `scripts/validate-reddit-artifacts.py`

@@ -53,6 +53,17 @@ committing through the connector (`egbe-os-git`, "Without a terminal"). Until
 the shell step or that commit and its deploy succeed, do not report the work as
 published: a Claude Artifact or a local preview is not an Egbe deployment.
 
+Run a script bundled with this skill from the root of a project folder set up
+for Egbe, with `OS_AGENT_NAME="<your agent name>"` set inline, such as `Claude Code`.
+A script that calls Egbe reads `OS_URL`, `OS_API_KEY` and this agent's connection
+ID from `.env.local` through Egbe's request helper, which comes with the plugin at
+`../egbe-os-quickstart/scripts/egbe-curl.py` from this skill's folder. Where this
+skill says a script needs `OS_URL` or `OS_API_KEY` in its environment, start it
+through the helper, which loads `.env.local` without executing it:
+`python3 <helper> --egbe-run <command>`, with the helper's absolute path. Where
+this skill writes `<skills-directory>`, use the plugin's `skills` folder, which
+holds this skill's folder.
+
 
 # Analytics
 

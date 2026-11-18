@@ -104,41 +104,49 @@ back the diff and evidence. Keep useful page materials under
 `egbe-docs/product/pages/homepage/`, without a new spec for every small change.
 Report what was proved, remaining dependencies and where to review the result.
 
-## Files downloaded on demand
+## Scripts and templates from Egbe
 
 This skill's scripts and code templates are not bundled with the Egbe plugin
-from Claude's directory. They need a persistent project workspace; without one,
-tell the founder that the step needs it and continue with the rest of the work.
+from Claude's directory. They need a persistent project folder set up for Egbe;
+without one, tell the founder that the step needs it and continue with the rest
+of the work.
 
-In a project workspace, before a step that runs or copies one of these files,
-download it into `.egbe/skills/egbe-os-design-landing-page/` at the same relative path, for example
-`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-design-landing-page/<file>`, and check that its SHA-256
-matches. Also download the files it uses from the same folder, such as the
-modules a script imports. Wherever this skill names one of these files by its
-path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-design-landing-page/<file>`;
-where it writes `<skills-directory>`, use `.egbe/skills`.
-Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+In a set-up project folder, before a step that runs or copies one of them, get
+this skill's whole bundle into `.egbe/skills/egbe-os-design-landing-page/` as
+`egbe_workspace_files(group="scripts")` describes: write that group's files,
+which include Egbe's request helper, then download this skill's listed archive,
+check its SHA-256 and extract it. Never download single files: scripts import
+their sibling files and some use other skills' bundles, which come the same way.
+When the `scripts` release changes, refresh the bundles already there.
 
-| File | URL | SHA-256 |
-| --- | --- | --- |
-| `assets/scaffold/.dockerignore` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/.dockerignore | `9edf9c8ea71aa771fd9cda65a89dbfdeb24f678abb1552b9918bfa2b4b5632ab` |
-| `assets/scaffold/.gitignore` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/.gitignore | `71ad838817dea7f0923afd767de0eee8e5d76e967712dbbc3be01fbb27266427` |
-| `assets/scaffold/Dockerfile` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/Dockerfile | `bae7045848fb5167bb8ab2d8135e81f5aa2f0be465fcdb021b988efe2dae1726` |
-| `assets/scaffold/eslint.config.mjs` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/eslint.config.mjs | `870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493` |
-| `assets/scaffold/next.config.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/next.config.ts | `7b651c37a6222dc83e7b3612dd9853829664b6bb4ce3dd9af8b10ef78996b783` |
-| `assets/scaffold/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json | `ece42978c0f7ac05c03e3e49f556478e6f8ef35b2c701a346454f841372a3682` |
-| `assets/scaffold/package.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package.json | `afa3397944bf4e488b623ce5c4d2c6f9b39fb56aec0fe146adf2ec09fe996385` |
-| `assets/scaffold/postcss.config.mjs` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/postcss.config.mjs | `dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde` |
-| `assets/scaffold/public/.gitkeep` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/public/.gitkeep | `01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b` |
-| `assets/scaffold/sentry.edge.config.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/sentry.edge.config.ts | `060641f5e4fbd4fa380eef342b721f61a610b0e6056b0689008d6d88672ae8d8` |
-| `assets/scaffold/sentry.server.config.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/sentry.server.config.ts | `060641f5e4fbd4fa380eef342b721f61a610b0e6056b0689008d6d88672ae8d8` |
-| `assets/scaffold/src/app/global-error.tsx` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/app/global-error.tsx | `09e2d1f8f654d2f0c1a2116d23d0dee2f579df0b21e0a9e67d179763ec49cdf9` |
-| `assets/scaffold/src/app/globals.css` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/app/globals.css | `1dcbce69c95506d6ce8ba3c5412060ecc924aa025413817928df9f2f3365fa2b` |
-| `assets/scaffold/src/app/layout.tsx` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/app/layout.tsx | `6f25b8b9c4afe5b9aa39ae7d91ef9f03e5b3952024dc4358438596e9c86bd340` |
-| `assets/scaffold/src/app/page.tsx` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/app/page.tsx | `e5a02eaa1ad18daaf76c9a9968ff24333ec868d392c9af8fda983a9f9969be5f` |
-| `assets/scaffold/src/app/privacy/page.tsx` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/app/privacy/page.tsx | `f611d919ebf5aafb4478bfff21644f1834448206bdbc1f7d3922c98205b525b3` |
-| `assets/scaffold/src/components/egbe-analytics.tsx` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/components/egbe-analytics.tsx | `b7f28d15d174d65918d4715b9fb29b0e75fa58e315c1c7db8e1b96c5556ef8e2` |
-| `assets/scaffold/src/instrumentation-client.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/instrumentation-client.ts | `438276892c9516d311b68c8eab87a2f80f0d4b47377d1b2a6da2df3ed8b0f595` |
-| `assets/scaffold/src/instrumentation.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/instrumentation.ts | `4a351bb98c1ab7fed481670c78277c9321e014cb6d8aeaf73a6649d3611708df` |
-| `assets/scaffold/src/lib/egbe-observability.generated.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/lib/egbe-observability.generated.ts | `421aa422310a5a356ed02b16ea2251107e104d7d286d605043f45d06e416732b` |
-| `assets/scaffold/src/lib/utils.ts` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/src/lib/utils.ts | `7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d` |
+Wherever this skill names a file by its path in the skill (for example `scripts/...`
+or `assets/...`), use `.egbe/skills/egbe-os-design-landing-page/<file>`; where it writes `<skills-directory>`, use
+`.egbe/skills`. Run scripts from the project root with
+`OS_AGENT_NAME="<your agent name>"` set inline. Where this skill says a script needs
+`OS_URL` or `OS_API_KEY` in its environment, start it as
+`python3 .egbe/skills/egbe-os-quickstart/scripts/egbe-curl.py --egbe-run <command>`, which loads `.env.local` without
+executing it. Keep `.egbe/skills/` out of Git.
+
+Files in the bundle that this plugin leaves out:
+
+- `assets/scaffold/.dockerignore`
+- `assets/scaffold/.gitignore`
+- `assets/scaffold/Dockerfile`
+- `assets/scaffold/eslint.config.mjs`
+- `assets/scaffold/next.config.ts`
+- `assets/scaffold/package-lock.json`
+- `assets/scaffold/package.json`
+- `assets/scaffold/postcss.config.mjs`
+- `assets/scaffold/public/.gitkeep`
+- `assets/scaffold/sentry.edge.config.ts`
+- `assets/scaffold/sentry.server.config.ts`
+- `assets/scaffold/src/app/global-error.tsx`
+- `assets/scaffold/src/app/globals.css`
+- `assets/scaffold/src/app/layout.tsx`
+- `assets/scaffold/src/app/page.tsx`
+- `assets/scaffold/src/app/privacy/page.tsx`
+- `assets/scaffold/src/components/egbe-analytics.tsx`
+- `assets/scaffold/src/instrumentation-client.ts`
+- `assets/scaffold/src/instrumentation.ts`
+- `assets/scaffold/src/lib/egbe-observability.generated.ts`
+- `assets/scaffold/src/lib/utils.ts`

@@ -124,35 +124,43 @@ Keep the quiz folder with the product's source. Return what changed, validation
 performed, remaining gaps and the artifact or route the caller can inspect.
 Distinguish a local build, a released route and an observed real conversion.
 
-## Files downloaded on demand
+## Scripts and templates from Egbe
 
 This skill's scripts and code templates are not bundled with the Egbe plugin
-from Claude's directory. They need a persistent project workspace; without one,
-tell the founder that the step needs it and continue with the rest of the work.
+from Claude's directory. They need a persistent project folder set up for Egbe;
+without one, tell the founder that the step needs it and continue with the rest
+of the work.
 
-In a project workspace, before a step that runs or copies one of these files,
-download it into `.egbe/skills/egbe-os-quiz-funnel/` at the same relative path, for example
-`curl -fsSL <url> --create-dirs -o .egbe/skills/egbe-os-quiz-funnel/<file>`, and check that its SHA-256
-matches. Also download the files it uses from the same folder, such as the
-modules a script imports. Wherever this skill names one of these files by its
-path in the skill (for example `scripts/...` or `assets/...`), use `.egbe/skills/egbe-os-quiz-funnel/<file>`;
-where it writes `<skills-directory>`, use `.egbe/skills`.
-Keep `.egbe/skills/` out of Git by adding it to `.gitignore`.
+In a set-up project folder, before a step that runs or copies one of them, get
+this skill's whole bundle into `.egbe/skills/egbe-os-quiz-funnel/` as
+`egbe_workspace_files(group="scripts")` describes: write that group's files,
+which include Egbe's request helper, then download this skill's listed archive,
+check its SHA-256 and extract it. Never download single files: scripts import
+their sibling files and some use other skills' bundles, which come the same way.
+When the `scripts` release changes, refresh the bundles already there.
 
-| File | URL | SHA-256 |
-| --- | --- | --- |
-| `assets/engine/quiz-engine.d.mts` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-engine.d.mts | `426fb25b7cec91d72570a398987d2c7c284f96acadeb1ac1a377a83cd08325b6` |
-| `assets/engine/quiz-engine.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-engine.mjs | `ea898ed24ed95e81f98e8939bf9234f423d05ef9c4572be45f3b0a9aacf589ef` |
-| `assets/engine/quiz-engine.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-engine.test.mjs | `68f0b9a8b3781e4fa3659e814da2290857febb0d6db224ce42abfcdea9d76c8e` |
-| `assets/engine/quiz-history.d.mts` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-history.d.mts | `f0b08105cac6f973973b8caf8f06465cdd837739c03d26bca91c071236405ce9` |
-| `assets/engine/quiz-history.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-history.mjs | `f751218e891490bf5ba7665a3e5ff518c087bb4b529a74903c500289333f624b` |
-| `assets/engine/quiz-history.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-history.test.mjs | `c4d9eabf2d48ddddfa1848188970682afb86b97643c4e63ee3324171799cef35` |
-| `assets/engine/quiz-reference.test.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/engine/quiz-reference.test.mjs | `6daf3e33d46ac527970a57c6078987d0c8abdf06c759de1c01a06f0c61369d32` |
-| `assets/reference/index.html` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/index.html | `ca4f019c5ac1a115b173e02396e4953633db30965badc211de17dd8748d446ee` |
-| `assets/reference/quiz-bootstrap.js` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/quiz-bootstrap.js | `774722451dc76095084ade669c97ee06a646363cc133abb55f36111a01a849a6` |
-| `assets/reference/quiz-early-actions.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/quiz-early-actions.mjs | `3ae7433033fb2128ce9ef1d69c522cb1d723ec3b806e886be2371ad2a118d982` |
-| `assets/reference/quiz-first-screen.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/quiz-first-screen.mjs | `a1be9874f944d16381174532737338d90751dd519aab7ee8a50b300480758a3b` |
-| `assets/reference/quiz-page.mjs` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/quiz-page.mjs | `5807e2378bb2bae0a2fbc5cf71dc24d96f96325d8bef82480267d5c13ac9edef` |
-| `assets/reference/quiz.css` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/assets/reference/quiz.css | `db5a24036257c73abcd6653baba0fca75f80c3e529dfaa8da08934c1caf7edb7` |
-| `scripts/compile-quiz-spec.py` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/scripts/compile-quiz-spec.py | `02815107081b323b258e6bfd3b7e197f8ff0e388133d75936022c8164046aa6d` |
-| `scripts/prepare-research-identity.py` | https://os.hz.egbe.dev/skills/egbe-os-quiz-funnel/resources/scripts/prepare-research-identity.py | `e8405b1ff02878ee88182ecad327d97e067b0f2a08ed9676a80e103dc9bdb2d3` |
+Wherever this skill names a file by its path in the skill (for example `scripts/...`
+or `assets/...`), use `.egbe/skills/egbe-os-quiz-funnel/<file>`; where it writes `<skills-directory>`, use
+`.egbe/skills`. Run scripts from the project root with
+`OS_AGENT_NAME="<your agent name>"` set inline. Where this skill says a script needs
+`OS_URL` or `OS_API_KEY` in its environment, start it as
+`python3 .egbe/skills/egbe-os-quickstart/scripts/egbe-curl.py --egbe-run <command>`, which loads `.env.local` without
+executing it. Keep `.egbe/skills/` out of Git.
+
+Files in the bundle that this plugin leaves out:
+
+- `assets/engine/quiz-engine.d.mts`
+- `assets/engine/quiz-engine.mjs`
+- `assets/engine/quiz-engine.test.mjs`
+- `assets/engine/quiz-history.d.mts`
+- `assets/engine/quiz-history.mjs`
+- `assets/engine/quiz-history.test.mjs`
+- `assets/engine/quiz-reference.test.mjs`
+- `assets/reference/index.html`
+- `assets/reference/quiz-bootstrap.js`
+- `assets/reference/quiz-early-actions.mjs`
+- `assets/reference/quiz-first-screen.mjs`
+- `assets/reference/quiz-page.mjs`
+- `assets/reference/quiz.css`
+- `scripts/compile-quiz-spec.py`
+- `scripts/prepare-research-identity.py`

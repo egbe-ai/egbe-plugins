@@ -28,7 +28,8 @@ compound command does not stall setup.
 - **Credentials.** Save them as the instructions' credentials step describes:
   write `.env.local` with the file tools, then
   run `chmod 600 .env.local` as its own command.
-- **Private files.** Make sure `.gitignore` ignores `.env.local`. Unless
+- **Private files.** Make sure `.gitignore` ignores `.env.local` and `/.egbe/`,
+  where skill scripts downloaded from Egbe are kept. Unless
   `.gitignore` already ends with the lines below, append them; they keep private
   working files in `egbe-docs/` out of Git:
 
