@@ -210,8 +210,8 @@ deploy the returned SHA.
 The Docker build runs on Egbe, so dependencies install there (`npm ci` in the
 Dockerfile); commit `package-lock.json`, not `node_modules/`. A static site can
 be a Dockerfile that serves its files as a non-root user on 8080, for example
-from `nginxinc/nginx-unprivileged:alpine`. Use `"db": true` for a database. The Convex path needs a terminal with Node
-(`npx convex deploy`); without one, publish a Dockerfile app.
+from `nginxinc/nginx-unprivileged:alpine`. Use `"db": true` for a database. A
+Convex app needs no terminal either: see "Convex apps" below.
 
 ## Before you push or commit: .gitignore and .dockerignore
 
@@ -334,14 +334,80 @@ request to wake it, then retry.
 
 Redeploy by calling `POST /deploy` again with the same `slug`.
 
-### Business names with Convex
+## Convex apps
 
-When publishing through a managed Convex backend, include the same exact name
-in the optional JSON body of `POST /deploy/<slug>/convex`:
+A Convex app (Vite + React SPA with a self-hosted Convex backend) has no
+Dockerfile. Each business has one Convex backend; its site is served from
+`siteUrl` (and your `<name>.egbe.app` domain when attached).
 
-```json
-{"business_name":"FirstSignal"}
+### 1. Provision the backend
+
+`POST /deploy/<slug>/convex?async=true` returns `202` with a `jobId` at once
+(the `Prefer: respond-async` header does the same). Poll
+`GET /deploy/<slug>/convex/jobs/<jobId>` until `status` is `succeeded`
+(usually under 4 minutes); `result` has `deploymentUrl` and `siteUrl`, not the
+admin key. Without `async` the call waits for the backend and returns
+`deploymentUrl`, `siteUrl` and `adminKey` in one response. Re-provisioning
+returns the same backend.
+
+Include the exact chosen business name in the optional JSON body:
+`{"business_name":"FirstSignal"}`. It is saved independently of the URL slug;
+existing chosen names are preserved.
+
+### 2a. Publish without a terminal
+
+Commit the app through a commit session as in "Publish without a terminal"
+(`package.json`, `package-lock.json`, `convex/`, `src/`, `index.html`; no
+`node_modules/`, `dist/` or `.env*`), then:
+
+```bash
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/deploy/my-app/convex/deploy" -s -X POST \
+ -H 'Content-Type: application/json' \
+  -d '{"repo":"my-app","ref":"<sha from the commit result>","build_env":{"VITE_SUPPORT_EMAIL":"support@my-app.egbe.app"}}'
 ```
 
-The business name is saved independently of the URL slug. Calls without a body
-continue to work. Existing chosen names are preserved.
+Egbe's build sandbox checks out `ref`, runs `npm ci`, `npx convex deploy -y`
+against your backend, `npm run build` and
+`npx @convex-dev/static-hosting upload -d dist`. The admin key stays inside
+Egbe. The response is `202` with a `jobId`; poll
+`GET /deploy/<slug>/convex/jobs/<jobId>` every ~15 seconds. Stages are
+`preflight`, `convex-env`, `build-starting`, `building`; `succeeded` returns
+`result.url` (the live address), `siteUrl`, `deploymentUrl`, `source_commit` and
+the build log tail in `result.logs`. `failed` returns `stage`, `error` and `logs`
+(for example a TypeScript or schema error from `convex deploy`): fix the code,
+commit and start a new job. One Convex job runs per business at a time; a second
+one gets `409 convex_job_in_progress` with the running job's poll URL.
+
+- `env` — Convex backend environment variables (server-side, may be secrets),
+  set before `convex deploy` like `npx convex env set`. Supplied names replace
+  their values; omitted names are kept. `OS_URL` and `OS_API_KEY` are set by the
+  platform on every publish to the product's own credential, as for Docker
+  apps; your Convex actions read `process.env.OS_API_KEY`.
+- `build_env` — public build-time values (for example `VITE_*`). They are
+  inlined into the browser bundle; never put a secret here. `VITE_CONVEX_URL`
+  is set to `deploymentUrl` for you. `CONVEX_*`, `EGBE_*`, `NODE_*`, `NPM_*`
+  and `OS_*` names are reserved.
+- `dist` — build output directory to upload (default `dist`); `upload: false`
+  publishes the backend only.
+
+Requirements: `package.json` and `package-lock.json` at the repository root,
+`convex` and (for the upload) `@convex-dev/static-hosting` as dependencies,
+a `build` script, and the static-hosting component set up in
+`convex/convex.config.ts`, `convex/http.ts` and `convex/staticHosting.ts`.
+Build-time public values must be passed in `build_env` (the sandbox has no
+`.env` files). Verify the live URL in a browser after `succeeded`.
+
+### 2b. Publish from a terminal
+
+With Node in a workspace, fetch the admin key with `GET /deploy/<slug>/convex`
+and run the same steps yourself:
+
+```bash
+export CONVEX_SELF_HOSTED_URL=<deploymentUrl> CONVEX_SELF_HOSTED_ADMIN_KEY=<adminKey>
+npx convex deploy -y && npm run build && npx @convex-dev/static-hosting upload -d dist
+```
+
+Keep the admin key out of the repository and logs; it contains a `|`, so quote
+it in `.env` files. Both paths publish to the same backend.
+
+To inspect Convex data, read `GET /db/skill` ("Convex").

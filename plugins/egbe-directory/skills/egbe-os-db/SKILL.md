@@ -144,10 +144,32 @@ not execute arbitrary write SQL, INSERT, bulk changes or DDL.
 
 ## Convex
 
-These SQL endpoints operate on attached PostgreSQL, not Convex. For a Convex
-product, obtain its existing backend details through `GET /deploy/<slug>/convex`,
-configure `CONVEX_SELF_HOSTED_URL` and `CONVEX_SELF_HOSTED_ADMIN_KEY`, and use the
-project's installed Convex CLI: `npx convex data`, `npx convex export`, or
-`npx convex run <function> <args>`. Function execution uses deployed queries,
-mutations or actions. Check the installed CLI/backend versions before relying
-on newer options such as inline queries.
+These SQL endpoints operate on attached PostgreSQL, not Convex.
+
+### Read Convex documents without a terminal
+
+`GET /db/convex/tables/<table>` returns one page of a table of the account's
+Convex backend, like `npx convex data <table>`, with the same key and no admin
+key:
+
+```bash
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/db/convex/tables/users" -s
+```
+
+The result has `documents`, `count`, `hasMore`, `cursor` and `snapshot`. While
+`hasMore` is true, request the next page with `?cursor=<cursor>&snapshot=<snapshot>`;
+keep the first page's `snapshot` so every page reads the same point in time.
+Table names come from the repository's `convex/schema.ts`; an unknown table
+returns 404. System tables such as `_storage` can be read the same way. A page
+too large to return gives 413; export from a workspace instead.
+
+### Export, run functions and change data: workspace only
+
+`npx convex export`, `npx convex run <function> <args>`, `npx convex import` and
+direct document edits need a workspace with Node. Obtain the backend details
+through `GET /deploy/<slug>/convex`, configure `CONVEX_SELF_HOSTED_URL` and
+`CONVEX_SELF_HOSTED_ADMIN_KEY`, and use the project's installed Convex CLI.
+Function execution uses deployed queries, mutations or actions. Check the
+installed CLI/backend versions before relying on newer options such as inline
+queries. Without a workspace, correct data through the product's own functions:
+change the code and publish it with `POST /deploy/<slug>/convex/deploy`.
