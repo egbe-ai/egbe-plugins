@@ -24,8 +24,11 @@ holds one part of a long body; read the next part with `egbe_read`, the same
 Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
-A step that needs a local project key or a bundled script, such as a git push or
-a local deploy command, needs a set-up project workspace. In a persistent
+Publishing works through the connector: commit the app's files with the JSON
+commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned
+commit SHA; no git push or workspace setup is needed. A step that needs a local
+project key or a bundled script, such as a local `npx convex deploy`, needs a
+set-up project workspace. In a persistent
 project workspace that is not set up yet, set it up as the `egbe-setup` skill's
 project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
@@ -45,8 +48,10 @@ answers, for example HTTP 403 on CONNECT or curl status `000`, follow the Claude
 network recovery in
 `egbe_skill(name="egbe-os-quickstart", resource="references/environment.md")`:
 the founder allows that host for Claude's code execution or continues in Claude
-Code on their own computer. Until the shell step succeeds, do not report the work
-as published: a Claude Artifact or a local preview is not an Egbe deployment.
+Code on their own computer. Code can also be published without the shell by
+committing through the connector (`egbe-os-git`, "Without a terminal"). Until
+the shell step or that commit and its deploy succeed, do not report the work as
+published: a Claude Artifact or a local preview is not an Egbe deployment.
 
 
 # Scrape (Apify)

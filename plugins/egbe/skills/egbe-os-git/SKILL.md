@@ -1,6 +1,6 @@
 ---
 name: egbe-os-git
-description: Create an Egbe repository and push local code, including projects without a remote.
+description: Create an Egbe repository, push local code or commit files without a terminal, and read code back.
 metadata:
   egbe-when: "Use when code needs versioning or a repository for publication."
   egbe-visible: "true"
@@ -24,8 +24,11 @@ holds one part of a long body; read the next part with `egbe_read`, the same
 Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
-A step that needs a local project key or a bundled script, such as a git push or
-a local deploy command, needs a set-up project workspace. In a persistent
+Publishing works through the connector: commit the app's files with the JSON
+commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned
+commit SHA; no git push or workspace setup is needed. A step that needs a local
+project key or a bundled script, such as a local `npx convex deploy`, needs a
+set-up project workspace. In a persistent
 project workspace that is not set up yet, set it up as the `egbe-setup` skill's
 project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
@@ -45,8 +48,10 @@ answers, for example HTTP 403 on CONNECT or curl status `000`, follow the Claude
 network recovery in
 `egbe_skill(name="egbe-os-quickstart", resource="references/environment.md")`:
 the founder allows that host for Claude's code execution or continues in Claude
-Code on their own computer. Until the shell step succeeds, do not report the work
-as published: a Claude Artifact or a local preview is not an Egbe deployment.
+Code on their own computer. Code can also be published without the shell by
+committing through the connector (`egbe-os-git`, "Without a terminal"). Until
+the shell step or that commit and its deploy succeed, do not report the work as
+published: a Claude Artifact or a local preview is not an Egbe deployment.
 
 
 # Git
@@ -153,15 +158,79 @@ a direct Forgejo URL or send the OS key to Forgejo. Internal credentials stay on
 the server. Existing repositories and saved remotes are not deleted or revoked.
 
 If a shell network policy blocks OS, follow quickstart’s environment recovery for
-`os.hz.egbe.dev` (or the configured OS host). Direct Forgejo access is not required
-and is not the recovery path. MCP can manage repositories/issues/comments, but
-cannot carry Git smart HTTP bytes; push still needs a configured workspace and
-shell access to OS.
+`os.hz.egbe.dev` (or the configured OS host), or commit through the API below.
+Direct Forgejo access is not required and is not the recovery path. MCP cannot
+carry Git smart HTTP bytes, but it carries every repository, issue and commit
+operation in this skill.
 
 Escalate the actual redacted authorization/provisioning/network/build error,
-not missing configuration. A browser-only vault that cannot provide the OS key
-to a Git process still needs a separate browser source-transfer path; this shell
-transport does not resolve that constraint. Report that specific limitation.
+not missing configuration. When the OS key cannot reach a Git process, commit
+through the API below instead of reporting publication as blocked.
+
+## Without a terminal: commit through the Egbe connector
+
+Use this when the agent has no shell or Git, or its shell cannot reach Egbe (for
+example a chat in claude.ai, Cowork or ChatGPT). Every step is a JSON request,
+so it works through `egbe_read`/`egbe_write`; nothing contains `.git`. A
+workspace with Git can keep using the push flow above.
+
+1. Pick the repository from `GET /git/repos` (one with a non-null `os_http_url`,
+   your own namespace) or create it with `POST /git/repos`.
+2. Read what is there. `GET /git/repos/<owner>/<repo>/tree` with `ref` (default:
+   the default branch) returns `commit`, the branch head's full SHA, and
+   `entries` (`path`, `type`, `mode`, `size`, `sha`); request `page=<next_page>`
+   until `next_page` is null. A repository without commits answers 404 with
+   `data.empty: true`: its base is `""`. Read a file with
+   `GET /git/repos/<owner>/<repo>/file` and `path`, `ref=<commit>`: `content` is
+   UTF-8 text or, with `encoding: "base64"`, binary. Repeat with
+   `offset=<next_offset>` until `next_offset` is null. Files over 10 MB are not
+   readable here.
+3. Commit. A small change is one request:
+
+   ```json
+   POST /git/repos/<owner>/<repo>/commits
+   {"base": "<commit>", "message": "Add pricing page",
+    "files": [{"path": "src/pricing.html", "content": "<h1>Pricing</h1>\n"}],
+    "delete": ["src/old.html"]}
+   ```
+
+   For more files, send the same request without `message` to open a session
+   (response `session_id`), add batches with
+   `POST /git/commit-sessions/<session_id>/files` (`files`, `delete`), then
+   `POST /git/commit-sessions/<session_id>/commit` with `{"message": "..."}`.
+   Nothing reaches the branch until that call, which makes one commit.
+   - `base` is required: the branch head SHA you read, or `""` for an empty
+     repository or a new branch. `branch` defaults to the repository's default
+     branch. With `"base": ""` and `from_branch`, a new branch starts from that
+     branch's head.
+   - `encoding` is `utf-8` (default) or `base64` for images, fonts and other
+     binary files. `executable: true` marks scripts; an existing file keeps its
+     mode otherwise. `delete` removes files or whole folders of the base.
+   - Paths are relative and `/`-separated, without `..` or `.git`. Send source
+     files only: never `.env*` with real values, `node_modules/` or build output.
+   - Keep each request under 700,000 bytes (base64 grows content by a third; aim
+     for about 450 KB of file content per batch). For a larger file, send its
+     first part, then the rest in later batches with `"append": true` on the same
+     path. A later batch replaces a path staged earlier.
+   - Optional `author: {"name", "email"}` on the commit uses an identity approved
+     for this project; the default is Egbe OS.
+4. The result's `sha` is the full commit SHA: pass it as `ref` to `POST /deploy`
+   (see `/deploy/skill`). `changed: false` means the files matched the base and
+   no commit was made.
+
+Limits: 10 MB per file, 50 MB and 2,000 paths per commit, 500 entries per batch,
+3 open sessions per business. A session expires 30 minutes after its last request
+(2 hours at most); `GET /git/commit-sessions/<session_id>` shows its state, staged
+paths and result, and `DELETE` discards it.
+
+A 409 whose `data.head` differs from your `base` means the branch moved; nothing
+was written. Read the changed files at `data.head`, reapply your edits where
+needed, then repeat the commit call with `"base": "<data.head>"`: the staged files
+replace those paths at that head. Egbe never force-pushes. After a timeout or a
+lost response, repeat the same session's commit call: a finished session returns
+its commit again with `replayed: true`. For a one-shot request, read the tree
+first; if its `commit` differs from your base, check whether your change is
+already there before committing again.
 
 ## Product backlog
 

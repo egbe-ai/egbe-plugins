@@ -24,8 +24,11 @@ holds one part of a long body; read the next part with `egbe_read`, the same
 Files this skill refers to are next to this `SKILL.md`, except any listed under
 "Files downloaded on demand".
 
-A step that needs a local project key or a bundled script, such as a git push or
-a local deploy command, needs a set-up project workspace. In a persistent
+Publishing works through the connector: commit the app's files with the JSON
+commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned
+commit SHA; no git push or workspace setup is needed. A step that needs a local
+project key or a bundled script, such as a local `npx convex deploy`, needs a
+set-up project workspace. In a persistent
 project workspace that is not set up yet, set it up as the `egbe-setup` skill's
 project setup describes.
 Without such a workspace, or if it refuses, tell the founder that this step needs
@@ -45,8 +48,10 @@ answers, for example HTTP 403 on CONNECT or curl status `000`, follow the Claude
 network recovery in
 `egbe_skill(name="egbe-os-quickstart", resource="references/environment.md")`:
 the founder allows that host for Claude's code execution or continues in Claude
-Code on their own computer. Until the shell step succeeds, do not report the work
-as published: a Claude Artifact or a local preview is not an Egbe deployment.
+Code on their own computer. Code can also be published without the shell by
+committing through the connector (`egbe-os-git`, "Without a terminal"). Until
+the shell step or that commit and its deploy succeed, do not report the work as
+published: a Claude Artifact or a local preview is not an Egbe deployment.
 
 
 # Deploy a web app
@@ -181,11 +186,34 @@ A missing remote, a local `master` branch or absent Vercel/Netlify configuration
 is normal setup. Read `/git/skill`, create/reuse the account's Forgejo repo and
 push with native Git through `/git/http/<repo>.git` using the OS key. Preserve
 current history and branch names. Prepare a root Dockerfile if missing and deploy
-the full pushed SHA. Respect the founder's existing authorization and budget; report only
-an observed redacted auth/provisioning/network/build error or a real inability to
-supply the key to Git. Verify status, deployed revision and public URL after deploy.
+the full pushed SHA. Without a terminal, Git or shell access to Egbe, follow
+"Publish without a terminal" below instead. Respect the founder's existing
+authorization and budget; report only an observed redacted
+auth/provisioning/network/build error. Verify status, deployed revision and
+public URL after deploy.
 
-## Before you push: .gitignore and .dockerignore
+## Publish without a terminal
+
+Through the Egbe connector alone (for example in claude.ai, Cowork or ChatGPT),
+publishing is: create or reuse the repository, commit the app's files as JSON,
+deploy the returned SHA.
+
+1. `POST /git/repos` (or reuse one from `GET /git/repos`).
+2. Commit the source, a root `Dockerfile` and `.dockerignore` with
+   `POST /git/repos/<owner>/<repo>/commits`, in batches for larger apps, as
+   `/git/skill` describes under "Without a terminal". To update an existing app,
+   read its files and head first with `GET /git/repos/<owner>/<repo>/tree` and
+   `/file`.
+3. `POST /deploy` with `"ref": "<sha from the commit result>"`, then check status,
+   logs and the public URL as below.
+
+The Docker build runs on Egbe, so dependencies install there (`npm ci` in the
+Dockerfile); commit `package-lock.json`, not `node_modules/`. A static site can
+be a Dockerfile that serves its files as a non-root user on 8080, for example
+from `nginxinc/nginx-unprivileged:alpine`. Use `"db": true` for a database. The Convex path needs a terminal with Node
+(`npx convex deploy`); without one, publish a Dockerfile app.
+
+## Before you push or commit: .gitignore and .dockerignore
 
 Exclude dependencies, build output and actual environment files in both
 `.gitignore` and `.dockerignore`, for example:

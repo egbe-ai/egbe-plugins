@@ -304,7 +304,7 @@ Does: Set up Sentry error reporting and inspect project-scoped issues, exception
 
 When: Use when code needs versioning or a repository for publication.
 
-Does: Create an Egbe repository and push local code, including projects without a remote.
+Does: Create an Egbe repository, push local code or commit files without a terminal, and read code back.
 
 #### egbe-os-product-build
 

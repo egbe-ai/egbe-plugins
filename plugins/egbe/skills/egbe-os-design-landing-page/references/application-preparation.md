@@ -16,7 +16,8 @@ selected compatible Auth/subscription foundations. Use its `plan` command before
 `apply`; it preserves existing project guidance and rejects conflicting files.
 
 Initialize Git if necessary and use the Git skill to connect the product repository
-before publishing. Ignore secrets, dependency/build output and machine-only state;
+before publishing. Without a terminal, commit the files through the Git skill's
+connector API instead; the Docker build on Egbe installs dependencies and builds. Ignore secrets, dependency/build output and machine-only state;
 keep resumable project documents versioned but outside public builds.
 
 Install dependencies with the lockfile-safe command only when missing, changed
