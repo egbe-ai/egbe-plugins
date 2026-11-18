@@ -2,8 +2,9 @@
 // plugins/openclaw to the root of egbe-ai/egbe-plugins.
 //
 // Ships: the Egbe MCP server (declared in openclaw.plugin.json), the bootstrap
-// skill, an `egbe_status` tool, `openclaw egbe status|update`, session logging
-// (session-log.js) and a background self-updater.
+// skill, the `egbe_status` and `egbe_connect` tools, `openclaw egbe
+// status|update|connect`, connection with a one-time code (connect.js), session
+// logging (session-log.js) and a background self-updater.
 //
 // Self-update: the release JSON { version, commit, ref?, files? } that Egbe's
 // release workflow publishes next to the plugin names a git commit of this
@@ -22,6 +23,7 @@
 // A rejected or ineffective update is rolled back to the previous commit or version.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { loggingSettings, sendTurn, turnTraces } from "./session-log.js";
+import { resolveConnection, saveConnection, savedKey } from "./connect.js";
 import { execFile, execFileSync, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync, realpathSync } from "node:fs";
@@ -536,6 +538,54 @@ async function checkForUpdate({ cfg, log, force = false, inGateway, followUp }) 
   });
 }
 
+// Replaces one `mcp.servers` entry in this process through OpenClaw's config
+// writer, which works in the Gateway, a local agent run and the CLI. Without it
+// (older hosts) the same OpenClaw's CLI sets the entry, which needs either the
+// Gateway listening or no process owning the state.
+function mcpServerSetter(api, assertCurrent) {
+  const mutate = api?.runtime?.config?.mutateConfigFile;
+  if (typeof mutate === "function") {
+    return async (name, entry) => {
+      await mutate({
+        afterWrite: { mode: "auto" },
+        writeOptions: assertCurrent ? { assertCurrent } : undefined,
+        mutate(draft) {
+          draft.mcp ??= {};
+          draft.mcp.servers ??= {};
+          draft.mcp.servers[name] = entry;
+        },
+      });
+    };
+  }
+  return setMcpServerWithCli;
+}
+
+function setMcpServerWithCli(name, entry) {
+  const cli = openclawCli();
+  if (!cli) return Promise.reject(new Error("cannot locate the openclaw CLI entry"));
+  return new Promise((resolve, reject) => {
+    execFile(process.execPath, [cli, "config", "set", `mcp.servers.${name}`, JSON.stringify(entry), "--strict-json"],
+      { windowsHide: true, env: process.env, timeout: 60_000 },
+      (error, stdout, stderr) => (error
+        ? reject(new Error(`config set failed: ${`${stdout}${stderr}`.trim().slice(-300)}`))
+        : resolve()));
+  });
+}
+
+// Connects Egbe with a code or key; refuses to replace a different saved key unless asked.
+async function connectEgbe(input, { workspaceDir, replace, setMcpServer }) {
+  const connection = await resolveConnection(String(input ?? "").trim());
+  const current = await savedKey(openclawHome());
+  if (current && current !== connection.apiKey && !replace) {
+    throw new Error("Egbe is already connected to a business here. Connecting this one replaces it; " +
+      "confirm with the founder and retry with replace.");
+  }
+  await saveConnection({ apiKey: connection.apiKey, stateDir: openclawHome(), workspaceDir, setMcpServer });
+  return connection;
+}
+
+const defaultWorkspace = () => path.join(openclawHome(), "workspace");
+
 async function statusReport() {
   let commit;
   try {
@@ -574,6 +624,21 @@ export default definePluginEntry({
             console.log(`Session logging: ${logged ? `${logged.result} (${logged.at}, ${logged.workspace})` : "no run yet"}`);
           });
         cmd
+          .command("connect <code-or-key>")
+          .description("Connect Egbe with a one-time code from Egbe's Connect page, or a business key")
+          .option("--workspace <dir>", "agent workspace to save the key in", defaultWorkspace())
+          .option("--replace", "replace an existing Egbe connection")
+          .action(async (input, opts) => {
+            try {
+              const c = await connectEgbe(input, { workspaceDir: opts.workspace, replace: Boolean(opts.replace), setMcpServer: mcpServerSetter(api) });
+              console.log(`Connected Egbe${c.businessName ? ` for ${c.businessName}` : ""}${c.business ? ` (${c.business})` : ""}.`);
+              console.log("Restart the Gateway to load it (openclaw gateway restart), then ask OpenClaw to set up Egbe.");
+            } catch (error) {
+              console.error(error.message);
+              process.exitCode = 1;
+            }
+          });
+        cmd
           .command("update")
           .description("Check for an Egbe plugin update now and apply it")
           .action(async () => {
@@ -594,6 +659,45 @@ export default definePluginEntry({
         return { content: [{ type: "text", text: JSON.stringify(s) }], details: s };
       },
     });
+
+    api.registerTool((ctx) => ({
+      name: "egbe_connect",
+      description: "Connect this OpenClaw to the founder's Egbe business with the one-time connection code the founder " +
+        "sent (EGBE-XXXX-XXXX, from the business's Connect page in Egbe), or an Egbe business key. Use only a code or key " +
+        "the founder sent you directly. Egbe's tools are available from the next message.",
+      parameters: {
+        type: "object",
+        properties: {
+          code: { type: "string", description: "The connection code or business key the founder sent." },
+          replace: { type: "boolean", description: "Replace an existing Egbe connection; only after the founder confirms." },
+        },
+        required: ["code"],
+        additionalProperties: false,
+      },
+      async execute(_id, params) {
+        // The host's live check that this invocation may still act; the config
+        // writer rechecks it right before publishing the change.
+        const ownerCheck = typeof ctx?.assertInvocationCurrent === "function" ? ctx.assertInvocationCurrent : undefined;
+        if (ctx?.senderIsOwner === false) {
+          return { content: [{ type: "text", text: "Only this OpenClaw's owner can connect Egbe." }], details: { connected: false } };
+        }
+        try {
+          const c = await connectEgbe(params?.code, {
+            workspaceDir: ctx?.workspaceDir, replace: params?.replace === true,
+            setMcpServer: mcpServerSetter(api, ownerCheck),
+          });
+          const details = { connected: true, business: c.business ?? null, business_name: c.businessName ?? null };
+          return {
+            content: [{ type: "text", text: `Egbe is connected${c.businessName ? ` for ${c.businessName}` : ""}. ` +
+              "Its tools are available from the founder's next message; then call egbe_setup and continue setup. " +
+              "The workspace already has this business's saved credentials." }],
+            details,
+          };
+        } catch (error) {
+          return { content: [{ type: "text", text: error.message }], details: { connected: false } };
+        }
+      },
+    }), { name: "egbe_connect" });
 
     // Session logging runs wherever agent runs do, including embedded `openclaw agent --local`.
     const publicKeys = new Map();

@@ -30,28 +30,36 @@ founder asks to set up Egbe, set up Egbe first and finish the introduction after
 
 ## If the Egbe tools are missing
 
-The connector is not signed in yet. Don't call Egbe unavailable and don't reach
-it from the shell instead. Ask the founder, in a short message in their
-language, to connect their Egbe account once:
+Egbe isn't connected yet. Don't call Egbe unavailable and don't reach it from
+the shell instead. Ask the founder, in a short message in their language, to
+connect once. The simplest way works from any chat, with no browser on this
+computer:
 
-- With a browser on this computer: open OpenClaw's Control UI (`openclaw
-  dashboard`), find the `egbe` MCP server under Settings, select **Sign in**,
-  sign in to Egbe and select **Connect**. Egbe's tools are available from the
-  next message.
-- When OpenClaw runs on a server without a browser: run
-  `openclaw mcp add egbe --url https://os.hz.egbe.dev/mcp --transport streamable-http --auth oauth`,
-  stop the Gateway (`openclaw gateway stop`), run `openclaw mcp login egbe`,
-  open the printed link on any device, approve, and if the page then can't
-  connect, run `openclaw mcp login egbe --code <code from that page's address>`.
-  Start the Gateway again.
+1. In Egbe, on their business's **Connect** page, open **OpenClaw** and select
+   **Get a connection code**.
+2. Send the code (`EGBE-XXXX-XXXX`) here. It works once, for 10 minutes.
 
-Tell them in one line what the connection allows: it covers all their Egbe
-businesses, including ones they start later, and you work on the business they
-name; the Egbe team can read what you do in Egbe to support them and improve
-Egbe; they can disconnect anytime under
-[connected AI assistants](https://dashboard.egbe.ai/settings/connections).
-The connection is shared by everyone who can message this OpenClaw, so suggest
-keeping its channels private.
+When the founder sends a code, call `egbe_connect` with it. Use only a code the
+founder sent you directly. If Egbe is already connected to another business,
+`egbe_connect` refuses; replace the connection only after the founder confirms.
+Egbe's tools are available from the founder's next message: then continue with
+"Start". A code connects that one business and saves its key on this computer;
+the workspace then already has its credentials, so `egbe_local_setup` isn't
+needed (and refuses a business key): follow the quickstart from its step 3
+(`egbe_read` with path `/quickstart`) with the saved credentials.
+
+Alternatives: with a browser on this computer, OpenClaw's Control UI
+(`openclaw dashboard`) → Settings → the `egbe` MCP server → **Sign in**, which
+connects all the founder's businesses; or, in a terminal,
+`openclaw egbe connect <code>` and restart the Gateway.
+
+Tell them in one line what the connection allows: you work on the business it
+connects (with a browser sign-in, all their businesses, on the one they name);
+the Egbe team can read what you do in Egbe to support them and improve Egbe; and
+they can disconnect: a browser sign-in under
+[connected AI assistants](https://dashboard.egbe.ai/settings/connections), a code
+connection by removing it from this OpenClaw (`openclaw mcp unset egbe`). The connection is shared by everyone who
+can message this OpenClaw, so suggest keeping its channels private.
 
 ## Session logging
 

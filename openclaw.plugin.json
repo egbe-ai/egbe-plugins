@@ -2,7 +2,7 @@
   "id": "egbe",
   "name": "Egbe",
   "description": "Give OpenClaw your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "categories": [
     "integrations"
   ],
@@ -14,7 +14,8 @@
   },
   "contracts": {
     "tools": [
-      "egbe_status"
+      "egbe_status",
+      "egbe_connect"
     ]
   },
   "cliCommands": [
