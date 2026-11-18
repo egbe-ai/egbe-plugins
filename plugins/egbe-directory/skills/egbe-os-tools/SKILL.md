@@ -156,6 +156,20 @@ list answer is cut to the rows left and says `limited_by_quota: true`, and
 whether another page exists. `found: false` from `domain-stats` means SpyFu
 has no data for the domain, not zero spend.
 
+## Long calls: async mode (DataForSEO, SpyFu)
+
+A DataForSEO live call can take up to two minutes, longer than some clients wait
+for one tool call. Through the Egbe connector, add `?async=1` to a
+`/tools/dataforseo/...` or `/tools/spyfu/...` call (`egbe_write` or `egbe_read`
+with query `{"async": "1"}`; the provider body is unchanged). It answers `202`
+with a `job_id` at once. Poll `GET /tools/jobs/<job_id>` (`egbe_read`) about every
+10 seconds until `status` is `succeeded` or `failed`; `result` then holds the
+call's own response (`code`, `message`, `data`), provider errors included. The
+provider call runs and bills once per job. Retry a start with the same
+`idempotency_key` to get the existing job back instead of a second call. Results
+are kept for an hour; a `404` on poll means the job is unknown or expired. Other
+providers have no async mode; OS forwards the flag to them unchanged.
+
 ## More providers
 
 For delegated research or processing with Theona agents, follow

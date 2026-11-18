@@ -140,3 +140,17 @@ model configured in that account's upstream. It must support multipart
 `/v1/audio/transcriptions` with `response_format=verbose_json`. There is no
 catalogued default audio model in this repository. A missing policy returns 503;
 video research can still analyse available frames and report the speech gap.
+
+## Long media calls: async mode
+
+`POST /v1/media/analyze`, `/v1/media/transcribe` and `/v1/media/classify-creative`
+can run for several minutes. Through the Egbe connector, or any client whose tool
+calls time out sooner, add `?async=1` (connector: `egbe_write` with query
+`{"async": "1"}`), or `"async": true` in the body. The call answers `202` with a
+`job_id` at once; poll `GET /v1/media/jobs/<job_id>` (`egbe_read`) about every 10
+seconds until `status` is `succeeded` or `failed`. `result` then holds the call's
+own response (`code`, `message`, `data`), exactly as the synchronous call returns
+it. The model runs and bills once per job. Retry a start with the same
+`idempotency_key` to get the existing job back instead of a second run. Results
+are kept for an hour; a `404` on poll means the job is unknown or expired.
+Without the flag the calls stay synchronous.

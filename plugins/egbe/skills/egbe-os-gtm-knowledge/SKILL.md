@@ -89,6 +89,17 @@ The response also reports `pool_size`, `judged`, and `partial`: when
 must be treated as an incomplete review — never as a no-match conclusion.
 `geo` is judge context, not a hard filter.
 
+The judge can take a few minutes on a large pool. Through the Egbe connector,
+or any client whose tool calls time out sooner, start it in async mode with
+`?async=1` (or `"async": true` in the body): `egbe_write` POST
+`/gtm/comparables` with query `{"async": "1"}` and the same body answers `202`
+with a `job_id` at once. Poll `egbe_read` `/gtm/jobs/<job_id>` about every 10
+seconds until `status` is `succeeded` or `failed`; `result` then holds the
+response described above (`code`, `message`, `data`). The judge runs and bills
+once per job, however often you poll. Pass the same `idempotency_key` when you
+retry a start, so a repeat returns the existing job instead of a second run.
+Results are kept for an hour; a `404` on poll means the job is unknown or expired.
+
 `POST /gtm/search` remains available as a keyless-of-LLM fallback (token
 overlap ranking with optional hard filters). Build one concise query from
 the current product truth: the buyer, costly problem or trigger,
