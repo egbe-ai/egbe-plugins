@@ -1,16 +1,26 @@
 {
-  "name": "egbe-openclaw",
-  "version": "0.1.0",
+  "name": "@egbe/openclaw",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Egbe's plugin for OpenClaw.",
   "license": "SEE LICENSE IN LICENSE",
+  "files": [
+    "openclaw/",
+    "openclaw.plugin.json",
+    "LICENSE",
+    "README.md"
+  ],
   "openclaw": {
     "extensions": [
       "./openclaw/index.js"
     ],
     "compat": {
       "pluginApi": ">=2026.11.5"
+    },
+    "build": {
+      "openclawVersion": "2026.11.5",
+      "pluginSdkVersion": "2026.11.5"
     }
   }
 }

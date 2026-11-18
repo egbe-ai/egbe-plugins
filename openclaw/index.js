@@ -15,8 +15,11 @@
 //     spec:"git:<origin>@<commit>", mode:"update"}; OpenClaw re-clones, updates
 //     its install record and hot-reloads the plugin;
 //   - linked checkout (`plugins install -l`): `git reset --hard <commit>` and
-//     `openclaw plugins reload egbe`.
-// A rejected or ineffective update is rolled back to the previous commit.
+//     `openclaw plugins reload egbe`;
+//   - ClawHub install (`openclaw plugins install @egbe/openclaw`): Gateway RPC
+//     `plugins.install` {source:"clawhub", packageName, version, mode:"update"},
+//     once the release JSON's `clawhub` entry says that version is published there.
+// A rejected or ineffective update is rolled back to the previous commit or version.
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { loggingSettings, sendTurn, turnTraces } from "./session-log.js";
 import { execFile, spawn } from "node:child_process";
@@ -28,6 +31,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PLUGIN_ID = "egbe";
+const CLAWHUB_PACKAGE = "@egbe/openclaw";
+// The repository whose release commits ClawHub installs are verified against.
+const RELEASE_REPOSITORY = "https://github.com/egbe-ai/egbe-plugins.git";
 const DEFAULT_RELEASE_URL = "https://raw.githubusercontent.com/egbe-ai/egbe-plugins/main/openclaw-release.json";
 // OpenClaw imports a captured copy of the plugin (~/.openclaw/tmp/plugin-captures/...),
 // so this module's directory tells us which version is *running*; api.rootDir is
@@ -206,6 +212,10 @@ async function fetchRelease(url) {
       throw new Error(`release.files entry is invalid: ${p}`);
     }
   }
+  if (rel.clawhub !== undefined &&
+      (rel.clawhub?.package !== CLAWHUB_PACKAGE || !/^\d+\.\d+\.\d+$/.test(String(rel.clawhub?.version)))) {
+    throw new Error("release.clawhub is invalid");
+  }
   return rel;
 }
 
@@ -223,8 +233,18 @@ function surfaceOf(manifest) {
 
 // Where the plugin came from and how updates are applied to it.
 async function describeInstall() {
-  const top = (await gitRoot(["rev-parse", "--show-toplevel"])).trim();
-  if (realpathSync(top) !== realpathSync(ROOT)) throw new Error(`plugin root ${ROOT} is not a git checkout root`);
+  let top = "";
+  try {
+    top = (await gitRoot(["rev-parse", "--show-toplevel"])).trim();
+  } catch {}
+  if (!top || realpathSync(top) !== realpathSync(ROOT)) {
+    // A ClawHub install is OpenClaw's copy of the package, without git metadata
+    // of its own; releases are verified against the published repository.
+    if (readJsonSync(path.join(ROOT, "package.json")).name !== CLAWHUB_PACKAGE) {
+      throw new Error(`plugin root ${ROOT} is neither a git checkout root nor the ${CLAWHUB_PACKAGE} package`);
+    }
+    return { kind: "clawhub", origin: RELEASE_REPOSITORY, managed: true, head: installedVersion() };
+  }
   const origin = (await gitRoot(["remote", "get-url", "origin"])).trim();
   if (!/^(https:\/\/|ssh:\/\/|git@[\w.-]+:|file:\/\/)/.test(origin)) throw new Error(`unsupported plugin origin ${origin}`);
   // OpenClaw keeps managed git installs at <state dir>/git/git-<hash>/repo, under
@@ -233,7 +253,7 @@ async function describeInstall() {
   try {
     managed = /[\\/]git[\\/]git-[0-9a-f]+[\\/]repo$/.test(realpathSync(ROOT));
   } catch {}
-  return { origin, managed, head: (await gitRoot(["rev-parse", "HEAD"])).trim() };
+  return { kind: managed ? "git" : "linked", origin, managed, head: (await gitRoot(["rev-parse", "HEAD"])).trim() };
 }
 
 // Fetch the release commit into a private bare repo and verify it there.
@@ -305,8 +325,12 @@ async function runCli(args, { detached, log }) {
   });
 }
 
-// Move the plugin to `commit` and have the running Gateway load it.
-async function applyCommit({ commit, origin, managed }, opts) {
+// Move the plugin to `commit` (or, from ClawHub, `version`) and have the running Gateway load it.
+async function applyCommit({ commit, origin, managed, kind, version }, opts) {
+  if (kind === "clawhub") {
+    const params = { source: "clawhub", packageName: CLAWHUB_PACKAGE, version, expectedPluginId: PLUGIN_ID, mode: "update" };
+    return runCli(["gateway", "call", "plugins.install", "--json", "--timeout", "600000", "--params", JSON.stringify(params)], opts);
+  }
   if (managed) {
     const params = { source: "git", spec: `git:${origin}@${commit}`, mode: "update" };
     return runCli(["gateway", "call", "plugins.install", "--json", "--timeout", "600000", "--params", JSON.stringify(params)], opts);
@@ -328,7 +352,8 @@ async function rollback(st, why, log, detached) {
     lastResult: `rollback pending for ${st.toVersion}: ${why}`, lastError: null,
     badVersions: [...new Set([...(st.badVersions ?? []), st.toVersion])],
   });
-  const r = await applyCommit({ commit: st.fromCommit, origin: st.origin, managed: st.managed }, { detached, log });
+  const r = await applyCommit({ commit: st.fromCommit, origin: st.origin, managed: st.managed, kind: st.kind,
+                                version: st.fromVersion }, { detached, log });
   if (!r.ok) {
     log.error(`[egbe] rollback could not be applied: ${r.reason}`);
     return writeState({ lastError: `rollback could not be applied: ${r.reason}` });
@@ -339,8 +364,23 @@ async function rollback(st, why, log, detached) {
   return pending;
 }
 
+async function installedMismatch(files) {
+  if (!files || !Object.keys(files).length) return "the release lists no file hashes";
+  for (const [p, expected] of Object.entries(files)) {
+    let actual;
+    try {
+      actual = createHash("sha256").update(await fs.readFile(path.join(ROOT, p))).digest("hex");
+    } catch {
+      return `${p} is missing`;
+    }
+    if (actual !== expected) return `sha256 mismatch for ${p}`;
+  }
+  return undefined;
+}
+
 async function rollbackIsLive(st) {
   if (LOADED_VERSION !== st.fromVersion || installedVersion() !== st.fromVersion) return false;
+  if (st.kind === "clawhub") return true;
   try {
     return (await gitRoot(["rev-parse", "HEAD"])).trim() === st.fromCommit;
   } catch {
@@ -381,6 +421,10 @@ async function reconcile(log) {
   }
   if (st.phase !== "applying") return st;
   if (LOADED_VERSION === st.toVersion) {
+    // A ClawHub package is verified only once installed: its files must match the
+    // release commit's hashes, or the update is rolled back like a rejected one.
+    const mismatch = st.kind === "clawhub" ? await installedMismatch(st.files) : undefined;
+    if (mismatch) return rollback(st, `the installed ClawHub package differs from the release (${mismatch})`, log, true);
     log.info(`[egbe] update to ${st.toVersion} is live`);
     return writeState({ phase: "idle", lastResult: `updated ${st.fromVersion} -> ${st.toVersion}`, lastSuccessAt: new Date().toISOString() });
   }
@@ -408,8 +452,16 @@ async function checkForUpdate({ cfg, log, force = false, inGateway, followUp }) 
       if (!force && (st.badVersions ?? []).includes(rel.version)) return { status: "skipped", message: `${rel.version} failed before` };
       log.info(`[egbe] update available ${current} -> ${rel.version} (${rel.commit})`);
       const install = await describeInstall();
+      if (install.kind === "clawhub" && rel.clawhub?.version !== rel.version) {
+        // Published to the repository; ClawHub publication follows shortly.
+        await writeState({ lastError: null, lastResult: `waiting for ${rel.version} on ClawHub` });
+        return { status: "waiting", message: `${rel.version} is not on ClawHub yet` };
+      }
+      if (install.kind === "clawhub" && !Object.keys(rel.files ?? {}).length) {
+        throw new Error("the release lists no file hashes to verify the ClawHub package against");
+      }
       await fetchAndVerify(rel, install.origin);
-      log.info(`[egbe] verified ${rel.version}; applying via ${install.managed ? "plugins.install" : "checkout + plugins reload"}`);
+      log.info(`[egbe] verified ${rel.version}; applying via ${install.kind === "linked" ? "checkout + plugins reload" : `plugins.install (${install.kind})`}`);
       pending = await writeState({
         phase: "applying",
         fromVersion: current,
@@ -418,11 +470,14 @@ async function checkForUpdate({ cfg, log, force = false, inGateway, followUp }) 
         toCommit: rel.commit,
         origin: install.origin,
         managed: install.managed,
+        kind: install.kind,
+        files: rel.files ?? null,
         requestedAt: new Date().toISOString(),
         rollbackAttempts: 0, rollbackRequestedAt: null, rollbackReason: null,
         lastError: null,
       });
-      const r = await applyCommit({ commit: rel.commit, origin: install.origin, managed: install.managed }, { detached: inGateway, log });
+      const r = await applyCommit({ commit: rel.commit, origin: install.origin, managed: install.managed, kind: install.kind,
+                                    version: rel.version }, { detached: inGateway, log });
       if (inGateway) {
         if (!r.ok) throw new Error(r.reason);
         followUp?.();
