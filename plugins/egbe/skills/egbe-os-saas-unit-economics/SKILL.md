@@ -29,8 +29,8 @@ Where this skill sends an `Idempotency-Key` header, pass the same value as
 `idempotency_key` and reuse it when retrying. A result with a `continuation`
 holds one part of a long body; read the next part with `egbe_read`, the same
 `path` and `business`, and that `continuation`.
-Files this skill refers to are next to this `SKILL.md`, except any listed under
-"Files downloaded on demand".
+Read bundled files beside this `SKILL.md`. For published skill resources on
+Egbe OS, use `egbe_skill`. Follow "Files downloaded on demand" for listed downloads.
 
 Publishing works through the connector: commit the app's files with the JSON
 commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned

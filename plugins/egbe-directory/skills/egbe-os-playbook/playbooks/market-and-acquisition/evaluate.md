@@ -15,6 +15,8 @@ outcome; show counts behind rates and spend behind efficiency claims.
 Use the actual run and its plan/terms, not just the provider campaign ID. When
 counting new customers or purchases, deduplicate people and receipts; distinguish
 first purchases from renewals, test payments, refunds and other non-target events.
+If two channels claim the same buyer, count that person once in the business
+total. A verified first purchase still counts when its source is unknown.
 
 Distinguish cumulative snapshots from separate-period totals: do not sum
 overlapping counts or spend, or treat repeated snapshots of one experiment as
@@ -70,6 +72,14 @@ Before expanding, consider consequential evidence about delivered value, quality
 refunds or repeat use through [product evaluation](../product/evaluate.md).
 Sales alone do not establish useful outcomes. Use relevant available evidence,
 not a mandatory full audit or retention waiting period for every product.
+
+If the founder wants to grow after the first sale, propose one small test, such
+as sharing another sample or increasing ad spend within an agreed cap. Compare the total
+number of new paying customers across all channels over comparable periods,
+allowing buyers in each period time to decide. Weigh the margin from any extra
+buyers against the extra cash and founder hours the test took. If a few sales
+could be explained by timing or chance, suggest repeating within the agreed
+limits or pausing. Ask the founder before increasing those limits.
 
 Make changes interpretable: retain what changed and when; separate hypotheses
 where feasible. Do not erase a test's original criteria or relabel its historical

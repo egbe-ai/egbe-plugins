@@ -94,17 +94,10 @@ copies.
    unavailable, not exhausted. Mention a limit only if it affects requested work
    or the next step. Review the context you already have, such as notes, to
    recommend where to continue. Do not run a full audit.
-4. **Offer useful follow-through.** Clarify the nearest business goal and material
-   constraints from known context, asking only what could change the next step.
-   Offer a Business Loop at a useful, agreed cadence: review progress, propose
-   useful work and follow agreed actions through to their results. Before
-   scheduling, follow
-   `egbe_skill(name="egbe-os-product-routines")` and verify persistent access to the
-   project's current methods, decisions and work. Create or migrate a schedule
-   only after the founder agrees; preserve existing owners and disables. If
-   context cannot persist or scheduling/delivery is unavailable, offer a manual
-   review and help move ongoing work to a supported project workspace. A connected
-   chat alone does not establish continuing background work.
+4. **Offer useful follow-through.** Use the founder's goal and project evidence
+   with `egbe_skill(name="egbe-os-quickstart", resource="references/offer-loop.md")`
+   to recommend a preset or custom loop. Discuss the choice in this chat; keep
+   ongoing work in a workspace with persistent access to the project.
 5. **Finish.** Call `egbe_complete_setup` once, then give a concise handoff in the
    first person: what you can do with Egbe, a compact capabilities table and the
    concrete next step. If no product idea exists yet, start that conversation

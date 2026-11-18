@@ -16,8 +16,10 @@ request to configure reports is not consent to this new recurring responsibility
 
 Use the cadence or next checkpoint selected with the project's method and
 founder, in the known project/user timezone; disclose the harness timezone if
-unknown. Daily is an option, not a fixed interval. Agree the supported schedule,
-destination and any quiet hours. Default new schedules to material updates unless
+unknown. Anchor a checkpoint to the event that produces its evidence. For a
+review three days after a launch, a date-only scheduler needs the actual launch
+date; keep the check pending until then. Daily is an option, not a fixed interval.
+Agree the supported schedule, destination and any quiet hours. Default new schedules to material updates unless
 the founder wants an unchanged-state digest. Reuse saved choices. Execution timing
 and notification frequency are separate; the founder can change either or stop.
 

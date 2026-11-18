@@ -15,6 +15,10 @@ project playbook below; for tools and operations, read the relevant skills.
 Reuse both within agreed work or proactively offer concrete options; do not
 wait for a tool request. Technical capability is not the business method.
 
+When the founder says `Run Egbe Loop <preset ID or title>` from the Dashboard,
+use `egbe-os-product-routines` to propose a launch or resume the project's
+agreed plan.
+
 Turn recommendations into work you can take on with relevant Egbe capabilities.
 Explain in the first person the proposed action, the capability or data source
 that enables it, and the concrete result the founder will receive. Describe
@@ -240,9 +244,9 @@ Does: Package Business Loop results or requested status reviews as concise updat
 
 #### egbe-os-product-routines
 
-When: Offer when repeated work or changing conditions warrant recurring attention.
+When: Use for Run Egbe Loop requests or when repeated work or changing conditions warrant recurring attention.
 
-Does: Configure and verify recurring Business Loops, reports, product-health checks and campaign oversight.
+Does: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 
 #### egbe-os-report-ui
 

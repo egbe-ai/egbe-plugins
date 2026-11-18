@@ -1,8 +1,8 @@
 ---
 name: egbe-os-product-routines
-description: Configure and verify recurring Business Loops, reports, product-health checks and campaign oversight.
+description: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 metadata:
-  egbe-when: "Offer when repeated work or changing conditions warrant recurring attention."
+  egbe-when: "Use for Run Egbe Loop requests or when repeated work or changing conditions warrant recurring attention."
   egbe-visible: "true"
   egbe-title: "Keep your product moving"
   egbe-description: "Keep agreed work moving with a recurring Business Loop, product checks and reports in your agent."
@@ -21,8 +21,8 @@ Where this skill sends an `Idempotency-Key` header, pass the same value as
 `idempotency_key` and reuse it when retrying. A result with a `continuation`
 holds one part of a long body; read the next part with `egbe_read`, the same
 `path` and `business`, and that `continuation`.
-Files this skill refers to are next to this `SKILL.md`, except any listed under
-"Files downloaded on demand".
+Read bundled files beside this `SKILL.md`. For published skill resources on
+Egbe OS, use `egbe_skill`. Follow "Files downloaded on demand" for listed downloads.
 
 Publishing works through the connector: commit the app's files with the JSON
 commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned
@@ -61,6 +61,9 @@ Execution and scheduling belong to the user's harness; Egbe supplies capabilitie
 and guidance, not a managed scheduler.
 
 ## Choose the entry
+
+For `Run Egbe Loop <preset ID or title>`, follow
+[Start or resume a Dashboard preset](references/run-preset.md).
 
 For the Business Loop, existing product reports, or a change/disable request,
 follow [Business Loop and reporting schedules](references/product-reporting.md).
