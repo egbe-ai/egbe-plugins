@@ -74,9 +74,10 @@ jobs:
       actions: read
       contents: read
       id-token: write
+    # No source input: ClawHub then publishes this run's commit with its ref
+    # (refs/heads/main), the only source a trusted publish accepts.
     uses: openclaw/clawhub/.github/workflows/package-publish.yml@bcb25920d7bf46881cbd911d71d6d2d26598d208
     with:
-      source: egbe-ai/egbe-plugins@${{ github.sha }}
       family: code-plugin
       dry_run: false
       changelog: "Egbe OpenClaw plugin ${{ needs.plan.outputs.version }}"
