@@ -1,12 +1,12 @@
 {
-  "version": "0.1.4",
-  "commit": "f5bae94c5e9516eb0c285a7a641f30a6a7a1b9b1",
+  "version": "0.1.5",
+  "commit": "2e07a7896f9e4739ed926aeb8e24740b127e38d5",
   "files": {
-    "openclaw.plugin.json": "6f6f784ad82d8d5d29314593b01952e412130d14d8f5f8394513e14830a28745",
-    "package.json": "4d001aeffa848ad3c55eedf9dcc5ef087d9883f1c71d718240a71c8231e86965",
-    "openclaw/index.js": "c1825b4ce5a6f4711a38b8e7c6bc19f6dece89ed83c4ed1e2455203156304795",
+    "openclaw.plugin.json": "692b6a970cdb99e83691b6e7716eac48638f1c8944f4336bbf6f5e033c774dfc",
+    "package.json": "44ed59262747cf78b9f7b080fa0d909bcf8e7ca9bd1dc8faff5726bd88565492",
+    "openclaw/index.js": "be316fa8ac95e078f110283385eada3f253965ae32d07f8b435913fa57e37554",
     "openclaw/session-log.js": "2ed327d1de3312ba565579e9fa4f30649a596829702084e2c22024d03d6ca6bd",
     "openclaw/connect.js": "cb1f910dcf8d81a5c75e1ef20efd68bd88d4a84bd6c52e2dce37574b89c44882",
-    "openclaw/skills/egbe/SKILL.md": "c3522c297c3ba375cb7655b9722cef6b48adb5a681db54d6f09ba1bb16fa233b"
+    "openclaw/skills/egbe/SKILL.md": "a5ec12dbdbb47ef2b6f92784774ad40a5ea69ffcb3ecc17785e2ad5ef669486f"
   }
 }
