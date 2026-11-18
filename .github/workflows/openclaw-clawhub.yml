@@ -80,4 +80,7 @@ jobs:
     with:
       family: code-plugin
       dry_run: false
+      # Waiting re-mints the trusted publish token, which ClawHub refuses once the
+      # version is already published; the updater waits for publication itself.
+      wait_for_publication: false
       changelog: "Egbe OpenClaw plugin ${{ needs.plan.outputs.version }}"
