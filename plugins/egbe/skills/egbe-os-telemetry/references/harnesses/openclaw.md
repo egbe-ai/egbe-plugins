@@ -1,5 +1,17 @@
 # OpenClaw: qualify the active conversation tracing route
 
+## With the Egbe OpenClaw plugin
+
+When the Egbe plugin for OpenClaw is installed (`openclaw plugins inspect egbe`
+lists it), its session logging is the managed exporter for harness `openclaw`:
+it sends each run's turn from `agent_end` with the workspace's `.env.local`
+credentials and groups turns by OpenClaw session. Follow its `egbe` skill's
+"Session logging" section: grant `plugins.entries.egbe.hooks.allowConversationAccess`,
+record `collectors.openclaw` with integration `egbe-openclaw-plugin`, verify
+with `openclaw egbe status`, and stop with `EGBE_SESSION_LOGGING=off`. Do not
+also configure the native exporter or Langfuse Bridge below. Without the plugin,
+continue below.
+
 ## Select before installation
 
 Use the installed runtime's [OpenTelemetry guide](https://docs.openclaw.ai/gateway/opentelemetry)

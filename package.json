@@ -1,0 +1,16 @@
+{
+  "name": "egbe-openclaw",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Egbe's plugin for OpenClaw.",
+  "license": "SEE LICENSE IN LICENSE",
+  "openclaw": {
+    "extensions": [
+      "./openclaw/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.11.5"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "id": "egbe",
+  "name": "Egbe",
+  "description": "Give OpenClaw your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
+  "version": "0.1.0",
+  "categories": [
+    "integrations"
+  ],
+  "activation": {
+    "onStartup": true
+  },
+  "reload": {
+    "turnHandover": true
+  },
+  "contracts": {
+    "tools": [
+      "egbe_status"
+    ]
+  },
+  "cliCommands": [
+    {
+      "name": "egbe",
+      "description": "Egbe plugin status and updates",
+      "hasSubcommands": true
+    }
+  ],
+  "skills": [
+    "./openclaw/skills"
+  ],
+  "mcpServers": {
+    "egbe": {
+      "url": "https://os.hz.egbe.dev/mcp",
+      "transport": "streamable-http",
+      "auth": "oauth"
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "autoUpdate": {
+        "type": "boolean",
+        "default": true,
+        "description": "Install Egbe plugin updates automatically."
+      },
+      "releaseUrl": {
+        "type": "string",
+        "description": "Release manifest URL (https; loopback http allowed for testing)."
+      },
+      "checkIntervalMinutes": {
+        "type": "number",
+        "minimum": 1,
+        "default": 360
+      },
+      "initialDelaySeconds": {
+        "type": "number",
+        "minimum": 0,
+        "default": 60
+      },
+      "sessionLogging": {
+        "type": "boolean",
+        "default": true,
+        "description": "Send this OpenClaw's sessions in workspaces set up for Egbe to Egbe (also needs hooks.allowConversationAccess)."
+      }
+    }
+  }
+}
