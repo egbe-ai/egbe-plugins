@@ -9,13 +9,10 @@ files that come with the plugin.
 1. Call `egbe_local_setup` with the `business` that `egbe_setup` returned. Never
    show its `OS_API_KEY` in chat, and keep it out of logs, commits, URLs and
    search queries.
-2. Follow the `instructions` it returns, with two changes:
-   - Do quickstart step 3 (skills, playbooks and project guidance) as
-     [project files](#project-files) below describes, not through the catalog
-     installation.
-   - Where quickstart or its connection setup uses the installed request helper
-     (`egbe-curl.py`) or catalog helper (`sync-catalog.py`), use `egbe_read`,
-     `egbe_write` and `egbe_complete_setup`, passing `business`.
+2. Follow the `instructions` it returns. Do their project files step as
+   [project files](#project-files) below describes, from the plugin's own
+   files, not with `egbe_workspace_files`: the plugin brings the same
+   playbooks, and its `EGBE.md` indexes the skills the plugin provides.
 
 ## Project files
 
@@ -28,10 +25,9 @@ absolute paths: no `&&`, `;` or pipes, no `cd`, no shell variables, and never th
 key in a command. Claude Code then asks for fewer approvals, and a refused
 compound command does not stall setup.
 
-- **Credentials.** Save `OS_URL`, `OS_API_KEY` and this agent's connection ID in
-  `.env.local` as quickstart's connection setup ("Save credentials and connection
-  identity") describes, keeping other entries. Write the file with the file
-  tools, then run `chmod 600 .env.local` as its own command.
+- **Credentials.** Save them as the instructions' credentials step describes:
+  write `.env.local` with the file tools, then
+  run `chmod 600 .env.local` as its own command.
 - **Private files.** Make sure `.gitignore` ignores `.env.local`. Unless
   `.gitignore` already ends with the lines below, append them; they keep private
   working files in `egbe-docs/` out of Git:

@@ -19,8 +19,8 @@ skills, so they are always current.
    commands: it is a persistent project workspace. When it is not set up for
    Egbe yet (no `.env.local` with Egbe credentials and no installed Egbe skills
    in its `skills/` folder), call `egbe_local_setup` and follow its result to set
-   it up in the active agent's workspace, not another agent's. Egbe's installed
-   skills keep themselves current there.
+   it up in the active agent's workspace, not another agent's. It installs no
+   skills: Egbe serves them through `egbe_skill`, always current.
 3. For any capability afterwards, use the workspace's installed Egbe skill, or
    read it with `egbe_skill`, and make its API calls with `egbe_read` (GET) and
    `egbe_write` (other methods).

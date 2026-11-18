@@ -76,12 +76,16 @@ copies.
    establish one; do not create one through installation or plugins.
    - **Workspace already set up for Egbe** (saved Egbe credentials or an
      installed Egbe catalog): this is not a new setup. Skip `egbe_local_setup`,
-     use the installed skills and saved credentials, and continue with what the
-     founder asked.
+     use the saved credentials and the installed skills, or `egbe_skill` where
+     none are installed, and continue with what the founder asked.
+     If it has `egbe-docs/egbe-workspace.json` and its saved `releases` differ
+     from this result's `releases`, first update its files as
+     `egbe_workspace_files` describes.
    - **Persistent project workspace not set up yet:** call `egbe_local_setup` and
-     follow its result instead of the steps below. The workspace gets the same
-     skills, project playbooks, credentials, logging authorization and Business
-     Loop offer as the instruction-based connection. If it refuses, mention the reason once and
+     follow its result instead of the steps below. Through your own file tools
+     and this connection, with no Egbe installer or script, the workspace gets
+     saved credentials, project playbooks and guidance, logging authorization
+     and the Business Loop offer; skills stay readable with `egbe_skill`. If it refuses, mention the reason once and
      continue below.
    - **Otherwise:** continue below. This path needs no installation, API key,
      curl, shell command or local file.
