@@ -83,6 +83,21 @@ For activation, readiness to continue, or protection recovery, read
 [configured protection](references/observation-and-scheduling.md#configured-operational-protection)
 to check what the bundled monitor supports and what its state actually proves.
 
+## Through the Egbe connector
+
+Through the connector alone, observe without changing anything: the reads in
+[campaign operations](references/instantly-ops.md#paginated-and-date-filtered-reads)
+with their cursor rules, `GET /outreach/instantly/campaigns/{id}`,
+`/campaigns/{id}/analytics`, `/campaigns/{id}/sending-status`, and the
+assigned-sender and exclusion reads, all below `/outreach/instantly`. Report
+them as provider observations at their read time; they are not the run's
+`outreach.db` history, so do not compute conclusions that need it. Preparation,
+activation, imports, replies, opt-out handling and monitoring run the bundled
+Node scripts against the run's files and `outreach.db`, and need a set-up
+project workspace: in a persistent project workspace not set up yet, call
+`egbe_local_setup`; otherwise tell the founder which step needs it. Do not
+reproduce those writes with raw requests.
+
 Keep the owning run under
 `egbe-docs/marketing/campaigns/instantly/<run_key>/`. Before continuing, read its
 manifest and state files and query the project `outreach.db`, next to the run

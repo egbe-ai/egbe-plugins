@@ -19,6 +19,12 @@ Read this when drafting or changing an image ad, not for a metrics-only audit.
 
 ## Generate → inspect → upload → attach
 
+Through the Egbe connector, step 2's generation is refused. There, start from an
+existing approved image, a stock image (`egbe-os-images` →
+`references/stock-images.md`) or one the founder supplies at a public HTTPS URL,
+and continue from step 3. Generating a new image needs a project workspace
+connected with the business's Egbe key (`egbe_local_setup`).
+
 1. Read `$OS_URL/images/skill` and `GET $OS_URL/images` using the current
    `OS_API_KEY`. Choose an available model within the task's cost/quality scope;
    never request OpenAI provider keys or introduce `IMAGE_API_KEY`.

@@ -63,6 +63,19 @@ Reddit Ads directly.
 Use the requested targeting, objective, budget and assets for writes.
 Status, spend and pause requests do not require research or policy files.
 
+## Through the Egbe connector
+
+Campaign reads, paused builds, status changes, metrics and recovery work through
+the connector, with execution records in Egbe's artifact store ([execution
+records](references/runtime/artifacts.md)).
+<!-- egbe-connector-todo: html-render. Replace the next sentence when Egbe serves HTML-to-PNG rendering as an API route. -->
+Capturing a static banner from HTML runs `scripts/capture-ad.sh` with a local
+Chrome and needs a set-up project workspace: in a persistent project workspace
+not set up yet, call `egbe_local_setup`; otherwise tell the founder which step
+needs it. Through the connector alone, use a finished image the founder supplies
+at a public HTTPS URL or a stock image from `egbe-os-images` instead, and upload
+it as [capture/upload](references/creative/html-to-png-pipeline.md) describes.
+
 ## Read only what the operation needs
 
 - Payloads, targeting lookup and errors: [API](references/runtime/api-reference.md).

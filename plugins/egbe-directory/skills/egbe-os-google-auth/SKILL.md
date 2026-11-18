@@ -68,6 +68,16 @@ Never put the OS key in browser code. Never add Google client credentials to the
 product, call Google's token endpoint from the product, or treat an email/query
 parameter as authenticated identity.
 
+## Through the Egbe connector
+
+Through the connector you can change and publish the app with `egbe-os-git`
+("Without a terminal") and `egbe-os-deploy`. Rendered-page and interactive
+checks need a browser: use this environment's own browser tools, or a set-up
+project workspace. In a persistent project workspace not set up yet, call
+`egbe_local_setup`. Without either, read pages with `egbe-os-scrape` and HTTP
+responses, report signup, login and logout as unverified, and tell the founder
+which check remains.
+
 ## Start from the product backend
 
 Create a same-origin product route such as `/api/auth/google/start`. It calls:

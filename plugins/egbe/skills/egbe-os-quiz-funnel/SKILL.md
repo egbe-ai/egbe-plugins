@@ -60,6 +60,20 @@ Implement the accepted experience in the product's application. This skill owns
 the executable specification, quiz runtime, integration and technical checks;
 it does not choose whether the product needs a quiz or prescribe its UX method.
 
+## Through the Egbe connector
+
+Through the connector alone, you can write the specification, keeping
+`quiz.json` in Egbe's artifact store (`egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector")), and change and
+publish product code with `egbe-os-git` ("Without a terminal") and
+`egbe-os-deploy`.
+
+<!-- egbe-connector-todo: quiz-compile. Replace this paragraph when Egbe serves the quiz compiler as an API route. -->
+The compiler (`scripts/compile-quiz-spec.py`) and the runtime checks need a
+set-up project workspace: in a persistent project workspace not set up yet, call
+`egbe_local_setup`; otherwise tell the founder which step needs it. The runtime
+reads the compiler's output, so an uncompiled quiz is not ready to release.
+
 ## Start from the task
 
 Reuse the request and accepted project decisions for the audience, questions,

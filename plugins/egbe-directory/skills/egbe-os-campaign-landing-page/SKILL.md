@@ -65,6 +65,16 @@ The main homepage is `egbe-os-design-landing-page`. Provider campaign creation,
 creative limits and spend controls belong to the selected channel skill; building
 a page neither changes those objects nor authorizes traffic.
 
+## Through the Egbe connector
+
+Through the connector you can change and publish the page with `egbe-os-git`
+("Without a terminal") and `egbe-os-deploy`, wire analytics and read its events.
+Rendered-page and interactive checks need a browser: use this environment's own
+browser tools, or a set-up project workspace. In a persistent project workspace
+not set up yet, call `egbe_local_setup`. Without either, read pages with
+`egbe-os-scrape` and HTTP responses, label each interactive or visual claim
+unverified, and tell the founder which check remains.
+
 ## Build the owned page
 
 1. Inspect the accepted inputs, current route, storage and integration contracts.

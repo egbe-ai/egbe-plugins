@@ -4,6 +4,11 @@ Keep requests, IDs and evidence beside the relevant campaign, normally
 `egbe-docs/marketing/campaigns/reddit/<campaign>/`. Reference existing input
 records when available; no research, strategy or report package is required.
 
+Through the Egbe connector without a project folder, keep these records at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. Save a
+write's request record there before sending the write.
+
 Before campaign creation save its `create_idempotency_key` and exact
 `create_payload` in `campaign-state.json`. Retain every attempt's endpoint,
 time, response/error and unknown outcome. Save returned IDs immediately.

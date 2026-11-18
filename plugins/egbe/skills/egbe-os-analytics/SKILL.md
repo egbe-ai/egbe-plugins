@@ -416,7 +416,9 @@ milliseconds), `page` (from 1) and `pageSize` (up to 500). Each envelope's `data
 contains `{data: [...], count, page, pageSize}`. Join event `id` to property
 row `eventId`; paginate both through `count` with the same window. For a funnel
 analysis, use the [session evidence collector](references/session-funnel.md)
-to retain sanitized inputs and reproduce the calculation offline.
+to retain sanitized inputs and reproduce the calculation offline; through the
+Egbe connector alone, follow its
+[connector recipe](references/session-funnel.md#through-the-egbe-connector).
 
 ## Reporting customer metrics
 

@@ -1,5 +1,11 @@
 # Meta video operations
 
+Through the Egbe connector, the `/tools/videos/generations` routes are refused.
+There, use a finished MP4 the founder supplies at a public HTTPS URL, uploaded
+as below, with a still the founder supplies or a stock image as its thumbnail.
+Generating a video, or extracting a thumbnail from one, needs a project
+workspace connected with the business's Egbe key (`egbe_local_setup`).
+
 Use the source/format covered by the task; generation can incur cost.
 This helper does not require video or a static/video mix.
 Preserve generation request ID, selected model and eventual asset URL.

@@ -75,6 +75,21 @@ The caller need not know an internal workflow ID. Select the operations that
 serve the question; their real input dependencies, not a fixed catalog sequence,
 determine execution order. Finishing a section does not stop the surrounding task.
 
+## Through the Egbe connector
+
+The bundled runners, adapters, publishers and resume journals need a set-up
+project workspace: in a persistent project workspace not set up yet, call
+`egbe_local_setup`; otherwise tell the founder which step needs it. Through the
+connector alone, answer a narrow assignment with the capabilities they call:
+`egbe-os-research` for cited narrative research, and `egbe-os-search`,
+`egbe-os-scrape` or Google keyword ideas (`egbe-os-google-ads`) for
+measurements. Keep the brief, requests, job IDs, raw responses and sources at
+their `egbe-docs/research/<id>/` paths in Egbe's artifact store, as
+`egbe-os-quickstart` → `references/artifact-sync.md` ("Through the Egbe
+connector") describes. Label the result as collected without the section runner:
+it has no runner receipt or completion review and is not a published PMR
+section.
+
 ## Choose the operation
 
 Find available sections and their contracts in

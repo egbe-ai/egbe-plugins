@@ -67,6 +67,15 @@ server code reads those same names; the Site Gateway injects a separate product
 identity automatically. Never mint or deploy an image-specific key, and never
 introduce `IMAGE_API_KEY` for this OS capability.
 
+## Through the Egbe connector
+
+The connector refuses image generation (`/images/generations`). Through it, use
+[stock image search](references/stock-images.md) or an image the founder
+supplies at a public HTTPS URL. Generating an image needs a project workspace
+connected with the business's Egbe key: in a persistent project workspace not
+set up yet, call `egbe_local_setup`; otherwise offer stock or the founder's own
+image and say that generation needs such a workspace.
+
 Available options:
 
 - [Image generation](#generate) from a text prompt.

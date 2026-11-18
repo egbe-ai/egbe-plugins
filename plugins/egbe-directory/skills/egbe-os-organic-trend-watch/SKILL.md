@@ -62,6 +62,19 @@ product-relevant adaptations. This skill does not publish videos or measure
 the product's resulting conversions. It can run independently or supply a
 Product Market Research section; it is not a pre-PRD prerequisite.
 
+## Through the Egbe connector
+
+Through the connector alone, you can collect a bounded sample with the Apify
+routes in [provider-contract.md](references/provider-contract.md), saving each
+run and dataset ID in Egbe's artifact store before reading results so a paid run
+is resumed, not repeated, and answer from captions, metrics and comments. State
+that frames and transcripts were not analyzed. The bundled runner, media
+analyzer, renderer and finalizer, and so `analysis.json`, `result.md` and a
+sealed `receipt.json`, need a set-up project workspace: in a persistent project
+workspace not set up yet, call `egbe_local_setup`; otherwise tell the founder
+which step needs it. Do not present a connector answer as a sealed result or a
+PMR section.
+
 ## Establish the assignment
 
 Use the question, product/audience context and available evidence. Missing

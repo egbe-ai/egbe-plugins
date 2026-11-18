@@ -16,6 +16,11 @@ egbe-docs/marketing/campaigns/google/<campaign-slug>/
 Create these on demand, not as an empty bundle. Reference existing input records
 rather than copying them or requiring a new planning document.
 
+Through the Egbe connector without a project folder, keep these records at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. Save a
+write's request record there before sending the write.
+
 - campaign.json: object bindings, last significant confirmed provider state and
   at most one unfinished agent-side campaign operation.
 - results.md: observed build/launch result and later measurements, dates,

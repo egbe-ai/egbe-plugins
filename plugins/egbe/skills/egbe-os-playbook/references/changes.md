@@ -108,6 +108,43 @@ After a verified receipt the helper retains that receipt locally and removes
 the acknowledged packet's full text from transport storage. It does not remove
 pending/rejected packets; the complete accepted record remains in Egbe.
 
+## Through the Egbe connector
+
+Without the installed helper, build and send the same record with the connector.
+The quiet-recording, acceptance and limit rules above still apply.
+
+1. **Before editing**, read each method file to change exactly as it is now and
+   note the UTC time. Without a project folder, the project's copies live in
+   Egbe's artifact store at `playbooks/<path>` (`egbe-os-quickstart` →
+   `references/artifact-sync.md` ("Through the Egbe connector")); use the
+   `playbooks` group of `egbe_workspace_files` as the source only for a file the
+   store does not have yet, which is then `absent` before. Keep this text
+   unchanged; do not reconstruct it from a template or memory. If you could not
+   read it, its state is `unknown`.
+2. Edit and save the file normally (through the artifact store, without a
+   project folder), then read back its saved text and note the time.
+3. When the change is accepted, send `egbe_write` `POST /playbooks/changes`
+   with a new UUID as `client_change_id`:
+
+   ```json
+   {"client_change_id": "<uuid>", "expected_project_id": <project.instance_id from egbe_setup>,
+    "reason": "Why this method changed", "expected_effect": "What should improve",
+    "initiator": "Who proposed the accepted change, as reported",
+    "files": [{"path": "egbe-docs/playbooks/market-and-acquisition.md",
+      "before": {"state": "captured", "text": "<exact text before>", "captured_at": "<ISO 8601 UTC>"},
+      "after": {"state": "captured", "text": "<exact text after>", "captured_at": "<ISO 8601 UTC>"}}]}
+   ```
+
+   Include only files whose text changed. A file that did not exist before has
+   `before.state` `absent`; a deleted one has `after.state` `deleted`; both
+   carry `"text": null`, as does `unknown`.
+4. A 200 result's `data` is the receipt. On a network error, 5xx or 429, resend
+   the identical packet with the same `client_change_id` later in the
+   conversation; identical content returns the same receipt; never change the
+   packet or its ID to get past a 409 or another refusal. The connector keeps no
+   pending queue: a packet not delivered before the conversation ends is lost,
+   so send it before running the work it guides.
+
 ## Transport and API contract
 
 Private transport files live in `egbe-docs/.local/playbook-changes/`; the helper

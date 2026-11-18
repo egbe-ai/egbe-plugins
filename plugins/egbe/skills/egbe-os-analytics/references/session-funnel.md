@@ -76,6 +76,27 @@ reading `.data.data[]`. Event-data uses the same window/pagination; join event
 `id` to `eventId` and read `eventProperties[]`. Its count is events with properties,
 not property count. The helper converts its exclusive CLI end into the API window.
 
+## Through the Egbe connector
+
+Without the helper, collect the same pages with `egbe_read`. Pick the site's
+`appSlug` from `GET /analytics`, then read `/analytics/<appSlug>/events` with
+`query` `startAt` and `endAt` (inclusive UTC milliseconds), `page` from 1 and
+`pageSize` (at most 500; 100 keeps a page in one result). A result with
+`continuation` holds part of that page: read every part with the same `path` and
+`continuation` and join them before parsing; never parse or count a partial
+page. Continue to the next `page` until you have `.data.count` rows. Stop and
+report the coverage as incomplete on an empty page before `count` or a page that
+repeats earlier event `id`s, and narrow the window when `count` is too large to
+read. Read `/analytics/<appSlug>/event-data` the same way and join `eventId` to
+event `id`. Then count per `sessionId` with the counting rules below, applying
+the same exclusions.
+
+Keep the window, event names, filters, coverage and derived counts with the
+analysis, without credentials, raw private paths or identifiers (in Egbe's
+artifact store without a project folder). Such a count has no replayable event
+snapshot; say so, and use a set-up project workspace for an analysis that must
+be reproduced offline.
+
 ## Counting and coverage
 
 - A session may span visits. Per-session observations are unordered; cross-visit

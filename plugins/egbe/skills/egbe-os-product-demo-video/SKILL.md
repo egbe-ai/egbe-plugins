@@ -65,6 +65,15 @@ Show the real path from customer intent to a useful result. Deliver a playable
 video and poster; embedding or publishing them is a separate action unless
 included in the request.
 
+## Through the Egbe connector
+
+Egbe does not record video. Through the connector you can plan the walkthrough,
+confirm the serving revision with `egbe-os-deploy` and keep the notes in Egbe's
+artifact store. Recording needs browser and recording tools in your own
+environment, or a set-up project workspace (in a persistent project workspace
+not set up yet, call `egbe_local_setup`). Without either, tell the founder;
+screenshots or a description are not a recording.
+
 ## Prepare the walkthrough
 
 Read the requested or already agreed audience, destination and behavior, then

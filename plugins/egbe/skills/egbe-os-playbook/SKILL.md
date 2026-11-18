@@ -64,3 +64,6 @@ their delivery, synchronization and change records, not the business decision.
   [synchronization](references/catalog.md#synchronize-before-method-work).
 - Before editing one, read [Changes](references/changes.md) to capture and quietly
   record accepted method changes; also use it to resume unfinished delivery.
+- Without the installed helper, such as through the Egbe connector alone, follow
+  [Changes](references/changes.md#through-the-egbe-connector) to build and send
+  the record yourself.

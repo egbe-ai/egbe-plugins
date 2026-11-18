@@ -60,6 +60,17 @@ Build payments through Egbe OS, not through provider credentials or direct
 payment-gateway routes. Base URL: `https://os.hz.egbe.dev`. Authenticate with
 `Authorization: Bearer $OS_API_KEY`.
 
+## Through the Egbe connector
+
+Through the connector you can read and create the provider catalog with the
+`/payments` routes in the workflows below, and change and publish product code
+with `egbe-os-git` ("Without a terminal") and `egbe-os-deploy`. `npm run
+billing:sync` migrates the app database and stores the provider bindings in it,
+and local test runs need the app's own environment. Both need a set-up project
+workspace (in a persistent project workspace not set up yet, call
+`egbe_local_setup`); otherwise tell the founder which step needs it. Do not
+report checkout as working until it is verified on the deployed app.
+
 ## Reuse the existing integration
 
 Inspect the product repository and its `AGENTS.md`. When it contains

@@ -73,6 +73,16 @@ the caller's concrete plan. Verify that
 journey; do not select a new offer, audience or test. Return a material conflict
 to the same method/plan decision rather than resolving it through a redesign.
 
+## Through the Egbe connector
+
+Through the connector you can read the project's source through `egbe-os-git`
+and its deployments through `egbe-os-deploy`. Rendered-page and interactive
+checks need a browser: use this environment's own browser tools, or a set-up
+project workspace. In a persistent project workspace not set up yet, call
+`egbe_local_setup`. Without either, read pages with `egbe-os-scrape` and HTTP
+responses, label each interactive or visual claim unverified, and tell the
+founder which check remains.
+
 ## Workflow
 
 1. **Frame the actual path.** Identify the product repository and deployed URL,

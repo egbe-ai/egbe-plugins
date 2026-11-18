@@ -4,6 +4,11 @@ Keep requests, IDs and evidence beside the relevant campaign, normally
 `egbe-docs/marketing/campaigns/meta/<campaign>/`. Reference existing input records
 when available; no research, strategy or report package is required.
 
+Through the Egbe connector without a project folder, keep these records at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. Save a
+write's request record there before sending the write.
+
 Before a write save its exact endpoint/payload, time and request identity.
 For plan/apply preserve the exact spec, plan/token and authorization context;
 OS derives apply idempotency from the original token. Save responses, errors,

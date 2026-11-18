@@ -24,6 +24,11 @@ phase. Store public creative assets beside `creatives.json` or link existing
 repo-relative assets. No credentials, raw customer emails, click identifiers,
 session cookies or customer conversion payloads belong in these artifacts.
 
+Through the Egbe connector without a project folder, keep these records at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. Save a
+write's request record there before sending the write.
+
 ## Resolve exactly one campaign
 
 `campaigns.json` example:

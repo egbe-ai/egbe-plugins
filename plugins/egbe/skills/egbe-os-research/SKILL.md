@@ -85,7 +85,11 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
 - `idempotency_key` identifies this exact logical attempt. Repeating it returns
   the same job and does not spend another quota unit.
 
-Persist `data.id` before doing other work.
+Persist `data.id` before doing other work. Through the Egbe connector without a
+project folder, persist it, and later the result you rely on, in Egbe's artifact
+store (for example `research/<id>/job.json`), as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. A job ID
+kept only in the conversation cannot be recovered after it.
 
 ## Poll
 

@@ -75,6 +75,16 @@ Next.js modules. Its `EGBE:AUTH-DATABASE` marker identifies only those database
 assets; the application still owns its request-time session and account-entry
 implementation. Preserve a working library's own schema/migration system.
 
+## Through the Egbe connector
+
+Through the connector you can change and publish the app with `egbe-os-git`
+("Without a terminal") and `egbe-os-deploy`. Rendered-page and interactive
+checks need a browser: use this environment's own browser tools, or a set-up
+project workspace. In a persistent project workspace not set up yet, call
+`egbe_local_setup`. Without either, read pages with `egbe-os-scrape` and HTTP
+responses, report signup, login and logout as unverified, and tell the founder
+which check remains.
+
 ## Core Workflow
 
 For every egbe-os-product-auth implementation, read all of these references before changing code:

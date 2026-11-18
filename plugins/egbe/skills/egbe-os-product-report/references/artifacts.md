@@ -13,6 +13,12 @@ creating a repository, committing, pushing or publishing. Do not use the
 installed skill folder as artifact storage. Keep reports out of public/static
 app directories and exclude all `egbe-docs/` from the build context.
 
+Through the Egbe connector without a project folder, keep the same files at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes, and
+render `report.html` there only if `egbe-os-report-ui` can run; otherwise leave
+HTML unfinished as the skill describes.
+
 ## Files
 
 | File | Brief | Detailed | Purpose |

@@ -20,6 +20,11 @@ egbe-docs/marketing/campaigns/linkedin/
 Create artifacts when needed, not empty files for future phases. Never store
 member tokens, signed upload URLs, raw customer records or private credentials.
 
+Through the Egbe connector without a project folder, keep these records at the
+same paths in Egbe's artifact store, as `egbe-os-quickstart` →
+`references/artifact-sync.md` ("Through the Egbe connector") describes. Save a
+write's request record there before sending the write.
+
 - `campaigns.json`: campaign slug/path and selected campaign; preserve caller
   product/experiment identifiers when provided. Explicit task selection wins.
 - `creatives.json`: approved text/image paths, format, stable local variant ID,

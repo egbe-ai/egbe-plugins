@@ -88,3 +88,38 @@ A provider status such as `verified` or `likely`, or a scraped `unverified`
 address, does not establish current deliverability, relevance, consent or
 authorization to send. These commands neither launch campaigns nor replace
 downstream import verification.
+
+## Through the Egbe connector
+
+Without Node, make the scripts' requests with `egbe_write` and keep their
+bounds. Each result's `data` is the provider body.
+
+- **Search** (`POST /outreach/apollo/people/search`, consumes search quota): the
+  Apollo fields from [search inputs](references/operations.md#search-inputs),
+  plus `page` (from 1) and `per_page` (at most 100). Read `data.people`. Request
+  the next page until a page is empty or shorter than `per_page`, the page
+  reaches `data.pagination.total_pages` (missing pagination does not mean one
+  page) or you have the requested number. Deduplicate by person `id` across
+  pages; a page that adds no new `id` is a repeated page, an incomplete result
+  rather than the end.
+- **Enrich** (`POST /outreach/apollo/people/bulk_match`, consumes enrichment
+  quota and can cost money): `{"details": [...]}` with at most 10 people, each
+  with `id`, or `linkedin_url`, or `first_name` and `last_name` with `domain` or
+  `organization_name`, and `"reveal_personal_emails": false`. Read
+  `data.matches`; a null entry is an unmatched person. `POST
+  /outreach/apollo/people/match` takes one such person.
+- Keep a match as a lead only with an email, trimmed and lower-cased, once per
+  address; the scripts keep `email_status` `verified` and `likely` by default.
+
+Save the result after every page or batch, before the next request, in the
+`{leads, meta}` shape of
+[operations](references/operations.md#enrichment-and-result-contract) with
+`complete`, `stop_reason`, `processed_count` and the inputs not yet sent as
+`not_enriched_people`. Keep it at its location above in Egbe's artifact store,
+as `egbe-os-quickstart` → `references/artifact-sync.md` ("Through the Egbe
+connector") describes; it holds personal data, so keep it nowhere else. A lost
+response may already be charged: on resume send only the saved unsent inputs.
+`places-leads` reads business websites with a guarded local client and needs a
+set-up project workspace: in a persistent project workspace not set up yet, call
+`egbe_local_setup`; otherwise tell the founder which step needs it. Through the
+connector, use `egbe-os-search` for Places listings and details instead.
