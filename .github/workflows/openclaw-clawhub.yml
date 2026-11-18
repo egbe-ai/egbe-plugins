@@ -6,8 +6,9 @@ name: Publish the OpenClaw plugin to ClawHub
 #
 # Egbe's release workflow in claw-swarm writes openclaw-release.json for each
 # new OpenClaw plugin version. This workflow publishes the commit it names to
-# ClawHub as @egbe/openclaw (owner egbe) through trusted publishing, which
-# works only on workflow_dispatch: a push of the file dispatches this workflow
+# ClawHub as @egbe/openclaw through trusted publishing, which keeps the
+# package's owner (egbe), refuses an owner input and works only on
+# workflow_dispatch: a push of the file dispatches this workflow
 # again. ClawHub installs of the plugin update once ClawHub reports the version
 # as published; nothing is written back here.
 
@@ -72,7 +73,6 @@ jobs:
     uses: openclaw/clawhub/.github/workflows/package-publish.yml@bcb25920d7bf46881cbd911d71d6d2d26598d208
     with:
       source: egbe-ai/egbe-plugins@${{ needs.plan.outputs.commit }}
-      owner: egbe
       family: code-plugin
       dry_run: false
       changelog: "Egbe OpenClaw plugin ${{ needs.plan.outputs.version }}"
