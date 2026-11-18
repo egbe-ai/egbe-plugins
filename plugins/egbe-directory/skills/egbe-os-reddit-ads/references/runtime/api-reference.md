@@ -288,9 +288,22 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
 ```
 
 Let curl set the multipart boundary. Through the Egbe connector (`egbe_write`),
-or when the file is already at a public HTTPS URL, send JSON instead and OS
-downloads it: `{"source_url":"https://<host>/creative.png"}`. The file must be
-served directly (no login page) with an accepted type. OS `response.data` contains
+send JSON instead:
+
+- a file already at a public HTTPS URL: `{"source_url":"https://<host>/creative.png"}`.
+  OS downloads it; it must be served directly (no login page) with an accepted type;
+- a local file up to about 512 KiB:
+  `{"content_base64":"<base64>","content_type":"image/png","filename":"creative.png"}`;
+- a larger local file (a rendered creative, a chat attachment): an upload session.
+  `POST /uploads` `{"filename":"creative.png","content_type":"image/png","size":<bytes>}`
+  returns `data.upload_id`; send the file in order with
+  `POST /uploads/{upload_id}/parts` `{"content_base64":"<base64 of at most 512000 bytes>","offset":<data.received_bytes>}`
+  (repeat a part with the same `offset` when its response was lost), then
+  `POST /uploads/{upload_id}/complete` `{"sha256":"<optional hex of the whole file>"}`.
+  Completing stores it exactly like this endpoint and returns the same fields;
+  repeating it returns the same URL. Sessions expire after 30 minutes of inactivity.
+
+OS `response.data` contains
 `{"url":"https://<cdn>/<key>","key":"<key>","size_bytes":12345,"content_type":"image/png"}`.
 Use `response.data.url` as `media_url`. Images (PNG/JPEG/WebP) are limited to
 10 MiB; MP4/WebM to 100 MiB. The upload endpoint checks MIME/size, not dimensions

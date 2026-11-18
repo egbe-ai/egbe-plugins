@@ -35,9 +35,11 @@ connected with the business's Egbe key (`egbe_local_setup`).
    product accuracy and cropping. Fix an actual defect, not by unbounded model
    probing. Preserve the prompt/model and approved asset path in campaign records.
 4. Use the returned image's stable public `url` when `stored:true`. If only
-   base64 is available, save it and use an OS storage capability discovered from
-   the root skill to obtain a public URL; do not regenerate just to upload, pass
-   local paths to the Ads API, or invent hosting URLs.
+   base64 is available, save it and store it with `POST $OS_URL/tools/ad-assets/upload`
+   (multipart `file`, or JSON `content_base64` up to about 512 KiB) or, through
+   the Egbe connector for a larger file, an upload session (`POST $OS_URL/uploads`,
+   then `/parts` and `/complete`); use the returned `data.url`. Do not regenerate
+   just to upload, pass local paths to the Ads API, or invent hosting URLs.
 5. `POST $OS_URL/ads/openai/uploads` with `{product_slug,image_url}` and a saved
    idempotency key. Save its returned `data.id` (the uploaded file ID).
 6. Attach that ID as `creative.file_id` when creating/updating the paused ad.

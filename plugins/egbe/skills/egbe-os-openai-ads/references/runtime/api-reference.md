@@ -40,7 +40,10 @@ before a newly authorized operation; retries do not renew expired reservations.
    additionally requires an owned `conversion_event_setting_id` and provider
    account access; ordinary traffic campaigns do not require tracking setup.
 3. `POST /ads/openai/uploads` with `{product_slug,image_url}` for a public image.
-   Use the returned `id` as `creative.file_id`.
+   Use the returned `id` as `creative.file_id`. For a local image, first store it
+   with `POST /tools/ad-assets/upload` (`content_base64` up to about 512 KiB) or an
+   upload session (`POST /uploads`, `/uploads/{upload_id}/parts`,
+   `/uploads/{upload_id}/complete`) and use the returned `data.url` as `image_url`.
 4. `POST /ads/openai/ad-groups` with `{campaign_id,name,context_hints,bidding_config}`.
    `bidding_config` contains `billing_event_type` (`click` or `impression`) and
    `max_bid_micros`. For conversion bidding use `click`; the bid is CPA, while

@@ -176,7 +176,14 @@ POST $OS_URL/ads/meta/raw/adimages
 
 Through the Egbe connector (`egbe_write`), or when the file is already at a
 public HTTPS URL, send `"image_url": "https://..."` instead of `image_base64`;
-OS downloads it (PNG/JPEG, up to 30 MiB).
+OS downloads it (PNG/JPEG, up to 30 MiB). A message carries at most 1 MiB, so
+through the connector send `image_base64` only for files up to about 500 KiB.
+For a larger local file (up to 10 MiB), store it first with an upload session:
+`POST /uploads` `{"filename","content_type","size"}` returns `data.upload_id`;
+send the bytes in order as `POST /uploads/{upload_id}/parts`
+`{"content_base64":"<at most 512000 bytes>","offset":<data.received_bytes>}`;
+`POST /uploads/{upload_id}/complete` returns a public `data.url`. Send that as
+`image_url`.
 
 The response is expected to include a stable `hash`. Every image ad must carry
 that hash at:
@@ -201,6 +208,9 @@ POST $OS_URL/ads/meta/raw/advideos
 
 Through the Egbe connector, or for a file already at a public HTTPS URL, send
 `"video_url": "https://..."` instead of `video_base64` (MP4/MOV, up to 100 MiB).
+Through the connector, a local MP4 goes through an upload session first (as
+for images, up to 100 MiB); send its `data.url` as `video_url`. Sessions do not
+accept MOV.
 
 The response is expected to include a stable `video_id`. This endpoint uploads a
 finished video; it does not define video generation. Use it only after an

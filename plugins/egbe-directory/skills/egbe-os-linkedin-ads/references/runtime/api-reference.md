@@ -68,7 +68,12 @@ replacement. No hidden account-wide changes or budget increases.
 `POST /images`: `{"product_slug":"example-product","image_base64":"<base64 PNG/JPEG>"}`.
 Maximum 5 MB decoded; no data URI. Through the Egbe connector (`egbe_write`), or
 when the image is already at a public HTTPS URL, send `"image_url":"https://..."`
-instead of `image_base64` and OS downloads it. Save the returned image URN,
+instead of `image_base64` and OS downloads it. A connector message carries at
+most 1 MiB, so store a larger local image with an upload session first:
+`POST /uploads` `{"filename","content_type","size"}` returns `data.upload_id`;
+send the bytes in order as `POST /uploads/{upload_id}/parts`
+`{"content_base64":"<at most 512000 bytes>","offset":<data.received_bytes>}`;
+`POST /uploads/{upload_id}/complete` returns a public `data.url` for `image_url`. Save the returned image URN,
 then GET until AVAILABLE before using it. Signed upload URLs remain internal.
 
 `POST /creatives`:

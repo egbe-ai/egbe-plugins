@@ -123,7 +123,13 @@ two- or three-letter `language` hint. Supply the actual SHA-256 of the decoded
 audio. Through the Egbe connector (`egbe_write`), or when the audio is already at
 a public HTTPS URL, send `content_url` instead of `content_base64`; OS downloads
 it and `sha256` becomes an optional check. `/v1/media/analyze` frames accept
-`content_url` the same way. Supported types are WAV, MP3, MP4 audio, WebM, Ogg
+`content_url` the same way. A connector message carries at most 1 MiB; for a
+larger local PNG/JPEG/WebP frame, store it with an upload session:
+`POST /uploads` `{"filename","content_type","size"}` returns `data.upload_id`;
+send the bytes in order as `POST /uploads/{upload_id}/parts`
+`{"content_base64":"<at most 512000 bytes>","offset":<data.received_bytes>}`;
+`POST /uploads/{upload_id}/complete` returns a public `data.url` for
+`content_url`. The file becomes publicly readable. Upload sessions do not accept audio. Supported types are WAV, MP3, MP4 audio, WebM, Ogg
 and FLAC, with a 24 MiB decoded bound. Caller-selected models are rejected. The account's
 provisioned AI key pays for the server-configured `media-transcription` role.
 The response preserves text, available language and timestamped segments as
