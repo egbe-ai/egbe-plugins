@@ -5,7 +5,7 @@ name: Publish the OpenClaw plugin to ClawHub
 # change here is copied to egbe-plugins by hand.
 #
 # Egbe's release workflow in claw-swarm writes openclaw-release.json for each
-# new OpenClaw plugin version. This workflow publishes the commit it names to
+# new OpenClaw plugin version. This workflow publishes that version to
 # ClawHub as @egbe/openclaw through trusted publishing, which keeps the
 # package's owner (egbe), refuses an owner input and works only on
 # workflow_dispatch: a push of the file dispatches this workflow
@@ -32,12 +32,13 @@ jobs:
       actions: write
     outputs:
       version: ${{ steps.release.outputs.version }}
-      commit: ${{ steps.release.outputs.commit }}
       publish: ${{ steps.release.outputs.publish }}
     steps:
+      # A trusted publish may only name the commit this run is authorized for.
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - id: release
         env:
           EVENT: ${{ github.event_name }}
@@ -48,8 +49,13 @@ jobs:
           import json
           r = json.load(open("openclaw-release.json"))
           print(r["version"], r["commit"])')
+          # The release commit only adds openclaw-release.json; publish this run's
+          # commit once its plugin package matches the released one.
+          if ! git diff --quiet "$commit" HEAD -- openclaw openclaw.plugin.json package.json LICENSE README.md; then
+            echo "::error::The OpenClaw plugin at $GITHUB_SHA differs from release $version ($commit); its own release publishes it."
+            exit 1
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "commit=$commit" >> "$GITHUB_OUTPUT"
           state=$(curl -fsS "https://clawhub.ai/api/v1/packages/%40egbe%2Fopenclaw/versions/$version/publication" |
             python3 -c 'import json, sys; print(json.load(sys.stdin).get("state", ""))' || true)
           if [ "$state" = published ] || [ "$state" = pending ]; then
@@ -72,7 +78,7 @@ jobs:
       id-token: write
     uses: openclaw/clawhub/.github/workflows/package-publish.yml@bcb25920d7bf46881cbd911d71d6d2d26598d208
     with:
-      source: egbe-ai/egbe-plugins@${{ needs.plan.outputs.commit }}
+      source: egbe-ai/egbe-plugins@${{ github.sha }}
       family: code-plugin
       dry_run: false
       changelog: "Egbe OpenClaw plugin ${{ needs.plan.outputs.version }}"
