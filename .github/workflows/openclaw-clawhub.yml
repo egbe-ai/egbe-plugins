@@ -1,0 +1,78 @@
+name: Publish the OpenClaw plugin to ClawHub
+
+# Lives in egbe-ai/egbe-plugins; its source is plugins/egbe-plugins-repo in
+# egbe-ai/claw-swarm. The release GitHub App can't write workflow files, so a
+# change here is copied to egbe-plugins by hand.
+#
+# Egbe's release workflow in claw-swarm writes openclaw-release.json for each
+# new OpenClaw plugin version. This workflow publishes the commit it names to
+# ClawHub as @egbe/openclaw (owner egbe) through trusted publishing, which
+# works only on workflow_dispatch: a push of the file dispatches this workflow
+# again. ClawHub installs of the plugin update once ClawHub reports the version
+# as published; nothing is written back here.
+
+on:
+  push:
+    branches: [main]
+    paths: [openclaw-release.json]
+  workflow_dispatch:
+
+concurrency:
+  group: openclaw-clawhub
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      commit: ${{ steps.release.outputs.commit }}
+      publish: ${{ steps.release.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - id: release
+        env:
+          EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          read -r version commit < <(python3 -c '
+          import json
+          r = json.load(open("openclaw-release.json"))
+          print(r["version"], r["commit"])')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          state=$(curl -fsS "https://clawhub.ai/api/v1/packages/%40egbe%2Fopenclaw/versions/$version/publication" |
+            python3 -c 'import json, sys; print(json.load(sys.stdin).get("state", ""))' || true)
+          if [ "$state" = published ] || [ "$state" = pending ]; then
+            echo "OpenClaw plugin $version is already $state on ClawHub." >> "$GITHUB_STEP_SUMMARY"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT" = workflow_dispatch ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            gh workflow run openclaw-clawhub.yml --ref main
+            echo "Dispatched the ClawHub publication of $version." >> "$GITHUB_STEP_SUMMARY"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish:
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    uses: openclaw/clawhub/.github/workflows/package-publish.yml@bcb25920d7bf46881cbd911d71d6d2d26598d208
+    with:
+      source: egbe-ai/egbe-plugins@${{ needs.plan.outputs.commit }}
+      owner: egbe
+      family: code-plugin
+      dry_run: false
+      changelog: "Egbe OpenClaw plugin ${{ needs.plan.outputs.version }}"
