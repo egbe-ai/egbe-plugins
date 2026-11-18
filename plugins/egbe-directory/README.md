@@ -86,7 +86,7 @@ Egbe settings.
 
 - `egbe-os-analytics`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-analytics
 - `egbe-os-apollo-lead-finder`: 13 files from https://os.hz.egbe.dev/skills/egbe-os-apollo-lead-finder
-- `egbe-os-design-landing-page`: 21 files from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page
+- `egbe-os-design-landing-page`: 23 files from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page
 - `egbe-os-instantly-campaign-launcher`: 23 files from https://os.hz.egbe.dev/skills/egbe-os-instantly-campaign-launcher
 - `egbe-os-meta-ads`: 2 files from https://os.hz.egbe.dev/skills/egbe-os-meta-ads
 - `egbe-os-openai-ads`: 1 file from https://os.hz.egbe.dev/skills/egbe-os-openai-ads

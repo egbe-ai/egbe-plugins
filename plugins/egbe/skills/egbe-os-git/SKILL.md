@@ -214,6 +214,18 @@ workspace with Git can keep using the push flow above.
      path. A later batch replaces a path staged earlier.
    - Optional `author: {"name", "email"}` on the commit uses an identity approved
      for this project; the default is Egbe OS.
+   - A template or other file bundled with an Egbe skill is copied on the server
+     instead of sent: give the entry `from_skill` in place of `content`, such as
+     `{"path": "src/quiz/quiz-engine.mjs", "from_skill": {"skill": "egbe-os-quiz-funnel",
+     "path": "assets/engine/quiz-engine.mjs"}}`. A `from_skill.path` ending in `/`
+     copies every file of that skill folder into the folder `path` names (`""`
+     for the repository root), each counting as one batch entry. The connector's
+     `egbe_skill` with `resource: ""` (or a folder ending in `/`) lists a skill's
+     files with their size and SHA-256; copies are byte-exact, keep a script's
+     executable mode and count toward the same limits.
+   - Product Build's shipped application and account foundations install into a
+     session with `POST /git/commit-sessions/<session_id>/scaffold`; see its
+     `references/foundations.md`.
 4. The result's `sha` is the full commit SHA: pass it as `ref` to `POST /deploy`
    (see `/deploy/skill`). `changed: false` means the files matched the base and
    no commit was made.

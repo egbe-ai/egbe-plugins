@@ -112,4 +112,6 @@ When a step uses one, download it to the place that step needs it, for example
 
 | File | URL | SHA-256 |
 | --- | --- | --- |
+| `assets/lockfiles/accounts/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/lockfiles/accounts/package-lock.json | `2af93bf2bf9e468a797ebb053517de5bd4220dece8597cb33716299df2a71f22` |
+| `assets/lockfiles/auth-db/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/lockfiles/auth-db/package-lock.json | `105ab8fd2c8a9d78e64a3f9938c8605c8904b8800e1af439486f4433f729eae6` |
 | `assets/scaffold/package-lock.json` | https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json | `ece42978c0f7ac05c03e3e49f556478e6f8ef35b2c701a346454f841372a3682` |

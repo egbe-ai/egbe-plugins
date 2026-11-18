@@ -14,6 +14,10 @@ Product Build's `references/foundations.md` documents the optional local
 `scripts/scaffold.py` helper for previewing and copying this starter and any
 selected compatible Auth/subscription foundations. Use its `plan` command before
 `apply`; it preserves existing project guidance and rejects conflicting files.
+Without a terminal, the same reference's "Without a terminal" section installs
+this starter into the product repository through a Git commit session, so its
+files, including the large `package-lock.json`, never need to pass through the
+conversation.
 
 Initialize Git if necessary and use the Git skill to connect the product repository
 before publishing. Without a terminal, commit the files through the Git skill's

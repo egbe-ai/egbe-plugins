@@ -72,6 +72,7 @@ not permission to invent one. A narrow repair needs no complete PRD or new app.
 - For a compatible application foundation, read [shipped foundations](references/foundations.md).
   The optional local helper previews and installs the existing Next.js, account/session
   and subscription pieces without choosing the stack or commercial model for you.
+  Without a terminal, Egbe runs the same installation into a Git commit session.
 - For a user-facing interface, use [interface quality](references/interface-quality.md).
 - For review that must remain usable after handoff, use
   [private review](references/workflows/private-review-handoff.md).

@@ -96,6 +96,8 @@ Files that exceed the plugin directory's size limits are listed in their
 skill; Claude downloads one from Egbe only when a step needs it and checks its
 SHA-256:
 
+- `egbe-os-design-landing-page/assets/lockfiles/accounts/package-lock.json` from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/lockfiles/accounts/package-lock.json
+- `egbe-os-design-landing-page/assets/lockfiles/auth-db/package-lock.json` from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/lockfiles/auth-db/package-lock.json
 - `egbe-os-design-landing-page/assets/scaffold/package-lock.json` from https://os.hz.egbe.dev/skills/egbe-os-design-landing-page/resources/assets/scaffold/package-lock.json
 
 ## Support

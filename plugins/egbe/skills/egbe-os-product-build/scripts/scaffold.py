@@ -64,13 +64,75 @@ def append_marked(existing: str, marker: str, text: str, *, ignore_file=False) -
     return existing.rstrip() + ("\n\n" if existing.strip() else "") + block + "\n"
 
 
-def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptions=False, skills=None):
+# The command-line options by name, for callers that select foundations without flags.
+FOUNDATIONS = {"nextjs": "base", "auth-db": "auth_db", "accounts": "accounts", "subscriptions": "subscriptions"}
+MERGED = {Path("package.json"), Path("AGENTS.md"), Path(".gitignore")}
+
+
+LOCKFILE = Path("package-lock.json")
+LOCKED_SECTIONS = ("dependencies", "devDependencies")
+
+
+def shipped_lockfiles(skills):
+    """The starter's lockfile and the prebuilt ones for its foundation combinations."""
+    assets = skill(skills, "design-landing-page") / "assets"
+    paths = [assets / "scaffold/package-lock.json", *sorted((assets / "lockfiles").glob("*/package-lock.json"))]
+    return [path.read_bytes() for path in paths if path.is_file()]
+
+
+def lock_lists(lock: bytes, package: dict) -> bool:
+    """Whether a lockfile's root lists exactly the package's dependencies, as `npm ci` requires."""
+    try:
+        root = json.loads(lock).get("packages", {}).get("", {})
+    except (ValueError, AttributeError):
+        return False
+    return all((package.get(section) or {}) == (root.get(section) or {}) for section in LOCKED_SECTIONS)
+
+
+def _lock_shape(lock: bytes):
+    """A lockfile without the root package's own name and version."""
+    try:
+        data = json.loads(lock)
+        root = dict(data.get("packages", {}).get("", {}))
+    except (ValueError, AttributeError):
+        return None
+    for field in ("name", "version"):
+        data.pop(field, None)
+        root.pop(field, None)
+    return {**data, "packages": {**data.get("packages", {}), "": root}}
+
+
+def is_shipped_lockfile(lock: bytes, skills) -> bool:
+    """An unedited shipped lockfile, whatever the root package's name and version."""
+    return _lock_shape(lock) in [_lock_shape(shipped) for shipped in shipped_lockfiles(skills)]
+
+
+def prebuilt_lockfile(package: dict, skills):
+    """The shipped lockfile listing the package's dependencies, carrying its name and version."""
+    shipped = shipped_lockfiles(skills)
+    for lock in shipped:
+        if lock_lists(lock, package):
+            data = json.loads(lock)
+            if all(data.get(field) == package.get(field) for field in ("name", "version")):
+                return lock
+            for record in (data, data["packages"][""]):
+                for field in ("name", "version"):
+                    if field in package:
+                        record[field] = package[field]
+                    else:
+                        record.pop(field, None)
+            return (json.dumps(data, indent=2) + "\n").encode()
+    return None
+
+
+def compose(read, *, base=False, auth_db=False, accounts=False, subscriptions=False, skills=None):
+    """Plan the selected foundations against any destination.
+
+    `read(relative)` returns the destination's bytes at a relative path, or None
+    when absent, and raises Conflict for a path that cannot hold a file. Returns
+    `(relative, before, after)` for every file the installation changes.
+    """
     skills = skills or Path(__file__).resolve().parents[2]
-    if target.is_symlink():
-        raise Conflict(f"Symlink destination: {target}")
-    root = target.resolve()
-    if root.exists() and not root.is_dir():
-        raise Conflict(f"Expected a product directory: {root}")
     if not (base or auth_db or accounts or subscriptions):
         raise Conflict("Select --nextjs, --auth-db, --accounts or --subscriptions explicitly")
     files = {}
@@ -84,23 +146,18 @@ def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptio
 
     if base:
         add(skill(skills, "design-landing-page") / "assets/scaffold")
-    package_path = root / "package.json"
-    check_path(root, package_path)
-    package_bytes = package_path.read_bytes() if package_path.exists() else files.get(Path("package.json"))
+    existing_package = read(Path("package.json"))
+    package_bytes = existing_package if existing_package is not None else files.get(Path("package.json"))
     if package_bytes is None:
         raise Conflict("A product package.json is required; use --nextjs only for a new app")
     package = json.loads(package_bytes)
     if not isinstance(package, dict):
         raise Conflict("package.json must contain an object")
-    agents_path = root / "AGENTS.md"
-    check_path(root, agents_path)
-    agents = agents_path.read_text() if agents_path.exists() else ""
+    agents = (read(Path("AGENTS.md")) or b"").decode()
     if base:
         starter_guidance = files[Path("AGENTS.md")].decode()
         agents = append_marked(agents, "EGBE:APPLICATION-SCAFFOLD", starter_guidance)
-        ignore_path = root / ".gitignore"
-        check_path(root, ignore_path)
-        existing_ignores = ignore_path.read_text() if ignore_path.exists() else ""
+        existing_ignores = (read(Path(".gitignore")) or b"").decode()
         files[Path(".gitignore")] = append_marked(
             existing_ignores, "EGBE:APPLICATION-SCAFFOLD", files[Path(".gitignore")].decode(), ignore_file=True,
         ).encode()
@@ -135,7 +192,7 @@ def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptio
                 current[name] = value
         add(foundation)
         agents = append_marked(agents, fragment["agentsMarker"], (foundation / "AGENTS.append.md").read_text())
-    if base and package_path.exists():
+    if base and existing_package is not None:
         # Do not transplant a starter package into an existing application.
         # Repeated installation is allowed only when its merged package agrees.
         starter = json.loads(files[Path("package.json")])
@@ -156,17 +213,44 @@ def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptio
         files[Path("package.json")] = (json.dumps(package, indent=2) + "\n").encode()
     if base or foundations:
         files[Path("AGENTS.md")] = agents.encode()
-    edits = []
+    # Keep `npm ci` working: an unedited shipped lockfile that no longer lists the
+    # package's dependencies is replaced by the prebuilt one for this combination.
+    replaceable = set(MERGED)
+    lock = files.get(LOCKFILE)
+    lock = lock if lock is not None else read(LOCKFILE)
+    final_package = json.loads(files[Path("package.json")])
+    if lock is not None and not lock_lists(lock, final_package):
+        existing_lock = read(LOCKFILE)
+        prebuilt = prebuilt_lockfile(final_package, skills) if is_shipped_lockfile(lock, skills) else None
+        if prebuilt is not None and (existing_lock is None or is_shipped_lockfile(existing_lock, skills)):
+            files[LOCKFILE] = prebuilt
+            replaceable.add(LOCKFILE)
+    changes = []
     for relative, after in sorted(files.items()):
-        destination = root / relative
-        check_path(root, destination)
-        before = destination.read_bytes() if destination.exists() else None
+        before = read(relative)
         if before == after:
             continue
-        if before is not None and relative not in {Path("package.json"), Path("AGENTS.md"), Path(".gitignore")}:
+        if before is not None and relative not in replaceable:
             raise Conflict(f"Existing file differs: {relative}; no files were written")
-        edits.append(Edit(destination, before, after))
-    return root, edits
+        changes.append((relative, before, after))
+    return changes
+
+
+def plan(target: Path, *, base=False, auth_db=False, accounts=False, subscriptions=False, skills=None):
+    if target.is_symlink():
+        raise Conflict(f"Symlink destination: {target}")
+    root = target.resolve()
+    if root.exists() and not root.is_dir():
+        raise Conflict(f"Expected a product directory: {root}")
+
+    def read(relative):
+        path = root / relative
+        check_path(root, path)
+        return path.read_bytes() if path.exists() else None
+
+    changes = compose(read, base=base, auth_db=auth_db, accounts=accounts, subscriptions=subscriptions,
+                      skills=skills)
+    return root, [Edit(root / relative, before, after) for relative, before, after in changes]
 
 
 def apply(root, edits):
@@ -203,7 +287,7 @@ def main():
             apply(root, edits)
         print(json.dumps({"target": str(root), "applied": args.command == "apply", "changes": [str(e.path.relative_to(root)) for e in edits]}, indent=2))
         if edits:
-            print("Next: refresh dependencies/lockfile with your package manager, implement accepted behavior, configure real bindings and verify before publishing.", file=sys.stderr)
+            print("Next: install dependencies with your package manager (refresh the lockfile only if it was edited or npm ci fails), implement accepted behavior, configure real bindings and verify before publishing.", file=sys.stderr)
     except (Conflict, OSError, ValueError) as exc:
         parser.exit(1, f"Scaffold installation stopped: {exc}\n")
 

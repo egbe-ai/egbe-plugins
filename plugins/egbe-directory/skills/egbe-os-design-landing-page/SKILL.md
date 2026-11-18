@@ -129,6 +129,8 @@ executing it. Keep `.egbe/skills/` out of Git.
 
 Files in the bundle that this plugin leaves out:
 
+- `assets/lockfiles/accounts/package-lock.json`
+- `assets/lockfiles/auth-db/package-lock.json`
 - `assets/scaffold/.dockerignore`
 - `assets/scaffold/.gitignore`
 - `assets/scaffold/Dockerfile`

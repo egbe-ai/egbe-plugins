@@ -97,6 +97,12 @@ to the caller rather than silently changing it during rendering.
    The [editorial example](assets/examples/editorial.html) shows a small
    composition. These are references, not required report sections.
 
+Without a local copy of this skill (through the Egbe connector), read these
+files with `egbe_skill` and their relative paths; a long file comes back in
+parts with a `continuation`, to be joined unchanged. To keep the unedited
+scaffold in a project repository, the Git skill's commit requests copy it there
+with `from_skill` instead of sending its text.
+
 Use semantic headings and controls for the chosen composition. Escape external
 text before inserting it; do not paste fetched HTML as report content.
 

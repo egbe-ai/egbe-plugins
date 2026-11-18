@@ -54,8 +54,40 @@ working code. Symlinks within the destination are rejected. Repeating the same
 installation without intervening edits makes no changes. Edited foundations
 remain a manual review, not an update/overwrite target.
 
-Use the project's package manager to refresh its lockfile after dependency
-changes (`npm install --include=dev` for the bundled npm starter). The helper
+## Without a terminal
+
+Through the Egbe connector, or wherever the local helper cannot run, Egbe runs
+the same helper against a repository. Open a commit session on the product's
+repository and branch as `egbe-os-git` describes ("Without a terminal"), then:
+
+```json
+POST /git/commit-sessions/<session_id>/scaffold
+{"foundations": ["nextjs", "subscriptions"], "directory": ""}
+```
+
+`foundations` takes the options above without dashes in front (`nextjs`,
+`auth-db`, `accounts`, `subscriptions`); `directory` is the product's folder in
+the repository (empty for its root). The plan is made against the session's base
+commit and anything already staged in the session, with the same merging and
+refusals as the local helper; a refusal (409) stages nothing. The result lists
+`changes` (`path`, `action`, `size`); review them, then repeat the same request
+with `"apply": true` to stage those files and commit the session with a message.
+Repeating an installation that is already staged or committed returns no changes.
+
+`lockfile_current: true` means the resulting `package-lock.json` lists the
+package's dependencies, so the starter Dockerfile's `npm ci` works. `false`
+means it does not, because the app's dependencies or lockfile differ from the
+shipped ones; regenerate the lockfile with `npm install --include=dev` where
+npm can run before deploying, or report that dependency as remaining work.
+
+## After installation
+
+Both paths keep an unedited shipped `package-lock.json` (the starter's or a
+previous installation's) in step: when a foundation adds dependencies, they
+install the matching prebuilt lockfile from Design landing page's
+`assets/lockfiles/`. An edited lockfile is left as it is; then refresh it with
+the project's package manager (`npm install --include=dev` for the bundled npm
+starter), as after any other dependency change. The helper
 does not install packages, migrate a database, create provider objects, deploy
 or verify an integration. Read the selected Auth/Payments contract, implement
 the accepted behavior and verify the resulting customer journey before publishing.
