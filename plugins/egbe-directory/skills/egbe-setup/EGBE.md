@@ -110,8 +110,9 @@ access for these data. Shared settings are `egbe-docs/routines.json` and
 `egbe-docs/telemetry/setup.json`; recheck actual scheduler/collector installation
 when changing machines. At session start and after a task that changes these files,
 run the installed quickstart's `scripts/sync-artifacts.py` with Python from the
-project root. Another agent connected to the same business can restore the files
-in a fresh workspace. For deletions, moves, read-only connections and conflicts,
+project root. If the task or connection allows reads only, pass `--pull-only`:
+local drafts stay here and are not published. Only synchronized work can be
+restored in a fresh workspace. For deletions, moves, interruptions and conflicts,
 follow the quickstart's `references/artifact-sync.md`.
 
 Reserve Git-ignored `.local/` for credentials and machine/process-only state;
