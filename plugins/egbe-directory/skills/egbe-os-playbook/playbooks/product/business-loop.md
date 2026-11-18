@@ -57,8 +57,10 @@ Egbe, and feedback that would change the next action. Explain that connection
 to the founder before narrowing the work to its first deliverable, including when
 feedback can realistically arrive. Use [loop examples](loop-examples.md) when
 the founder needs help choosing a useful cycle; adapt them to the project,
-not a fixed menu. Without customers or usable signals, first create a way to
-learn rather than repeatedly reviewing empty analytics.
+not a fixed menu. If learning depends on people trying an experience, explain
+how the intended audience could reach it now. Past traffic alone does not establish access;
+if none is available, keep access as an open prerequisite. Without a usable
+signal, first establish a way to learn rather than reviewing empty analytics.
 
 ## Turn the decision into work
 
@@ -69,9 +71,11 @@ unchanged approval or treat silence as one.
 
 Keep the concrete result, owner, scope, significant limits, evidence and next
 checkpoint in the work's existing plan. For experiments, retain the hypothesis
-and evaluation criteria established before execution. If the accepted stage
-ends before the business goal, retain the remaining outcome and proposed next
-action or decision, who would carry it forward, and a useful trigger or checkpoint.
+and evaluation criteria established before execution. Even in a planning-only
+handoff, say who would assess which observations and how their findings would
+change the next action. If the accepted stage ends before the business goal,
+retain the remaining outcome, the proposed next action or decision, who would
+carry it forward, and a useful trigger or checkpoint.
 Distinguish proposed continuation from accepted responsibility. Use the applicable
 delivery or channel method and technical skills to do agreed agent-owned work,
 not merely repeat an offer to begin it.

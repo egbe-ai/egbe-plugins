@@ -37,6 +37,15 @@ check what changed rather than repeating work or copying it into another format.
 Distinguish facts, interpretations and hypotheses. Collect missing evidence only
 when it can affect the next decision, using a bounded research assignment.
 
+When proposing creative work or a test, inspect saved competitor examples that bear
+on the choice. Show which observed detail informed the framing, format or
+destination and why it fits this audience, or why a plausible example was ruled
+out. Keep the source market, channel and destination with what you adapt;
+explain material differences before carrying an idea into a new setting.
+Visible messaging and ad longevity do not establish sales or profitability;
+a teaser or partial screenshot does not verify the rest of the funnel.
+Borrow a testable idea, not another company's promises or unverified proof.
+
 Explain significant choices through evidence, reasoning, uncertainty and their
 expected benefit. When data cannot settle a choice, expose the assumption and
 propose a proportionate check. Keep concrete decisions and outcomes in the task's

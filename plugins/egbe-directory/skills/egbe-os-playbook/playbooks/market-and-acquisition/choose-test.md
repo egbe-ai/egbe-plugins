@@ -40,14 +40,8 @@ response and possible content adaptations. Research a gap when the answer could
 change the choice or test plan; reuse sufficient existing evidence instead of
 requiring a new collection.
 
-Competitor ads and funnels can suggest a test. Distinguish what was actually
-observed, why it might transfer to this audience, what will be adapted and why.
-Keep the source market, channel and destination with the borrowed component;
-explain cross-market or cross-channel adaptation rather than presenting it as
-observed evidence in the new context.
-Activity or longevity does not prove profitability. Partial screenshots, an
-unvisited checkout or a teaser do not establish a complete successful funnel.
-Reuse useful evidence, not another company's promises or unverified proof.
+For a test adapted from another market or channel, apply the shared
+[evidence guidance](../market-and-acquisition.md#work-from-the-projects-evidence).
 
 ## Make the test feasible and interpretable
 
