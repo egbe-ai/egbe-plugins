@@ -143,9 +143,9 @@ and summary, explicitly leaving HTML unfinished.
 For scheduled output, honor the caller's notification decision: prepare without
 sending when notification is not required. Otherwise send the summary in the
 founder's language with light formatting and links to the actual local
-artifacts. A local path is not a public URL, and Egbe mail sends no
-attachments: when the recipient cannot open the file, put what they need in the
-message itself and say where the full report is kept, without publishing it
-elsewhere by default. Record the result under the artifact contract. For a
+artifacts. A local path is not a public URL: when the recipient cannot open the
+file, attach it through Egbe mail (`attachments` on `POST /mail/send`, see
+`egbe-os-mail`) or put what they need in the message itself, and say where the
+full report is kept, without publishing it elsewhere by default. Record the result under the artifact contract. For a
 scheduled run, return the artifact path and coverage/delivery outcome to
 `egbe-os-product-routines`; a manual report does not create or advance its schedule.

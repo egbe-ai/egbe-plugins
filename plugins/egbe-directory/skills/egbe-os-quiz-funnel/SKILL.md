@@ -68,9 +68,10 @@ Through the connector alone, you can write the specification, keeping
 publish product code with `egbe-os-git` ("Without a terminal") and
 `egbe-os-deploy`.
 
-<!-- egbe-connector-todo: quiz-compile. Replace this paragraph when Egbe serves the quiz compiler as an API route. -->
-The compiler (`scripts/compile-quiz-spec.py`) and the runtime checks need a
-set-up project workspace: in a persistent project workspace not set up yet, call
+Through the Egbe connector, compile with `POST /quiz/compile {spec}` (step 2): it
+returns the same files `scripts/compile-quiz-spec.py` writes, byte for byte, so
+no workspace is needed for compilation. The runtime checks still need a set-up
+project workspace: in a persistent project workspace not set up yet, call
 `egbe_local_setup`; otherwise tell the founder which step needs it. The runtime
 reads the compiler's output, so an uncompiled quiz is not ready to release.
 
@@ -106,6 +107,22 @@ compiler prerequisite and need not be repeated to correct an existing quiz.
    do not edit these outputs by hand. It checks structure, references and
    configured constraints, not whether a claim is true or an experience is good.
    Read diagnostics, especially reachability that could not be verified.
+
+   Without a terminal, such as through the Egbe connector (`egbe_write`), send
+   the parsed specification to the same compiler:
+
+   ```bash
+   POST $OS_URL/quiz/compile
+   {"spec": <contents of quiz.json>, "quiz_slug": "<quiz-slug>"}
+   ```
+
+   `quiz_slug` defaults to `spec.quiz_slug`. When ready, `response.data.files`
+   maps each output name to its exact text, identical to the script's output,
+   and `response.data.report` holds the diagnostics. Write each file unchanged
+   into `response.data.folder`. A `422` with `status: not_ready` lists
+   `problems`, returns only `validation.json` in `files` and names the page
+   files in `delete`: remove those, fix `quiz.json` and compile again. Nothing
+   is stored or charged.
 3. Bind the runtime to the product's framework following
    [implementation](references/implementation.md). Follow
    [conversion handoffs](references/conversion-handoff.md) for the chosen

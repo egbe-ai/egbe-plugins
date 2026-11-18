@@ -1738,42 +1738,37 @@ def _load(folder: Path) -> Any:
     return spec
 
 
-def compile_quiz(
-    workspace: Path, quiz_slug: str, today: date, *, check_only: bool = False
-) -> dict[str, Any]:
-    if not SLUG_PATTERN.fullmatch(quiz_slug):
-        raise SpecError("--quiz-slug must be a slug of lowercase letters, digits and '-'")
-    folder = workspace / 'egbe-docs/product/quizzes' / quiz_slug
+def failure_receipt(quiz_slug: str, today: date, problem: SpecError) -> str:
+    """The `validation.json` text that records why a compile was not ready."""
+    receipt = {
+        "contract": REPORT_CONTRACT,
+        "status": "not_ready",
+        "validated_on": today.isoformat(),
+        "quiz_slug": quiz_slug,
+        "problems": str(problem).splitlines()[1:] or [str(problem)],
+    }
+    return json.dumps(receipt, indent=2, ensure_ascii=False) + "\n"
+
+
+def compile_spec(
+    spec: Any, quiz_slug: str, today: date
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Compile a parsed specification without touching the filesystem.
+
+    Returns the validation report and the exact text of each artifact keyed by
+    file name. Raises SpecError when the specification is not ready.
+    """
     try:
-        spec = _load(folder)
-        try:
-            errors, warnings, facts = validate_spec(spec)
-        except RecursionError as exc:
-            raise SpecError("specification is nested too deeply") from exc
-        if isinstance(spec, dict) and spec.get("quiz_slug") not in (None, quiz_slug):
-            errors.append(
-                f"quiz_slug '{spec.get('quiz_slug')}' does not match its folder "
-                f"'{quiz_slug}'"
-            )
-        if errors:
-            raise SpecError(_format_problems(errors, warnings))
-    except SpecError as problem:
-        if not check_only and folder.is_dir():
-            # What an earlier version compiled must not outlive a failed compile.
-            for name in PAGE_FILES:
-                (folder / name).unlink(missing_ok=True)
-            receipt = {
-                "contract": REPORT_CONTRACT,
-                "status": "not_ready",
-                "validated_on": today.isoformat(),
-                "quiz_slug": quiz_slug,
-                "problems": str(problem).splitlines()[1:] or [str(problem)],
-            }
-            _atomic_write(
-                folder / "validation.json",
-                json.dumps(receipt, indent=2, ensure_ascii=False) + "\n",
-            )
-        raise
+        errors, warnings, facts = validate_spec(spec)
+    except RecursionError as exc:
+        raise SpecError("specification is nested too deeply") from exc
+    if isinstance(spec, dict) and spec.get("quiz_slug") not in (None, quiz_slug):
+        errors.append(
+            f"quiz_slug '{spec.get('quiz_slug')}' does not match its folder "
+            f"'{quiz_slug}'"
+        )
+    if errors:
+        raise SpecError(_format_problems(errors, warnings))
 
     digest = _sha256(_canonical_json(spec))
     public = public_spec(spec, digest)
@@ -1799,16 +1794,33 @@ def compile_quiz(
         "reachability": facts["reachability"],
         "warnings": warnings,
     }
+    files = {
+        "QUIZ.md": render_markdown(spec, facts),
+        "quiz.public.json": json.dumps(public, indent=2, ensure_ascii=False) + "\n",
+        "validation.json": json.dumps(report, indent=2, ensure_ascii=False) + "\n",
+    }
+    return report, files
+
+
+def compile_quiz(
+    workspace: Path, quiz_slug: str, today: date, *, check_only: bool = False
+) -> dict[str, Any]:
+    if not SLUG_PATTERN.fullmatch(quiz_slug):
+        raise SpecError("--quiz-slug must be a slug of lowercase letters, digits and '-'")
+    folder = workspace / 'egbe-docs/product/quizzes' / quiz_slug
+    try:
+        report, files = compile_spec(_load(folder), quiz_slug, today)
+    except SpecError as problem:
+        if not check_only and folder.is_dir():
+            # What an earlier version compiled must not outlive a failed compile.
+            for name in PAGE_FILES:
+                (folder / name).unlink(missing_ok=True)
+            _atomic_write(folder / "validation.json", failure_receipt(quiz_slug, today, problem))
+        raise
+
     if not check_only:
-        _atomic_write(folder / "QUIZ.md", render_markdown(spec, facts))
-        _atomic_write(
-            folder / "quiz.public.json",
-            json.dumps(public, indent=2, ensure_ascii=False) + "\n",
-        )
-        _atomic_write(
-            folder / "validation.json",
-            json.dumps(report, indent=2, ensure_ascii=False) + "\n",
-        )
+        for name, content in files.items():
+            _atomic_write(folder / name, content)
     return report
 
 
