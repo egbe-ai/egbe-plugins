@@ -9,7 +9,7 @@ unintended visual claims. Preserve supplied content; do not invent UI or proof.
 Generate requested assets through OS or reuse authorized supplied files.
 Preserve paid generation request IDs and results before considering a retry.
 
-Upload PNG/JPEG via `POST /ads/meta/raw/adimages` with `image_base64` and
-`filename`. Save the Meta hash: `CampaignSpec.creatives[].image_ref` uses it,
+Upload PNG/JPEG via `POST /ads/meta/raw/adimages` with `image_base64` (or a
+public HTTPS `image_url` through the Egbe connector) and `filename`. Save the Meta hash: `CampaignSpec.creatives[].image_ref` uses it,
 not a path or arbitrary URL. See [API](../runtime/api-reference.md) and
 [video](talking-head.md).

@@ -287,7 +287,10 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
   -F 'file=@creative.png;type=image/png'
 ```
 
-Let curl set the multipart boundary. OS `response.data` contains
+Let curl set the multipart boundary. Through the Egbe connector (`egbe_write`),
+or when the file is already at a public HTTPS URL, send JSON instead and OS
+downloads it: `{"source_url":"https://<host>/creative.png"}`. The file must be
+served directly (no login page) with an accepted type. OS `response.data` contains
 `{"url":"https://<cdn>/<key>","key":"<key>","size_bytes":12345,"content_type":"image/png"}`.
 Use `response.data.url` as `media_url`. Images (PNG/JPEG/WebP) are limited to
 10 MiB; MP4/WebM to 100 MiB. The upload endpoint checks MIME/size, not dimensions

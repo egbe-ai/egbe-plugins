@@ -174,6 +174,10 @@ POST $OS_URL/ads/meta/raw/adimages
 }
 ```
 
+Through the Egbe connector (`egbe_write`), or when the file is already at a
+public HTTPS URL, send `"image_url": "https://..."` instead of `image_base64`;
+OS downloads it (PNG/JPEG, up to 30 MiB).
+
 The response is expected to include a stable `hash`. Every image ad must carry
 that hash at:
 
@@ -194,6 +198,9 @@ POST $OS_URL/ads/meta/raw/advideos
   "filename": "03-talking-head.mp4"
 }
 ```
+
+Through the Egbe connector, or for a file already at a public HTTPS URL, send
+`"video_url": "https://..."` instead of `video_base64` (MP4/MOV, up to 100 MiB).
 
 The response is expected to include a stable `video_id`. This endpoint uploads a
 finished video; it does not define video generation. Use it only after an

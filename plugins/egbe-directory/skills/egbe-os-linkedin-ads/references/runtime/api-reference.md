@@ -66,7 +66,9 @@ replacement. No hidden account-wide changes or budget increases.
 ## Upload and create creative
 
 `POST /images`: `{"product_slug":"example-product","image_base64":"<base64 PNG/JPEG>"}`.
-Maximum 5 MB decoded; no data URI or remote URL. Save the returned image URN,
+Maximum 5 MB decoded; no data URI. Through the Egbe connector (`egbe_write`), or
+when the image is already at a public HTTPS URL, send `"image_url":"https://..."`
+instead of `image_base64` and OS downloads it. Save the returned image URN,
 then GET until AVAILABLE before using it. Signed upload URLs remain internal.
 
 `POST /creatives`:

@@ -13,7 +13,8 @@ POST /tools/videos/generations/{request_id}/meta-upload
 Read the OS video capability for current inputs/models. Poll the same request;
 do not regenerate after a failed status read. Meta upload takes the generation
 model and desired filename. For a supplied finished MP4 use
-`/ads/meta/raw/advideos` with `video_base64` and `filename`.
+`/ads/meta/raw/advideos` with `video_base64` (or a public HTTPS `video_url`
+through the Egbe connector) and `filename`.
 
 Save `video_id`. A video ad also needs a thumbnail: extract the selected still
 from that video, upload via `adimages`, and preserve `image_hash`.

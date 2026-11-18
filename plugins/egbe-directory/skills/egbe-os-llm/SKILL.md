@@ -111,8 +111,11 @@ telemetry record zero tokens for every call.
 `POST /v1/media/transcribe` accepts a local audio upload encoded in JSON:
 `schema_version: 1`, `media_type`, `sha256` and `content_base64`, with an optional
 two- or three-letter `language` hint. Supply the actual SHA-256 of the decoded
-audio. Supported types are WAV, MP3, MP4 audio, WebM, Ogg and FLAC, with a 24 MiB
-decoded bound. Remote URLs and caller-selected models are rejected. The account's
+audio. Through the Egbe connector (`egbe_write`), or when the audio is already at
+a public HTTPS URL, send `content_url` instead of `content_base64`; OS downloads
+it and `sha256` becomes an optional check. `/v1/media/analyze` frames accept
+`content_url` the same way. Supported types are WAV, MP3, MP4 audio, WebM, Ogg
+and FLAC, with a 24 MiB decoded bound. Caller-selected models are rejected. The account's
 provisioned AI key pays for the server-configured `media-transcription` role.
 The response preserves text, available language and timestamped segments as
 speech evidence; it does not prove the competitor's claims.

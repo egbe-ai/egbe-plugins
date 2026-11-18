@@ -68,9 +68,10 @@ Upload only after QA passes:
 POST $OS_URL/tools/ad-assets/upload
 ```
 
-See [API reference](../runtime/api-reference.md#asset-upload) for multipart fields
-and response shape. Use the returned CDN URL for Reddit image post creation. Do not host ad
-creatives from the product app or arbitrary public URLs.
+See [API reference](../runtime/api-reference.md#asset-upload) for multipart fields,
+the JSON `source_url` form for the Egbe connector, and response shape. Use the
+returned CDN URL for Reddit image post creation. Do not host ad creatives from the
+product app or arbitrary public URLs.
 
 ## If Local Capture Is Unavailable
 
