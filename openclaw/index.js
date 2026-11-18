@@ -33,6 +33,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PLUGIN_ID = "egbe";
+const GATEWAY_CONNECT = "egbe.connect";
+const CONNECT_FAILED = "EGBE_CONNECT_FAILED";
 const CLAWHUB_PACKAGE = "@egbe/openclaw";
 // The repository whose release commits ClawHub installs are verified against.
 const RELEASE_REPOSITORY = "https://github.com/egbe-ai/egbe-plugins.git";
@@ -584,6 +586,27 @@ async function connectEgbe(input, { workspaceDir, replace, setMcpServer }) {
   return connection;
 }
 
+// Asks the local Gateway's Egbe plugin to connect. Returns undefined when no
+// Gateway answers or it runs a plugin without this method; then the CLI connects
+// by itself. The Gateway's own failures (an invalid code, say) are thrown.
+async function connectThroughGateway(request) {
+  let sdk;
+  try {
+    sdk = await import("openclaw/plugin-sdk/gateway-runtime");
+  } catch {
+    return undefined;
+  }
+  try {
+    if (!(await sdk.isImplicitLocalGatewayTargetFromCli({}))) return undefined;
+    const result = await sdk.callGatewayFromCli(GATEWAY_CONNECT, { timeout: "60000", json: true }, request);
+    return { business: result?.business ?? undefined, businessName: result?.businessName ?? undefined };
+  } catch (error) {
+    if (sdk.isGatewayClientRequestError?.(error) && error?.gatewayCode === CONNECT_FAILED) throw new Error(error.message);
+    if (error?.code === CONNECT_FAILED || error?.details?.code === CONNECT_FAILED) throw new Error(error.message);
+    return undefined;
+  }
+}
+
 const defaultWorkspace = () => path.join(openclawHome(), "workspace");
 
 async function statusReport() {
@@ -629,10 +652,20 @@ export default definePluginEntry({
           .option("--workspace <dir>", "agent workspace to save the key in", defaultWorkspace())
           .option("--replace", "replace an existing Egbe connection")
           .action(async (input, opts) => {
+            // The Gateway resolves paths against its own working directory; send an absolute one.
+            const request = { code: String(input ?? "").trim(), workspace: path.resolve(opts.workspace),
+                              replace: Boolean(opts.replace) };
             try {
-              const c = await connectEgbe(input, { workspaceDir: opts.workspace, replace: Boolean(opts.replace), setMcpServer: mcpServerSetter(api) });
+              // A running Gateway connects itself, so its tools work without a restart.
+              let c = await connectThroughGateway(request);
+              let next = "Ask OpenClaw to set up Egbe.";
+              if (!c) {
+                c = await connectEgbe(request.code, { workspaceDir: request.workspace, replace: request.replace,
+                                                      setMcpServer: mcpServerSetter(api) });
+                next = "If OpenClaw's Gateway is running, restart it (openclaw gateway restart), then ask OpenClaw to set up Egbe.";
+              }
               console.log(`Connected Egbe${c.businessName ? ` for ${c.businessName}` : ""}${c.business ? ` (${c.business})` : ""}.`);
-              console.log("Restart the Gateway to load it (openclaw gateway restart), then ask OpenClaw to set up Egbe.");
+              console.log(next);
             } catch (error) {
               console.error(error.message);
               process.exitCode = 1;
@@ -698,6 +731,20 @@ export default definePluginEntry({
         }
       },
     }), { name: "egbe_connect" });
+
+    // `openclaw egbe connect` hands the code to a running Gateway, which saves the
+    // connection itself and loads Egbe's MCP server without a restart.
+    api.registerGatewayMethod?.(GATEWAY_CONNECT, async ({ params, respond }) => {
+      try {
+        const c = await connectEgbe(params?.code, {
+          workspaceDir: typeof params?.workspace === "string" ? params.workspace : defaultWorkspace(),
+          replace: params?.replace === true, setMcpServer: mcpServerSetter(api),
+        });
+        respond(true, { business: c.business ?? null, businessName: c.businessName ?? null });
+      } catch (error) {
+        respond(false, undefined, { code: CONNECT_FAILED, message: error.message });
+      }
+    }, { scope: "operator.admin" });
 
     // Session logging runs wherever agent runs do, including embedded `openclaw agent --local`.
     const publicKeys = new Map();

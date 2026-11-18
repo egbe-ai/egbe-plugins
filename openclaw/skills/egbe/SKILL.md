@@ -51,7 +51,7 @@ needed (and refuses a business key): follow the quickstart from its step 3
 Alternatives: with a browser on this computer, OpenClaw's Control UI
 (`openclaw dashboard`) → Settings → the `egbe` MCP server → **Sign in**, which
 connects all the founder's businesses; or, in a terminal,
-`openclaw egbe connect <code>` and restart the Gateway.
+`openclaw egbe connect <code>`, which a running Gateway loads without a restart.
 
 Tell them in one line what the connection allows: you work on the business it
 connects (with a browser sign-in, all their businesses, on the one they name);
