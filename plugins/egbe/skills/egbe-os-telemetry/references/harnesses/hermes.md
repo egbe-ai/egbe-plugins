@@ -1,5 +1,20 @@
 # Hermes: configure the active profile
 
+## With the Egbe Hermes plugin
+
+When the Egbe plugin for Hermes is installed (`hermes plugins list` shows
+`egbe` enabled), its session logging is the managed exporter for harness
+`hermes`: it sends each turn from Hermes's plugin hooks when the turn ends, with
+the project's `.env.local` credentials, grouped by Hermes session. Follow the
+"Session logging" section of the plugin's `egbe:egbe` skill: record
+`collectors.hermes` with integration `egbe-hermes-plugin`, verify with the
+`egbe_status` tool or `hermes egbe status`, and stop with
+`EGBE_SESSION_LOGGING=off`. Do not also install or configure `hermes_otel`
+below; an existing `hermes_otel` export to Egbe keeps the plugin's logging off,
+so sessions are not recorded twice. Without the plugin, continue below.
+
+## Without the plugin
+
 1. Use the maintained [hermes_otel plugin](https://github.com/briancaffey/hermes-otel):
    install and enable it through Hermes's plugin commands in the profile used
    for this project. Resolve that profile's `HERMES_HOME` first.

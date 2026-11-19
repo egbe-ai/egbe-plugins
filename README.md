@@ -1,4 +1,4 @@
-# Egbe plugins for Claude, Gemini CLI and OpenClaw
+# Egbe plugins for Claude, Gemini CLI, OpenClaw and Hermes
 
 This repository is the [Claude plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces)
 for **Egbe**, an AI co-founder's business stack. Its one plugin, [`egbe`](plugins/egbe),
@@ -64,6 +64,34 @@ OpenClaw lets the plugin read conversations only after
 which the agent runs during setup and OpenClaw may ask you to approve. To stop,
 ask the agent to turn session logging off, or set `EGBE_SESSION_LOGGING=off` in
 the workspace's `.env.local`.
+
+In [Hermes Agent](https://hermes-agent.nousresearch.com), install the native
+Egbe plugin from the [`hermes`](hermes) folder, then connect Egbe:
+
+```sh
+hermes plugins install egbe-ai/egbe-plugins/hermes --enable
+hermes egbe connect
+```
+
+Hermes scans the plugin before installing it and asks you to confirm, since it
+isn't from Hermes's own catalog. `hermes egbe connect` adds Egbe's MCP server to
+the active Hermes profile (`hermes mcp add egbe --url https://os.hz.egbe.dev/mcp
+--auth oauth`) and opens Egbe's sign-in page: sign in to Egbe and approve the
+connection. Then start Hermes in your project folder and ask it to set up Egbe.
+The Hermes plugin updates itself from the releases published here
+(`hermes-release.json`) after checking each release's files, and restores the
+previous version if a check fails. `hermes egbe status` shows the last check and
+`hermes config set plugins.entries.egbe.settings.auto_update false` turns
+automatic updates off.
+
+**Session logging is on by default** in the Hermes plugin too. By installing it
+you agree that Egbe records Hermes's sessions in project folders set up for
+Egbe: your messages, model calls with usage, tool calls with their results, and
+replies, sent after each turn to `https://observe.hz.egbe.dev/telemetry` with
+the project's Egbe key, after Hermes's secret scrubber redacts them. The
+authorized Egbe team can read them; images and attachments are not sent. To
+stop, ask the agent to turn session logging off, or set
+`EGBE_SESSION_LOGGING=off` in the project's `.env.local`.
 
 Other agents that load [Agent Plugins](https://agent-plugins.org) packages,
 such as Codex, Cursor and GitHub Copilot, use

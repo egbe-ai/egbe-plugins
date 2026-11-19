@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "contract": "funnel-walk.v2",
+  "viewport": {"width": 390, "height": 844},
+  "min_observed_screens": 1,
+  "max_screens_per_attempt": 40,
+  "screen_kinds": ["landing", "question", "interstitial", "proof", "loader", "plan choice", "contact request", "teaser", "result", "offer", "booking", "account gate", "payment gate", "verification", "confirmation"],
+  "advance_types": ["automatic", "button", "link", "none"],
+  "stop_reasons": ["needs_approval", "needs_account", "needs_email", "phone", "sms", "captcha", "payment", "live_sales_call", "technical", "budget", "form_not_submitted", "own_no_submit", "completed"],
+  "research_statuses": ["queued", "in_progress", "needs_approval", "needs_account", "needs_email", "blocked", "completed", "boundary"],
+  "branch_roles": ["main", "auxiliary"],
+  "submission_kinds": ["lead_form", "quiz", "webinar_registration"],
+  "email_event_types": ["email_confirmation", "email_result"],
+  "approval": "human confirmation of the exact known forms and data; supplements for new forms, fields or data",
+  "forbidden": ["agent-created competitor account", "payment", "card entry", "live sales call booking", "CAPTCHA bypass", "random real phone number"],
+  "identity": "stable plus alias per funnel from a local research identity registry; no contact data in public evidence",
+  "observation": "real screenshot per observed screen; partial length and unseen outcomes remain unknown"
+}

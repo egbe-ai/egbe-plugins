@@ -1,0 +1,139 @@
+---
+name: egbe-os-organic-trend-watch
+description: Research TikTok and Instagram Reels evidence, compare formats and audience responses, and propose grounded creative adaptations for a product.
+metadata:
+  egbe-when: "Offer when a new or existing product needs short-video evidence to assess an acquisition hypothesis or improve content."
+  egbe-visible: "true"
+  egbe-title: "Short-video research"
+  egbe-description: "Research TikTok and Instagram Reels examples and audience responses, then adapt useful ideas to your product."
+  egbe-category: "Marketing & growth"
+---
+
+<!-- egbe-mcp-connection:v1 -->
+This skill comes with the Egbe plugin. If this project has its own installed copy
+of the skill, use that copy instead. Otherwise make every Egbe API call it
+describes with the Egbe connector: `egbe_read` for GET and `egbe_write` for POST,
+PUT, PATCH and DELETE (with `method`). Pass the API path (for example
+`/me/limits`), query parameters in `query` and the JSON body in `body`. Leave out `OS_URL`, the Authorization header, `.env.local`,
+`egbe-curl.py` and catalog update checks; the connection authenticates and
+identifies the request. Also pass the `business` that `egbe_setup` returned.
+Where this skill sends an `Idempotency-Key` header, pass the same value as
+`idempotency_key` and reuse it when retrying. A result with a `continuation`
+holds one part of a long body; read the next part with `egbe_read`, the same
+`path` and `business`, and that `continuation`.
+Read bundled files beside this `SKILL.md`. For published skill resources on
+Egbe OS, use `egbe_skill`. Follow "Files downloaded on demand" for listed downloads.
+
+Publishing works through the connector: commit the app's files with the JSON
+commit requests in `egbe-os-git` ("Without a terminal") and deploy the returned
+commit SHA; no git push or workspace setup is needed. A step that needs a local
+project key or a bundled script, such as a local `npx convex deploy`, needs a
+set-up project workspace. In a persistent
+project workspace that is not set up yet, set it up as the `egbe-setup` skill's
+project setup describes.
+Without such a workspace, or if it refuses, tell the founder that this step needs
+an agent with a set-up project folder, and continue with the rest of the work.
+
+If the connector's tools (`egbe_read` and the other `egbe_*` tools) are not
+available, the plugin's connector is not signed in for this agent. Tell
+the founder how to connect it, as the `egbe-setup` skill describes, rather than
+saying Egbe is unavailable.
+
+The connector's tools work even where this environment's shell cannot reach
+Egbe: their calls travel through this agent's connection, not through the
+shell's network. A step that runs in the shell, such as a bundled script, a `git
+push` to Egbe's Git endpoint or a deploy upload, needs the shell to reach the
+Egbe host (`os.hz.egbe.dev`). If a proxy or allowlist refuses that request
+before Egbe answers, for example HTTP 403 on CONNECT or curl status `000`, tell
+the founder: they allow that host in this agent's network settings or continue
+with an agent on their own computer. Code can also be published without the
+shell by committing through the connector (`egbe-os-git`, "Without a terminal").
+Until the shell step or that commit and its deploy succeed, do not report the
+work as published: a preview in this agent or on this computer is not an Egbe
+deployment.
+
+Run a script bundled with this skill from the root of a project folder set up
+for Egbe, with `OS_AGENT_NAME="<your agent name>"` set inline, such as `Codex`.
+A script that calls Egbe reads `OS_URL`, `OS_API_KEY` and this agent's connection
+ID from `.env.local` through Egbe's request helper, which comes with the plugin at
+`../egbe-os-quickstart/scripts/egbe-curl.py` from this skill's folder. Where this
+skill says a script needs `OS_URL` or `OS_API_KEY` in its environment, start it
+through the helper, which loads `.env.local` without executing it:
+`python3 <helper> --egbe-run <command>`, with the helper's absolute path. Where
+this skill writes `<skills-directory>`, use the plugin's `skills` folder, which
+holds this skill's folder.
+
+
+# Organic Trend Watch
+
+Answer a scoped research question using collected TikTok/Reels observations.
+Compare what the sources actually show, explain uncertainty, and propose
+product-relevant adaptations. This skill does not publish videos or measure
+the product's resulting conversions. It can run independently or supply a
+Product Market Research section; it is not a pre-PRD prerequisite.
+
+## Through the Egbe connector
+
+Through the connector alone, you can collect a bounded sample with the Apify
+routes in [provider-contract.md](references/provider-contract.md), saving each
+run and dataset ID in Egbe's artifact store before reading results so a paid run
+is resumed, not repeated, and answer from captions, metrics and comments. State
+that frames and transcripts were not analyzed. The bundled runner, media
+analyzer, renderer and finalizer, and so `analysis.json`, `result.md` and a
+sealed `receipt.json`, need a set-up project workspace: in a persistent project
+workspace not set up yet, call `egbe_local_setup`; otherwise tell the founder
+which step needs it. Do not present a connector answer as a sealed result or a
+PMR section.
+
+## Establish the assignment
+
+Use the question, product/audience context and available evidence. Missing
+market-research sections do not block direct use. Keep founder identity and
+unrelated personal details out of provider inputs.
+
+Use the product repository and `EGBE_RESEARCH_ID` (default `market`). Resolve
+the installed skill separately from the mutable study directory:
+
+```bash
+ORGANIC_TREND_SKILL_ROOT=/absolute/path/to/the-directory-containing-this-SKILL.md
+WORKSPACE_ROOT=/absolute/path/to/the-product-repository
+RUNTIME_ROOT="$WORKSPACE_ROOT/egbe-docs/research/market/work/organic_trend_watch"
+```
+
+Keep execution artifacts below that study's `work/organic_trend_watch/`; replace
+`market` in examples when using another study ID. Never work inside the installed
+skill. Read [runtime-contract.md](references/runtime-contract.md) for context,
+state and resume rules, then [collection-and-analysis.md](references/collection-and-analysis.md)
+for the execution sequence.
+
+## Collect and interpret
+
+Use `OS_URL` and `OS_API_KEY` through the bundled provider adapters. Read
+[provider-contract.md](references/provider-contract.md) before paid collection.
+Bound the requested source/sample scope to the assignment and available budget;
+save asynchronous handles and resume them instead of duplicating paid runs.
+
+Read [analysis-and-adaptation.md](references/analysis-and-adaptation.md) before
+interpreting evidence. Captions, metrics, comments, transcripts and frames support
+different claims. A caption is not a viewed opening frame; a high view count is
+not proof that a format caused performance. Keep source claims distinct from
+claims the product can substantiate.
+
+The bundled media analyzer supplies content-bound receipts for visual/verbal
+claims; [visual-analysis-prompt.md](references/visual-analysis-prompt.md) defines
+its extraction scope. Missing media may leave useful caption, metric or comment
+evidence. Record the gap rather than inventing an analysis or treating limited
+coverage as complete.
+
+## Return a traceable result
+
+Write `analysis.json` using [output-contract.md](references/output-contract.md).
+The renderer produces `result.md`; the finalizer seals its evidence, coverage and
+collection time in `receipt.json`. Do not hand-author either generated file.
+Return the result and its limitations, with source-backed findings and feasible
+adaptations where supported. Empty findings are valid when evidence is thin.
+
+For PMR, return the validated result to its finalizer; do not edit the combined
+report or publish a competing section. For direct use, present the same result
+without requiring a PMR report. Business choices, launch plans and ongoing
+evaluation remain outside this collection's receipt.

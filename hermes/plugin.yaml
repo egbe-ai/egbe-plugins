@@ -1,0 +1,26 @@
+name: egbe
+version: 0.1.0
+description: "Give Hermes your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe."
+author: Egbe
+homepage: https://github.com/egbe-ai/egbe-plugins
+tags: [egbe, business, mcp]
+provides_tools:
+  - egbe_status
+provides_hooks:
+  - on_session_start
+  - pre_llm_call
+  - post_api_request
+  - post_tool_call
+  - post_llm_call
+  - on_session_end
+config_schema:
+  auto_update:
+    type: bool
+    default: true
+    label: Automatic updates
+    description: "Install new Egbe plugin releases automatically after verifying them."
+  session_logging:
+    type: bool
+    default: true
+    label: Session logging
+    description: "Send this Hermes's sessions in project folders set up for Egbe to Egbe."

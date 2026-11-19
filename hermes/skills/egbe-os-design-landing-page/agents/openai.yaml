@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Homepage"
+  short_description: "Implement the product's agreed main page"
+  default_prompt: "Use $egbe-os-design-landing-page to build or repair the main page from the accepted content and design."

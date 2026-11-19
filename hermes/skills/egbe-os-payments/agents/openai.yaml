@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Payments"
+  short_description: "Build secure checkout, discounts, and subscription billing"
+  default_prompt: "Use $egbe-os-payments to implement account-bound checkout, product-owned discounts and promotion codes, signed subscription lifecycle processing, entitlements, and billing UX through Egbe OS."
