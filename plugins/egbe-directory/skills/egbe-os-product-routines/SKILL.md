@@ -131,7 +131,8 @@ change it. Never describe a proposed task as active.
 
 ## Continue without repeating work
 
-At each run, read the prior checkpoint and current state before acting. Apply the
+At each run, first synchronize stored project work as `EGBE.md` describes, then read
+the prior checkpoint and current state before acting. Apply the
 project's current method, concrete plan and existing authorization for product or marketing
 judgments; domain skills supply evidence and operational constraints. For other
 work, follow the relevant domain contract. Do not rerun an entire audit or reread

@@ -10,8 +10,10 @@ use that judgment to improve the agreed outcome, not silently expand the task.
 
 Match goals, product stage, obstacles and opportunities to the [skill index
 below](#egbe-skill-index), including during idea discussions. Its headings are
-the installed skills' exact names. For a business approach, read the relevant
-project playbook below; for tools and operations, read the relevant skills.
+the installed skills' exact names; an installed folder may instead lack the
+`egbe-os-` prefix, so list the skills directory and use the folder you find.
+For a business approach, read the relevant project playbook below; for tools and
+operations, read the relevant skills.
 Reuse both within agreed work or proactively offer concrete options; do not
 wait for a tool request. Technical capability is not the business method.
 
@@ -47,6 +49,13 @@ Before work using a project method, follow `egbe-os-playbook` →
 from the index below. Project copies in `egbe-docs/playbooks/` are editable methods;
 skills provide technical capabilities. A narrow technical operation does not
 require the complete playbook.
+
+Read playbooks only after the catalog synchronization above and the
+session-start synchronization of `egbe-docs/` described under [Keep project work
+together](#keep-project-work-together); catalog delivery is how a missing copy
+is added. If a playbook the work needs is still absent, report the missing path
+and leave decisions that depend on it pending; do not read one from other
+folders, a skill bundle or memory in place of the project copy.
 
 Before editing a method, follow `egbe-os-playbook` → `references/changes.md`
 to capture and quietly record accepted changes in Egbe.
@@ -110,7 +119,8 @@ access for these data. Shared settings are `egbe-docs/routines.json` and
 `egbe-docs/telemetry/setup.json`; recheck actual scheduler/collector installation
 when changing machines. At session start and after a task that changes these files,
 run the installed quickstart's `scripts/sync-artifacts.py` with Python from the
-project root. If the task or connection allows reads only, pass `--pull-only`:
+project root; a scheduled or other unattended run does this before reading
+project files. If the task or connection allows reads only, pass `--pull-only`:
 local drafts stay here and are not published. Only synchronized work can be
 restored in a fresh workspace. For deletions, moves, interruptions and conflicts,
 follow the quickstart's `references/artifact-sync.md`.
