@@ -45,6 +45,8 @@ an unexplained mismatch must not unlock the product.
 - Keep paid, fulfilled, failed delivery, refunded and partially refunded facts
   distinct. Apply the accepted refund/access policy; a refund is never a new
   grant. Do not infer revocation rules or create refunds during verification.
+  The product records a refund; it does not issue one. Who does is covered by
+  [Seller of record, payouts and refunds](../../SKILL.md#seller-of-record-payouts-and-refunds).
 
 For an external delivery operation, durably record the pending work with the
 payment transaction, then retry using a stable operation identity. Record the

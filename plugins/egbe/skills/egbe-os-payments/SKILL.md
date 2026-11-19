@@ -149,6 +149,34 @@ Read only the workflow relevant to the requested payment capability.
 - Use the Egbe OS `egbe-os-analytics` skill as the sole source of payment event names,
   payloads, attribution, and delivery rules.
 
+## Seller of record, payouts and refunds
+
+Checkout runs on Egbe's shared payment account, not a provider account owned by
+the founder or the product. Under the current
+[Egbe commercial terms](https://egbe.ai/terms/), Egbe is the merchant of record
+for these sales, so the Checkout page and the buyer's card statement can name
+Egbe rather than the product.
+
+- Read those terms for who sells and is paid, what reduces a payout, how a
+  buyer requests a refund and who issues it. Cite them instead of restating
+  amounts, windows or contacts from memory or from a direct-Stripe integration.
+- Keep the product's Terms, pricing and checkout-adjacent copy consistent with
+  them. Where a buyer would otherwise meet an unexplained payee, say that Egbe
+  processes the payment and link those terms. Send order, billing and refund
+  requests to the contact the terms name. Never present the project mailbox or
+  the founder as the party that issues refunds; they remain the contact for the
+  product itself.
+- Never tell a founder they can issue refunds or manage payouts in a
+  payment-provider dashboard. Egbe OS gives a project no refund or payout
+  operation and no provider credentials or dashboard. The product receives a
+  refund as a signed webhook event and records it. For a payout, point the
+  founder to the Payouts section of the Wallet page in their Egbe Dashboard,
+  which states how to request one; do not open a support ticket to ask.
+- The accepted offer still decides what the product promises about refunds and
+  access, within those terms. It does not decide who executes a refund.
+- When the terms do not answer a question the work depends on, report it as
+  unconfirmed and ask through the `egbe-os-support` skill; do not guess.
+
 ## Discovery And Readback
 
 ```bash
