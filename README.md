@@ -65,6 +65,14 @@ which the agent runs during setup and OpenClaw may ask you to approve. To stop,
 ask the agent to turn session logging off, or set `EGBE_SESSION_LOGGING=off` in
 the workspace's `.env.local`.
 
+Other agents that load [Agent Plugins](https://agent-plugins.org) packages,
+such as Codex, Cursor and GitHub Copilot, use
+[`plugins/egbe-portable`](plugins/egbe-portable): the same skills and connector
+without Claude's hook. Install that folder the way your agent installs a plugin
+from a repository; in Codex, run
+`codex plugin marketplace add egbe-ai/egbe-plugins` and install Egbe from that
+marketplace. Then ask your agent to set up Egbe and sign in when it asks.
+
 The OpenClaw plugin updates itself from the releases published here.
 `openclaw egbe status` shows its version and last check, and
 `openclaw config set plugins.entries.egbe.config.autoUpdate false` turns

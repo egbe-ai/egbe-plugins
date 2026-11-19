@@ -1,0 +1,13 @@
+{
+  "agentsMarker": "EGBE:PRODUCT-FOUNDATION",
+  "expectedScripts": {
+    "start": "next start"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/pg": "^8.15.5"
+  },
+  "scripts": {
+    "start": "npm run db:migrate && next start"
+  }
+}

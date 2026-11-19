@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Build"
+  short_description: "Implement and verify a complete product change"
+  default_prompt: "Use $egbe-os-product-build to implement and verify the agreed product outcome in the existing repository."

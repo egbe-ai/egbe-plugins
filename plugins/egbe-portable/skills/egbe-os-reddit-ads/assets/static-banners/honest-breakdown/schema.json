@@ -1,0 +1,91 @@
+{
+  "name": "honest-breakdown",
+  "description": "3 bad alternatives + 1 good option. Self-aware Reddit voice in the bad-option notes is the engine of this template. Mirrors how Redditors compare products in threads.",
+  "canvas": { "width": 1080, "height": 1350 },
+  "universality": "HIGH",
+  "fields": {
+    "headline": {
+      "type": "string",
+      "maxLines": 2,
+      "maxChars": 40,
+      "required": true,
+      "accentSpan": "forbidden",
+      "description": "Short framing headline above the options list."
+    },
+    "bad1_label": {
+      "type": "string",
+      "maxChars": 36,
+      "required": true,
+      "description": "First bad option label"
+    },
+    "bad1_note": {
+      "type": "string",
+      "maxChars": 40,
+      "required": true,
+      "description": "Self-deprecating one-liner about why this option fails. Must be dry/self-aware, NOT sincere."
+    },
+    "bad2_label": {
+      "type": "string",
+      "maxChars": 36,
+      "required": true,
+      "description": "Second bad option label"
+    },
+    "bad2_note": {
+      "type": "string",
+      "maxChars": 40,
+      "required": true,
+      "description": "Self-deprecating one-liner. Dry/self-aware tone."
+    },
+    "bad3_label": {
+      "type": "string",
+      "maxChars": 36,
+      "required": true,
+      "description": "Third bad option label"
+    },
+    "bad3_note": {
+      "type": "string",
+      "maxChars": 40,
+      "required": true,
+      "description": "Self-deprecating one-liner. Dry/self-aware tone."
+    },
+    "good_label": {
+      "type": "string",
+      "maxLines": 2,
+      "maxChars": 42,
+      "required": true,
+      "description": "The good option (your product). Always last."
+    },
+    "good_note": {
+      "type": "string",
+      "maxChars": 40,
+      "required": true,
+      "description": "Short note for the good option. Can be self-aware too."
+    },
+    "cta": {
+      "type": "string",
+      "maxChars": 18,
+      "required": true,
+      "description": "Verb-led CTA, 2-3 words. Good: 'Try It Free', 'See an Example'. Bad: 'Learn More', 'Click Here'."
+    },
+    "brand": {
+      "type": "string",
+      "maxChars": 20,
+      "required": false,
+      "description": "Brand name — subtle, right side of CTA row"
+    }
+  },
+  "style": {
+    "accentColor": "#ff6b35",
+    "description": "Override accentColor to match product brand. Accent color appears only on the good-option border + checkmark."
+  },
+  "rendering": "Read template.html from this directory and replace {{placeholders}} with field values. Replace {{accentColor}} in the :root CSS variable. Do NOT generate HTML from scratch — the template contains exact option card layout, spacing, and flex structure that must be preserved.",
+  "forbidden": [
+    "more than 3 bad options or more than 1 good option",
+    "accent spans in any label or note text",
+    "sincere notes like 'a great way to improve' — notes must be dry/self-aware",
+    "gradient backgrounds or decorative shapes",
+    "marketing buzzwords — write like a Reddit commenter",
+    "large logos — brand is a subtle text label only",
+    "reordering options — good option is always last"
+  ]
+}
