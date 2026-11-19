@@ -141,6 +141,14 @@ Preserve unrelated settings and intentionally paused objects. Save recoverable
 inputs before the call. Use the operation's retry rules: temporary caches, durable
 receipts and desired-state assignments are not interchangeable.
 
+Approval covers the exact write it describes. After a failed or rejected write,
+reconcile an unknown outcome first, then retry without asking only with the same
+approved inputs and as the operation's retry rules allow. If the fix changes the
+target, payload, amount, keywords, ad text, status or another substantive input,
+show the founder the failure and the proposed changed write and wait for fresh
+explicit approval before sending it; a fix to request syntax alone is not a
+substantive change.
+
 Read back changed objects before reporting completion and preserve the useful
 facts for continuation. Simple reads need no new artifacts; missing historical
 research must not prevent an explicitly requested pause. Scheduling belongs to
