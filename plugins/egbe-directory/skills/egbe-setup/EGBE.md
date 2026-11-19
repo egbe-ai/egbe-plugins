@@ -187,6 +187,16 @@ founder's “done” triggers the domain capability's verification; it is not pr
 success. Record the result in the same notes and continue the remaining work
 without restarting setup or repeating permission.
 
+A harness may end a turn after a fixed time without a reply; Hermes gateway
+turns have been cut after about 10 minutes, and its operator may configure a
+different limit. Files written in that turn remain, but the founder learns
+nothing about them. Under such a limit, note the time when the turn starts and
+check it before each long step. When work may not fit in one turn, save this
+checkpoint and reply with what is done and what continues with a margin before
+the limit (on Hermes, by about 7 minutes), or hand the long part to a background
+task the harness supports and say how to follow it. Save the checkpoint before
+a long build, test or other verification step, not after.
+
 ## Egbe skill index
 
 ### AI & data

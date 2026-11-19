@@ -102,6 +102,9 @@ does not prove they are suppressed. Preserve requested digests and required safe
 The scheduled task needs the project context, relevant skill, purpose, sources,
 allowed actions, budget or stopping conditions where applicable, and notification
 rules. Keep credentials in the project's credential store, not in the task prompt.
+If the harness ends a turn after a fixed time, as `EGBE.md` describes, bound
+each run's work unit to fit with margin and save the checkpoint before long
+verification steps; the next run continues the rest.
 For product or market/acquisition judgments, include actual workspace paths to
 the relevant `egbe-docs/playbooks/product.md` or `market-and-acquisition.md`,
 their required sections and the concrete current plan. Confirm the scheduled runner can read these project
