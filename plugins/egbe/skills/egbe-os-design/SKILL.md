@@ -146,9 +146,19 @@ specific fields instead of the whole document:
 - `502` — the upstream catalog is unreachable and we have no cached copy. The
   message carries the upstream reason; facets, search and browse also return
   the mirror status (with `last_error`) in `data`, while style detail and
-  `design.md` return `data: null`. Retry about a minute later, at most 2–3
-  times; if it still fails, continue without a catalog reference and tell the
-  user the design catalog is unavailable.
+  `design.md` return `data: null`. If the message says the upstream catalog
+  refused access (HTTP 401 or 403), do not retry: continue without a catalog
+  reference and tell the user the design catalog is unavailable. Otherwise the
+  message says to retry in about a minute; do so at most 2–3 times, then do
+  the same.
+
+When the upstream fails after a copy exists, the gateway keeps serving its last
+good copy, including after a restart. `data.mirror.degraded: true` in
+`GET /design` means that copy could not be refreshed. Search, browse and facets
+still work from it, and so do style detail and `design.md` for styles the
+gateway fetched before. Other styles return the `502` above: try at most one
+other result, then build from the search result's fonts and colours or
+continue without a catalog reference.
 
 Semantic search never returns an error of its own: no ai-api credential, a
 still-building vector cache, or an embeddings-call failure all degrade silently
