@@ -26,6 +26,14 @@ Any synthetic inputs belong in an isolated check, not production metrics.
   for the next continuation. The caller's method owns its business interpretation.
 - With no new observation, confirm the continuation retains pending work and
   checkpoint without fabricating new evidence or repeating completed effects.
+- Present the same blocker again: a checkpoint whose last run stopped on a
+  dependency only the founder or an external party can clear, still unchanged.
+  Confirm the continuation makes only the saved cheap read for the blocked work,
+  skips that work quietly without repeating the audit or the blocker report, and
+  keeps the open blocker with its unchanged-run count. Confirm it proposes pausing
+  or a lower frequency, with how to resume, at the third unchanged run and not
+  again at the fourth, without changing the schedule itself. Then present the
+  cleared condition and confirm work resumes from the checkpoint.
 
 Record what the check actually established and any unavailable operation.
 Successful reads, resumed actions and saved outputs do not establish that a

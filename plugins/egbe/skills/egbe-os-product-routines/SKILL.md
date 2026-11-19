@@ -139,5 +139,26 @@ work, follow the relevant domain contract. Do not rerun an entire audit or rerea
 the whole repository when a bounded change check answers the question. Reconcile an uncertain
 previous write before retrying it, and avoid duplicate reports or fixes. Retain the
 agreed scope when proposing a new task; return decisions outside it to the founder.
+
 When the caller changes the checkpoint or ends this responsibility, update or
 disable its existing native job and saved record, then verify the actual state.
+
+### Same blocker again
+
+When work stops on a dependency only the founder or an external party can clear,
+such as a permission, account connection, sender route or approval, save it in the
+existing checkpoint as an open blocker: what is missing, the exact step that
+unblocks it, the one cheap read that shows whether it has cleared and the response
+that means it is still blocked, when the founder was told, how many runs found it
+unchanged and whether a pause was proposed. Tell the founder once, with that exact
+step. At the next run, after synchronizing, make that read before the blocked work.
+If it returns the saved still-blocked response, update the count and skip the
+blocked work quietly: no repeated audit, retry or blocker report. After three
+unchanged runs, propose once pausing the routine or lowering its frequency and say
+how to resume; change the schedule only with the founder's agreement. The project's
+method may set a different follow-up. If the read shows the blocker cleared,
+continue from the checkpoint and remove the open blocker. A different error or an
+unreachable source is a coverage gap, not proof of either state; run the normal
+bounded check, without repeating the blocker report if it confirms the same blocker.
+Work that does not depend on the blocker, required safety checks and requested
+digests keep running as before; a digest may restate the open blocker briefly.
