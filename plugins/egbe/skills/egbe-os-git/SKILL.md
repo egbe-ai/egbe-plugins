@@ -244,6 +244,27 @@ its commit again with `replayed: true`. For a one-shot request, read the tree
 first; if its `commit` differs from your base, check whether your change is
 already there before committing again.
 
+When the Git server refuses the push and the branch did not move, the commit
+call answers with `data.reason` (a 403 with `data.reason` is this refusal, not a
+missing key scope). Nothing was written. A session's commit call leaves the
+session open: discard it with `DELETE` if you will not retry it. A refused
+one-shot request keeps no session; send it again in full.
+
+- `protected_branch` (403): the branch is protected. Do not retry or work
+  around it; ask the founder to allow the push or name another branch, then
+  commit there with `"base": ""` and `from_branch`.
+- `permission_denied` (403): the Git server denied Egbe write access. Do not
+  retry; contact Egbe support.
+- `too_large` (422): the push was too large. Commit the change in smaller parts.
+- `rejected` (409, `data.head` equals your base): a server hook or ref check
+  declined the update. Read the branch head, retry once with it as base, and ask
+  the founder if it is refused again.
+- `unreachable` (502): the Git server could not be reached. Without `data.head`
+  the outcome is unknown: read the tree and check whether your change is
+  already there before committing again. Contact Egbe support if it persists.
+- `refused` (502): an unrecognized refusal. Retry once later, then contact Egbe
+  support with the time and repository.
+
 ## Product backlog
 
 To read or update issues in this project's repository, follow
