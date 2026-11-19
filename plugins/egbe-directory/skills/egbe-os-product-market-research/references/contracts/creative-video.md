@@ -67,5 +67,9 @@ The speech capability requires the optional `media-transcription` role in
 `runtime-models/roles.v1.json` to resolve to a catalog model with
 `audio_transcription` capability. Deployment derives the effective model from
 that role; an arbitrary model environment override does not select it. A missing
-configuration returns 503 and keeps frame-only analysis available. A new skill
+configuration reports `transcription.configured: false` in `GET /v1/media`. The
+runner reads that flag once per attempt, before its first uncached transcription,
+and then records the speech gap without posting audio. Transcripts already in the
+shared cache stay available. A 503 blocks transcription for the rest of the
+attempt. Frame-only analysis stays available in both cases. A new skill
 version is therefore not evidence that every deployed provider is configured.

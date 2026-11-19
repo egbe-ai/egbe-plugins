@@ -1,6 +1,6 @@
 {
   "name": "egbe",
-  "version": "0.1.67",
+  "version": "0.1.68",
   "description": "Give Gemini CLI your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
   "contextFileName": "GEMINI.md",
   "mcpServers": {

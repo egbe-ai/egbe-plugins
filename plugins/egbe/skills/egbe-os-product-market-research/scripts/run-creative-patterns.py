@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
 from types import ModuleType
-from typing import Any
+from typing import Any, Callable
 
 SCHEMA_VERSION = 1
 EVIDENCE_SCHEMA_VERSION = 2
@@ -160,6 +160,29 @@ class OsClient(CF.OsClient):
     # Successful content caches stay available; a later client can recover.
     media_endpoint_blocked: dict[str, str] = field(default_factory=dict)
     paid_ai_blocked_reason: str = ""
+    # GET /v1/media capability flags, read once per attempt on the first uncached transcribe.
+    get: Callable[[str, float], dict[str, Any]] | None = None
+    media_capabilities: dict[str, Any] | None = None
+
+    def _transcription_configured(self) -> bool:
+        """False only when GET /v1/media says so; an unreadable answer keeps transcribe."""
+        if self.media_capabilities is None:
+            try:
+                self.media_capabilities = (self.get or self._http_get)("/v1/media", 30.0)
+            except Exception:
+                self.media_capabilities = {}
+        flags = self.media_capabilities.get("transcription")
+        return not (isinstance(flags, dict) and flags.get("configured") is False)
+
+    def _http_get(self, path: str, timeout: float) -> dict[str, Any]:
+        req = urllib.request.Request(f"{self.os_url.rstrip('/')}{path}", method="GET",
+                                     headers={"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"})
+        for name, value in CF._connection_headers(req.full_url).items():
+            req.add_unredirected_header(name, value)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            envelope = json.loads(resp.read().decode("utf-8"))
+        data = envelope.get("data") if isinstance(envelope, dict) else None
+        return data if isinstance(data, dict) else {}
 
     def media_call(self, path: str, payload: dict[str, Any], *, kind: str, timeout: float = 330.0) -> dict[str, Any]:
         key_payload = {"kind": kind, "path": path, "payload": payload}
@@ -173,6 +196,9 @@ class OsClient(CF.OsClient):
         if path.startswith("/v1/media/") and self.paid_ai_blocked_reason:
             raise CreativePatternsError(self.paid_ai_blocked_reason)
         if path in self.media_endpoint_blocked:
+            raise SourceUnavailable(self.media_endpoint_blocked[path])
+        if path == "/v1/media/transcribe" and not self._transcription_configured():
+            self.media_endpoint_blocked[path] = "GET /v1/media reports transcription.configured is false; no audio was sent"
             raise SourceUnavailable(self.media_endpoint_blocked[path])
         if self.media_calls >= self.max_media_calls:
             raise BudgetExhausted("media call budget exhausted for this attempt; remaining videos are budget_deferred")

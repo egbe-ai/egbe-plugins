@@ -116,7 +116,12 @@ telemetry record zero tokens for every call.
 
 ## Speech evidence
 
-`GET /v1/media` advertises whether speech transcription is configured.
+Before transcribing a batch of media, read `GET /v1/media` and call
+`POST /v1/media/transcribe` only when `data.transcription.configured` is `true`.
+When it is `false`, do not post audio: continue with frame analysis and report
+the speech gap. A 503 from transcribe means the deployment or its upstream cannot
+transcribe now: do not retry it for the rest of that batch; keep the frame
+evidence and report the speech gap. Read `GET /v1/media` again before a later batch.
 `POST /v1/media/transcribe` accepts a local audio upload encoded in JSON:
 `schema_version: 1`, `media_type`, `sha256` and `content_base64`, with an optional
 two- or three-letter `language` hint. Supply the actual SHA-256 of the decoded
@@ -138,8 +143,8 @@ speech evidence; it does not prove the competitor's claims.
 The deployment must explicitly set `OS_MEDIA_TRANSCRIPTION_MODEL` to an audio
 model configured in that account's upstream. It must support multipart
 `/v1/audio/transcriptions` with `response_format=verbose_json`. There is no
-catalogued default audio model in this repository. A missing policy returns 503;
-video research can still analyse available frames and report the speech gap.
+catalogued default audio model in this repository. A missing policy reports
+`transcription.configured: false` and transcribe returns 503.
 
 ## Long media calls: async mode
 
