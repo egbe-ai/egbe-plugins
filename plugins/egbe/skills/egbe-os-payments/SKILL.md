@@ -125,6 +125,9 @@ Read only the workflow relevant to the requested payment capability.
   an automatic discount.
 - Treat provider state from `GET /payments/evidence` as Stripe readback and the
   product database as the source of account entitlement state.
+- Report checkout ready or done only after naming both verified validation
+  receipt outcomes and the `GET /payments/evidence` readback before and after
+  them; otherwise report readiness as unconfirmed.
 - Treat working Auth as an upstream input. Reuse its private validation identity
   and normal server-side session lookup for authenticated Billing work instead
   of replaying signup, password, or email-link entry. Never add a public

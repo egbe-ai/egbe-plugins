@@ -344,7 +344,12 @@ state in the payment lifecycle workflow.
 ## Completion
 
 Each displayed paid plan preserves its identity through the accepted buyer flow
-to the validated checkout endpoint. State separately whether the real Stripe
-handoff has been observed. Unknown plans, foreign
+to the validated checkout endpoint. A ready or done report names the outcome
+of both receipts verified through `POST /payments/validation-receipts/verify`
+(Preflight items 7-8) and the `GET /payments/evidence` readback taken before and after
+those requests. A build or type check alone does not make checkout ready;
+without both verified receipts and both readbacks, report checkout readiness as
+unconfirmed and name the missing check. State separately whether the real
+Stripe handoff has been observed. Unknown plans, foreign
 provider ids, duplicate subscriptions, unsafe return URLs, and provider errors
 fail without changing entitlement state.
