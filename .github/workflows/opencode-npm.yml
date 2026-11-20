@@ -1,0 +1,52 @@
+name: Publish the OpenCode plugin to npm
+
+# Lives in egbe-ai/egbe-plugins; its source is plugins/egbe-plugins-repo in
+# egbe-ai/claw-swarm. The release GitHub App can't write workflow files, so a
+# change here is copied to egbe-plugins by hand.
+#
+# Egbe's release workflow in claw-swarm writes the npm package @egbe-ai/opencode
+# to plugins/egbe-opencode with a new version whenever its files change. A
+# person runs this workflow to publish that version to npm with trusted
+# publishing (OIDC, no token), configured on npmjs.com for this repository and
+# this workflow file after the first version was published by hand. It skips a
+# version npm already has.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: opencode-npm
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: plugins/egbe-opencode
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1
+      - name: Publish a new version
+        run: |
+          set -e
+          name=$(node -p 'require("./package.json").name')
+          version=$(node -p 'require("./package.json").version')
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name $version is already on npm." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          npm publish --access public
+          echo "Published $name $version to npm." >> "$GITHUB_STEP_SUMMARY"
