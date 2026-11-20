@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Market Research"
+  short_description: "Execute bounded product-market research"
+  default_prompt: "Use $egbe-os-product-market-research to execute the supplied product-market research assignment with traceable evidence."

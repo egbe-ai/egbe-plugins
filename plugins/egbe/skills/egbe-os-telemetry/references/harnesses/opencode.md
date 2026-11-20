@@ -1,5 +1,18 @@
 # OpenCode: enable a collector, not just credentials
 
+## With the Egbe OpenCode plugin
+
+When the Egbe plugin for OpenCode (`@egbe/opencode`) is loaded, its session
+logging is the managed exporter for harness `opencode`: when a run of a session
+ends, it sends that run's turn with the project folder's `.env.local`
+credentials and groups turns by OpenCode session. The plugin's own copy of the
+telemetry skill says so below its title ("With the Egbe plugin in OpenCode");
+follow it: record `collectors.opencode` with integration `egbe-opencode-plugin`,
+verify after the next turn and stop with `EGBE_SESSION_LOGGING=off`. Do not also
+install the Langfuse plugin below. Without the plugin, continue below.
+
+## Without the plugin
+
 1. Follow the [Langfuse OpenCode guide](https://langfuse.com/integrations/developer-tools/opencode)
    to install `@langfuse/opencode-observability-plugin`. Check compatibility with
    the installed OpenCode version. Register it in the project configuration:

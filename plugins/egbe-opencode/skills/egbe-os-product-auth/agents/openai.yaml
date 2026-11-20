@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Auth"
+  short_description: "Build secure, usable product authentication"
+  default_prompt: "Use $egbe-os-product-auth to implement or repair signup, login, sessions, protected routes, auth-aware navigation, and logout."

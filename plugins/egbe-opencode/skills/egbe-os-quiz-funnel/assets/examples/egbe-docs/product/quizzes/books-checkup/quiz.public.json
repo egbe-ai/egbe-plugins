@@ -1,0 +1,369 @@
+{
+  "contract": "quiz-funnel-public-v1",
+  "spec_sha256": "a3946e5fcd22004dac3fe0b947d29d5d9b5fff237b7ace2a704a8953802a0276",
+  "public_sha256": "f39a0e7cd9fcf851539aeca5b0951a87ae62546d1113bb89327bfcd661004450",
+  "quiz_slug": "books-checkup",
+  "product_slug": "example-books",
+  "route": "/quiz/books-checkup",
+  "language": "en",
+  "title": "Books checkup",
+  "ui": {
+    "back": "Back",
+    "progress": "Step {current} of {total}"
+  },
+  "goal": {
+    "type": "call",
+    "destination": {
+      "kind": "booking_url",
+      "url": "https://cal.example.com/books-review",
+      "result_param": "utm_content",
+      "fallback_params": {
+        "utm_source": "quiz",
+        "utm_campaign": "books-checkup"
+      }
+    }
+  },
+  "proof": {
+    "review-summary": {
+      "kind": "fact",
+      "text": "The review takes 20 minutes and you keep the written summary."
+    },
+    "one-bookkeeper": {
+      "kind": "fact",
+      "text": "One bookkeeper handles your books from the first month to the last."
+    }
+  },
+  "screens": [
+    {
+      "id": "role",
+      "type": "question",
+      "select": "single",
+      "lead": "Find out what your books need before tax season.",
+      "headline": "What best describes you?",
+      "options": [
+        {
+          "id": "freelancer",
+          "label": "Freelancer",
+          "phrase": "freelancer"
+        },
+        {
+          "id": "studio",
+          "label": "Small studio",
+          "phrase": "small studio"
+        },
+        {
+          "id": "shop",
+          "label": "Online shop",
+          "phrase": "online shop"
+        },
+        {
+          "id": "other",
+          "label": "Something else",
+          "escape": true
+        }
+      ]
+    },
+    {
+      "id": "behind",
+      "type": "question",
+      "select": "single",
+      "headline": "How far behind are your books?",
+      "options": [
+        {
+          "id": "current",
+          "label": "Up to date",
+          "phrase": "up to date"
+        },
+        {
+          "id": "few",
+          "label": "1–3 months",
+          "phrase": "1–3 months behind"
+        },
+        {
+          "id": "many",
+          "label": "4–12 months",
+          "phrase": "4–12 months behind"
+        },
+        {
+          "id": "year",
+          "label": "Over a year",
+          "phrase": "over a year behind"
+        }
+      ]
+    },
+    {
+      "id": "tracking",
+      "type": "question",
+      "select": "single",
+      "headline": "How do you track expenses today?",
+      "options": [
+        {
+          "id": "sheet",
+          "label": "Spreadsheet",
+          "phrase": "a spreadsheet"
+        },
+        {
+          "id": "app",
+          "label": "Accounting app",
+          "phrase": "an accounting app"
+        },
+        {
+          "id": "bank",
+          "label": "Bank statements only",
+          "phrase": "bank statements only"
+        },
+        {
+          "id": "none",
+          "label": "I don't yet",
+          "phrase": "nothing yet"
+        }
+      ]
+    },
+    {
+      "id": "halfway",
+      "type": "interstitial",
+      "kind": "encouragement",
+      "headline": "You are halfway there",
+      "body": "Three more answers and you will see what your books need first.",
+      "button": "Continue",
+      "variants": [
+        {
+          "when": {
+            "all": [
+              {
+                "screen": "behind",
+                "any_of": [
+                  "many",
+                  "year"
+                ]
+              }
+            ]
+          },
+          "headline": "This is what a catch-up is for",
+          "body": "Books that are {{answer:behind}} can be reconciled month by month. Three more answers and you will see where to start."
+        }
+      ]
+    },
+    {
+      "id": "worries",
+      "type": "question",
+      "select": "multi",
+      "headline": "What worries you most?",
+      "hint": "Choose all that apply.",
+      "button": "Continue",
+      "options": [
+        {
+          "id": "deadline",
+          "label": "Tax deadline",
+          "phrase": "the tax deadline"
+        },
+        {
+          "id": "deductions",
+          "label": "Missed deductions",
+          "phrase": "missed deductions"
+        },
+        {
+          "id": "cashflow",
+          "label": "Cash flow",
+          "phrase": "cash flow"
+        },
+        {
+          "id": "audit",
+          "label": "An audit",
+          "phrase": "an audit"
+        },
+        {
+          "id": "nothing",
+          "label": "None of these",
+          "escape": true
+        }
+      ]
+    },
+    {
+      "id": "volume",
+      "type": "question",
+      "select": "single",
+      "headline": "How many invoices a month?",
+      "options": [
+        {
+          "id": "low",
+          "label": "Under 10",
+          "phrase": "under 10"
+        },
+        {
+          "id": "mid",
+          "label": "10–50",
+          "phrase": "10 to 50"
+        },
+        {
+          "id": "high",
+          "label": "Over 50",
+          "phrase": "over 50"
+        }
+      ]
+    },
+    {
+      "id": "penalty",
+      "type": "question",
+      "select": "single",
+      "sensitive": true,
+      "headline": "Ever paid a tax penalty?",
+      "options": [
+        {
+          "id": "yes",
+          "label": "Yes"
+        },
+        {
+          "id": "no",
+          "label": "No"
+        },
+        {
+          "id": "undisclosed",
+          "label": "Prefer not to say",
+          "escape": true
+        }
+      ]
+    },
+    {
+      "id": "how",
+      "type": "interstitial",
+      "kind": "proof",
+      "headline": "Here is how the review works",
+      "body": "On the call a bookkeeper looks at your last bank export and tells you what to fix first.",
+      "proof_ids": [
+        "review-summary",
+        "one-bookkeeper"
+      ],
+      "button": "See my result"
+    }
+  ],
+  "results": [
+    {
+      "id": "in-shape",
+      "fit": "not_fit",
+      "when": {
+        "all": [
+          {
+            "screen": "behind",
+            "any_of": [
+              "current"
+            ]
+          },
+          {
+            "screen": "tracking",
+            "any_of": [
+              "app"
+            ]
+          }
+        ]
+      },
+      "headline": "Your books are in good shape",
+      "body": "You are up to date and already use an accounting app, so a catch-up would not add much. A short monthly routine will keep it that way.",
+      "cta": {
+        "label": "Get the monthly checklist",
+        "destination": {
+          "kind": "link",
+          "path": "/guides/monthly-close"
+        }
+      }
+    },
+    {
+      "id": "planned-catch-up",
+      "fit": "fit",
+      "when": {
+        "all": [
+          {
+            "screen": "behind",
+            "any_of": [
+              "many",
+              "year"
+            ]
+          },
+          {
+            "screen": "volume",
+            "any_of": [
+              "high"
+            ]
+          }
+        ]
+      },
+      "headline": "Your catch-up needs a plan",
+      "body": "With over 50 invoices a month, the missed months hold many transactions, so the order of work matters. On the free 20-minute review we map the months, the accounts, and what your filing needs first.",
+      "points": [
+        "Your books: {{answer:behind}}",
+        "Expenses tracked with {{answer:tracking}}",
+        "On your mind: {{answer:worries}}"
+      ],
+      "cta": {
+        "label": "Book the free review",
+        "note": "The call takes 20 minutes. You keep the written summary."
+      }
+    },
+    {
+      "id": "catch-up",
+      "fit": "fit",
+      "when": {
+        "all": [
+          {
+            "screen": "behind",
+            "any_of": [
+              "many",
+              "year"
+            ]
+          }
+        ]
+      },
+      "headline": "Your books need a catch-up first",
+      "body": "Reconciling the missed months before the filing removes the most work later. On the free 20-minute review we list the missing months and what each one needs.",
+      "points": [
+        "Your books: {{answer:behind}}",
+        "Expenses tracked with {{answer:tracking}}",
+        "On your mind: {{answer:worries}}"
+      ],
+      "cta": {
+        "label": "Book the free review",
+        "note": "The call takes 20 minutes. You keep the written summary."
+      }
+    },
+    {
+      "id": "tidy-up",
+      "fit": "partial",
+      "when": {
+        "all": [
+          {
+            "screen": "behind",
+            "any_of": [
+              "few"
+            ]
+          }
+        ]
+      },
+      "headline": "A small tidy-up will do",
+      "body": "You are only a few months behind. On the free 20-minute review we check whether one catch-up session is enough and what to automate, so it does not pile up again.",
+      "points": [
+        "Your books: {{answer:behind}}",
+        "Expenses tracked with {{answer:tracking}}",
+        "On your mind: {{answer:worries}}"
+      ],
+      "cta": {
+        "label": "Book the free review",
+        "note": "The call takes 20 minutes. You keep the written summary."
+      }
+    },
+    {
+      "id": "review",
+      "fit": "partial",
+      "headline": "Let us look at your books",
+      "body": "Your books are current, but tracking expenses with {{answer:tracking}} can cost you time at filing. On the free 20-minute review we show what a monthly routine would look like.",
+      "points": [
+        "Your business: {{answer:role}}",
+        "Invoices a month: {{answer:volume}}",
+        "On your mind: {{answer:worries}}"
+      ],
+      "cta": {
+        "label": "Book the free review",
+        "note": "The call takes 20 minutes. You keep the written summary."
+      }
+    }
+  ]
+}

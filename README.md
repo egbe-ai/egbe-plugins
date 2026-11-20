@@ -101,6 +101,24 @@ from a repository; in Codex, run
 `codex plugin marketplace add egbe-ai/egbe-plugins` and install Egbe from that
 marketplace. Then ask your agent to set up Egbe and sign in when it asks.
 
+In OpenCode (1.18.29 or later, or 2.x), add the native Egbe plugin,
+[`@egbe/opencode`](plugins/egbe-opencode), to `opencode.json`:
+`"plugins": ["@egbe/opencode"]` in OpenCode 2 (or
+`opencode plugin add @egbe/opencode`), `"plugin": ["@egbe/opencode"]` in 1.x.
+It adds Egbe's skills and the `egbe` MCP server. Sign in once with
+`opencode mcp auth egbe` in a terminal (or `/mcps` in OpenCode 2), restart
+OpenCode and ask it to set up Egbe. Until the package is on npm, clone this
+repository and list the folder's absolute path instead of the package name.
+Session logging is on by default here too: in project folders set up for
+Egbe, the plugin sends each run's turn (your messages, model calls with usage,
+tool calls with their results, and replies) to
+`https://observe.hz.egbe.dev/telemetry` with the project's Egbe key. To stop,
+ask OpenCode to turn it off or set `EGBE_SESSION_LOGGING=off` in the project's
+`.env.local`; the plugin's [README](plugins/egbe-opencode/README.md) has the
+details. The plugin updates itself from npm to verified new versions (the
+`autoUpdate` option turns that off); a plugin loaded from a clone of this
+repository updates with `git pull`.
+
 The OpenClaw plugin updates itself from the releases published here.
 `openclaw egbe status` shows its version and last check, and
 `openclaw config set plugins.entries.egbe.config.autoUpdate false` turns

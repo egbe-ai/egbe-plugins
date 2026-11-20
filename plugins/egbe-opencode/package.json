@@ -1,0 +1,57 @@
+{
+  "name": "@egbe/opencode",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Egbe's plugin for OpenCode: the Egbe connector, Egbe's skills and session logging.",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://egbe.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/egbe-ai/egbe-plugins.git",
+    "directory": "plugins/egbe-opencode"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "egbe",
+    "mcp"
+  ],
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./server": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "plugin.js",
+    "session-log.js",
+    "state.js",
+    "update.js",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "opencode": ">=1.18.29"
+  },
+  "egbe": {
+    "capabilities": {
+      "mcpServers": [
+        "egbe"
+      ],
+      "tools": [],
+      "commands": [],
+      "v1Hooks": [
+        "config",
+        "event",
+        "dispose"
+      ],
+      "v2": [
+        "mcp.transform",
+        "skill.transform",
+        "event.subscribe"
+      ]
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Google Sign-in"
+  short_description: "Add Google login through Egbe OS"
+  default_prompt: "Use $egbe-os-google-auth to add platform-verified Google signup and login while keeping product sessions and account ownership local."
