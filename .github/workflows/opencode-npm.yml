@@ -5,13 +5,17 @@ name: Publish the OpenCode plugin to npm
 # change here is copied to egbe-plugins by hand.
 #
 # Egbe's release workflow in claw-swarm writes the npm package @egbe-ai/opencode
-# to plugins/egbe-opencode with a new version whenever its files change. A
-# person runs this workflow to publish that version to npm with trusted
-# publishing (OIDC, no token), configured on npmjs.com for this repository and
-# this workflow file after the first version was published by hand. It skips a
-# version npm already has.
+# to plugins/egbe-opencode with a new version whenever its files change. That
+# push (the release App's token, so it starts workflows) runs this workflow,
+# which publishes the version to npm with trusted publishing (OIDC, no token),
+# configured on npmjs.com for this repository and this workflow file with
+# direct `npm publish` allowed. It skips a version npm already has; a person
+# can rerun it with workflow_dispatch.
 
 on:
+  push:
+    branches: [main]
+    paths: [plugins/egbe-opencode/package.json]
   workflow_dispatch:
 
 concurrency:
