@@ -6,9 +6,11 @@ and the decision needed. Review related materials together, not every tool call;
 reuse unchanged approvals with their scope. Do not save every decision for one
 final approval or ask again to perform an already agreed bounded repair.
 
-Agreement on a direction does not clear an outstanding review. Record what the
-founder actually approved: permission to build locally, for example, need not
-mean the materials were reviewed or that publication or spending was approved.
+Agreeing on a goal does not clear an outstanding review or lift an explicit
+hold. Continue the work outside the hold that the founder already approved. If
+they authorized a step once a condition is met, proceed when it is met. Keep
+that scope clear in the plan: permission to build locally does not imply
+approval of the materials, publication or spending.
 
 Show complete proposed materials and behavior, not just illustrative fragments.
 Use `egbe-os-report-ui` when a visual comparison helps; derive it from the
