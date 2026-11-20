@@ -1,14 +1,14 @@
 // Egbe's OpenCode plugin updates itself from npm.
 //
 // OpenCode 1.x installs an unpinned npm plugin once into its cache
-// (`<cache>/opencode/packages/@egbe/opencode@latest/`) and loads that copy on
+// (`<cache>/opencode/packages/@egbe-ai/opencode@latest/`) and loads that copy on
 // every later start without checking npm again. OpenCode 2.x checks unpinned
 // npm plugins for new versions once a day but only marks them outdated: the
 // update runs when someone runs `opencode plugin update`. So, in a long-running
 // OpenCode, the plugin checks npm itself, a minute after it loads and every six
 // hours, never at import and never in the way of a turn:
 //
-//   1. It reads `@egbe/opencode` from the npm registry. A newer `latest` version
+//   1. It reads `@egbe-ai/opencode` from the npm registry. A newer `latest` version
 //      whose declared capabilities (package.json `egbe.capabilities`: MCP servers,
 //      tools, commands and hooks) differ from the running version's is not
 //      installed automatically; the state file says to update by hand.
@@ -36,7 +36,8 @@ import { pathToFileURL } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { readState, stateDir, writeState } from "./state.js";
 
-export const PACKAGE = "@egbe/opencode";
+export const PACKAGE = "@egbe-ai/opencode";
+const SCOPE = PACKAGE.split("/")[0];
 export const REGISTRY = "https://registry.npmjs.org";
 const MAX_PACKUMENT = 16 * 1024 * 1024;
 const MAX_TARBALL = 32 * 1024 * 1024;
@@ -86,11 +87,11 @@ export function v1Install(moduleRoot) {
   const specDir = path.dirname(modules);
   const scopeDir = path.dirname(specDir);
   const packages = path.dirname(scopeDir);
-  const isCache = path.basename(moduleRoot) === "opencode" && path.basename(scope) === "@egbe"
-    && path.basename(modules) === "node_modules" && path.basename(scopeDir) === "@egbe" && path.basename(packages) === "packages";
+  const isCache = path.basename(moduleRoot) === "opencode" && path.basename(scope) === SCOPE
+    && path.basename(modules) === "node_modules" && path.basename(scopeDir) === SCOPE && path.basename(packages) === "packages";
   if (!isCache) return { kind: "folder" };
   const spec = path.basename(specDir);
-  if (spec !== "opencode@latest") return { kind: "pinned", spec: `@egbe/${spec}` };
+  if (spec !== "opencode@latest") return { kind: "pinned", spec: `${SCOPE}/${spec}` };
   return { kind: "npm", spec: `${PACKAGE}@latest`, packageDir: moduleRoot };
 }
 

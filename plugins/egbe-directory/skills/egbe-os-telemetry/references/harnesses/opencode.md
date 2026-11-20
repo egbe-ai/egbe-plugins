@@ -2,7 +2,7 @@
 
 ## With the Egbe OpenCode plugin
 
-When the Egbe plugin for OpenCode (`@egbe/opencode`) is loaded, its session
+When the Egbe plugin for OpenCode (`@egbe-ai/opencode`) is loaded, its session
 logging is the managed exporter for harness `opencode`: when a run of a session
 ends, it sends that run's turn with the project folder's `.env.local`
 credentials and groups turns by OpenCode session. The plugin's own copy of the

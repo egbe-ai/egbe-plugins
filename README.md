@@ -102,9 +102,9 @@ from a repository; in Codex, run
 marketplace. Then ask your agent to set up Egbe and sign in when it asks.
 
 In OpenCode (1.18.29 or later, or 2.x), add the native Egbe plugin,
-[`@egbe/opencode`](plugins/egbe-opencode), to `opencode.json`:
-`"plugins": ["@egbe/opencode"]` in OpenCode 2 (or
-`opencode plugin add @egbe/opencode`), `"plugin": ["@egbe/opencode"]` in 1.x.
+[`@egbe-ai/opencode`](plugins/egbe-opencode), to `opencode.json`:
+`"plugins": ["@egbe-ai/opencode"]` in OpenCode 2 (or
+`opencode plugin add @egbe-ai/opencode`), `"plugin": ["@egbe-ai/opencode"]` in 1.x.
 It adds Egbe's skills and the `egbe` MCP server. Sign in once with
 `opencode mcp auth egbe` in a terminal (or `/mcps` in OpenCode 2), restart
 OpenCode and ask it to set up Egbe. Until the package is on npm, clone this

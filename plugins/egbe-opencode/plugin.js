@@ -1,5 +1,5 @@
 // Egbe's native OpenCode plugin, published from egbe-ai/claw-swarm plugins/opencode
-// as the npm package @egbe/opencode (and under plugins/egbe-opencode/ of
+// as the npm package @egbe-ai/opencode (and under plugins/egbe-opencode/ of
 // egbe-ai/egbe-plugins). index.js exports only its default, which plugin loaders read.
 //
 // One default export serves both plugin APIs, as OpenCode's V1 migration guide

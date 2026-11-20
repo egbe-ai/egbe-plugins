@@ -42,8 +42,8 @@ records each check under `update` in `~/.local/state/egbe/opencode-plugin.json`
 (under `$XDG_STATE_HOME` when it is set). When the founder asks about the
 plugin's version or updates, read that entry. `manual` means a new version
 changes what the plugin can do and waits for the founder: in OpenCode 2 they run
-`opencode plugin update @egbe/opencode`; in 1.x they delete
-`~/.cache/opencode/packages/@egbe/opencode@latest` and restart OpenCode. A
+`opencode plugin update @egbe-ai/opencode`; in 1.x they delete
+`~/.cache/opencode/packages/@egbe-ai/opencode@latest` and restart OpenCode. A
 plugin loaded from a folder updates with `git pull` in that folder.
 
 # Set up Egbe through this connection

@@ -15,15 +15,15 @@ It works with OpenCode 1.x (1.18.29 or later) and OpenCode 2.x.
 
    ```jsonc
    // OpenCode 2.x
-   { "plugins": ["@egbe/opencode"] }
+   { "plugins": ["@egbe-ai/opencode"] }
    ```
 
    ```jsonc
    // OpenCode 1.x
-   { "plugin": ["@egbe/opencode"] }
+   { "plugin": ["@egbe-ai/opencode"] }
    ```
 
-   In OpenCode 2.x, `opencode plugin add @egbe/opencode` does the same.
+   In OpenCode 2.x, `opencode plugin add @egbe-ai/opencode` does the same.
    OpenCode installs the package from npm when it starts.
 2. Sign in to Egbe once: run `opencode mcp auth egbe` in a terminal (in OpenCode
    2.x, `/mcps` in OpenCode works too), sign in in the browser that opens and
@@ -85,22 +85,22 @@ To stop, ask OpenCode to turn session logging off, or set
 every project, set the plugin's `sessionLogging` option to `false`:
 
 ```jsonc
-// OpenCode 2.x; in 1.x: { "plugin": [["@egbe/opencode", { "sessionLogging": false }]] }
-{ "plugins": [{ "package": "@egbe/opencode", "options": { "sessionLogging": false } }] }
+// OpenCode 2.x; in 1.x: { "plugin": [["@egbe-ai/opencode", { "sessionLogging": false }]] }
+{ "plugins": [{ "package": "@egbe-ai/opencode", "options": { "sessionLogging": false } }] }
 ```
 
 ## Updates
 
 The plugin updates itself from npm when OpenCode runs for a while: a minute
-after it loads and every six hours, it checks npm for a newer `@egbe/opencode`,
+after it loads and every six hours, it checks npm for a newer `@egbe-ai/opencode`,
 verifies the download against npm's SHA-512 integrity and checks that the new
 version loads, then installs it. OpenCode 1.x loads it at its next start;
 OpenCode 2.x installs and reloads it with `opencode plugin update`. A version
 that would change what the plugin can do (its MCP servers, tools, commands or
 hooks) is not installed automatically: update it yourself with
-`opencode plugin update @egbe/opencode` in OpenCode 2, or in 1.x by deleting
-`~/.cache/opencode/packages/@egbe/opencode@latest` and restarting OpenCode.
-A pinned version (`@egbe/opencode@0.1.2`) and a plugin loaded from a folder are
+`opencode plugin update @egbe-ai/opencode` in OpenCode 2, or in 1.x by deleting
+`~/.cache/opencode/packages/@egbe-ai/opencode@latest` and restarting OpenCode.
+A pinned version (`@egbe-ai/opencode@0.1.2`) and a plugin loaded from a folder are
 not updated; update a cloned folder with `git pull`. Each check is recorded
 under `update` in `~/.local/state/egbe/opencode-plugin.json`. To turn updates
 off, set the `autoUpdate` option to `false`, as for `sessionLogging` above.
