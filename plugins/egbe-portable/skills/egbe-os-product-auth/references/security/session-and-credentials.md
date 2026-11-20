@@ -44,8 +44,12 @@
   `Referrer-Policy: no-referrer`, even to its own origin; a direct HTTP probe
   supplying the expected `Origin` does not exercise that browser behavior.
   Choose a compatible policy for ordinary forms or use the framework's complete
-  supported CSRF mechanism. Keep the stricter privacy policy on one-time
-  credential exchange responses. Do not fix a rejected form by disabling CSRF
+  supported CSRF mechanism. Keep `no-referrer` on a one-time credential
+  exchange response that only redirects. A page whose URL carries a secret and
+  that renders a form posting back, such as a password-reset, invitation or
+  share/join link, needs `same-origin`. That policy keeps the secret out of
+  cross-site `Referer` and still sends the real `Origin` on its own form posts.
+  Do not fix a rejected form by disabling CSRF
   checks or trusting `null` as a same-origin identity. See the
   [Fetch origin-header rules](https://fetch.spec.whatwg.org/#append-a-request-origin-header).
 - Accept return destinations only when they are safe same-origin relative paths.

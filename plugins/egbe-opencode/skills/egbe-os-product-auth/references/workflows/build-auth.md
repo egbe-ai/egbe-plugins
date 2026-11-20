@@ -173,7 +173,9 @@ POST forms need no extra action metadata.
 
 Exercise rendered protected mutations through the browser with the deployed
 headers and session cookies, including logout and applicable closed or invalid
-states. Keep financial and communication checks non-charging and non-sending.
+states. Include forms reached from emailed or shared links, such as password
+reset, invitation and join pages, and submit them from the page the link opens.
+Keep financial and communication checks non-charging and non-sending.
 Endpoint probes with manually supplied headers can support security checks but
 do not prove that the rendered form or control works. Preserve server-side
 request protection when correcting a browser failure.

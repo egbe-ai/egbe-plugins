@@ -25,6 +25,9 @@ second auth system.
 - Put the raw credential only in the intended HTTPS email link. Never log it,
   persist it in browser storage, expose it to analytics, or retain it in the
   browser URL after exchange. Send a no-referrer policy on the exchange response.
+  If the link opens a confirmation form instead of redirecting, send
+  `same-origin` on that page so its own POST keeps a real `Origin`; see
+  [request safety](../security/session-and-credentials.md#request-and-redirect-safety).
 - Consume it atomically: exactly one request may transition an unexpired,
   unused credential to used and receive the associated account. A separate
   read followed by an unconditional update is not single-use enforcement.
