@@ -39,6 +39,38 @@ Overall data_status=available describes the basic metrics; individual share
 metrics can still be unavailable. Search shares update daily and can lag 1–2
 days. Unknown freshness.provider_data_through does not establish completeness.
 
+## Device and keyword-device reports
+
+```http
+GET /ads/google/campaigns/{ref}/device-report?period=LAST_7_DAYS
+GET /ads/google/campaigns/{ref}/device-report?date_from=2026-01-05&date_to=2026-01-05&level=keyword&ad_group_id=789&by_hour=true
+```
+
+Read-only native Google rows segmented by `segments.device`. Dates use the same
+rules as campaign results (period OR both dates, account-local, inclusive).
+`level` selects the row identity:
+
+- `campaign` (default): date x device.
+- `ad_group`: adds `ad_group_id` and `ad_group_name`.
+- `keyword`: the joint keyword x device matrix with `ad_group_id`,
+  `criterion_id`, `keyword_text` and `match_type` (traffic matched by that
+  bid keyword, not the search query).
+
+`ad_group_id` (ad_group/keyword levels only) restricts to one group of this
+campaign. `by_hour=true` adds the account-local `hour` (0-23) for windows of at
+most 7 days, for example to separate delivery before a known start time.
+Ad-level device rows are not available.
+
+Each row has `date`, `device` (DESKTOP, MOBILE, TABLET, CONNECTED_TV, OTHER or
+UNKNOWN), `impressions`, `clicks`, `cost_micros` and `cost` in the returned
+`currency_code`. `totals` and `totals_by_device` sum the rows. `reconciliation`
+compares them with unsegmented totals of the campaign (or the selected ad group)
+for the same dates: `difference` = reference minus rows. Keyword rows omit
+traffic not matched by a keyword; any other non-zero difference is a provider
+omission or revision, not lost data. Also read `time_zone`, `date_from`,
+`date_to`, `data_status` (`available`, `no_rows`, `unavailable`),
+`retrieved_at` and `freshness`; recent figures can still be revised.
+
 ## Search terms and current diagnostics
 
 ```http

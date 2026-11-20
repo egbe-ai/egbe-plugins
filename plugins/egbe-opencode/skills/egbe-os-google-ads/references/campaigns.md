@@ -81,6 +81,49 @@ operation with the same key and payload. On an uncertain outcome or drift,
 inspect readback and the diagnostic; do not recreate criteria or change keys
 to bypass it.
 
+## Adjust or exclude devices
+
+```http
+GET /ads/google/campaigns/{ref}/devices
+PATCH /ads/google/campaigns/{ref}/devices
+Idempotency-Key: <stable key for this device change>
+Content-Type: application/json
+```
+
+```json
+{"devices": [{"device": "MOBILE", "bid_modifier": 0}, {"device": "TABLET", "bid_modifier": 0}]}
+```
+
+This example serves only computers (desktop/laptop); it is not a recommendation.
+Devices are DESKTOP, MOBILE and TABLET. `bid_modifier` is Google's campaign
+device criterion multiplier: `0` excludes the device (-100%), `0.1`-`10.0`
+multiplies Manual CPC bids (1.2 = +20%), `null` removes the adjustment (1.0).
+Omitted devices stay unchanged. At least one device must stay eligible.
+Supply each device once, at most three.
+
+The write changes only campaign DEVICE criteria in one atomic Google mutate:
+it updates an existing criterion's `bid_modifier` or creates the missing one.
+Bidding strategy (including Manual CPC and its enhanced-CPC flag), budget,
+statuses, ad-group bids and other targeting are unchanged and are compared
+before/after; a concurrent change returns `campaign_changed_concurrently`.
+Ad-group device adjustments are not changed and are not read here. With
+automated bidding, Google honours only the `0` exclusion.
+
+Readback (`data` of either call): `devices.<DEVICE>.bid_modifier` (native
+`campaign_criterion.bid_modifier`; 1.0 when no criterion is configured),
+`excluded` (bid_modifier is 0), `criterion_id` (native
+`campaign_criterion.criterion_id`, null when absent), `configured`, plus
+`campaign.status`, `campaign.bidding_strategy_type`,
+`campaign.enhanced_cpc_enabled`, `retrieved_at` and, after a write, `verified`.
+
+Writes need `ads` scope, an Idempotency-Key and the explicit mutation quota.
+Retry an interrupted write with the same key and payload: it reads back and
+completes without writing again. `device_mutation_outcome_unconfirmed`,
+`device_readback_mismatch` or drift mean inspect `GET .../devices` first; do not
+switch keys to force another write. A new intentional change needs a new key.
+Use the [device report](reporting.md#device-and-keyword-device-reports) to
+measure delivery by device before and after the change.
+
 ## Change only the daily budget
 
 ```http

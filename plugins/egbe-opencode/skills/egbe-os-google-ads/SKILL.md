@@ -112,10 +112,10 @@ secrets out of chat, browser code and project evidence.
 | Task | Read |
 | --- | --- |
 | Query keyword ideas and interpret their fields | [Keyword ideas](references/keyword-ideas.md) |
-| Create a paused campaign; change targeting, budget or bids | [Campaigns](references/campaigns.md) |
+| Create a paused campaign; change targeting, device adjustments/exclusions, budget or bids | [Campaigns](references/campaigns.md) |
 | Create or edit groups, keywords, negatives and responsive search ads | [Search assets](references/search-assets.md) |
 | Launch, pause, inspect serving state or repair child status | [Delivery](references/delivery.md) |
-| Read performance, search terms, diagnostics and product attribution | [Reporting](references/reporting.md) |
+| Read performance, device and keyword x device reports, search terms, diagnostics and product attribution | [Reporting](references/reporting.md) |
 | Configure browser/server conversion actions, goals or bidding; read action reports | [Conversions](references/conversions.md) |
 | Deliver backend-confirmed outcomes and inspect receipts | [Server conversions](references/server-conversions.md) |
 | Preserve authorized inputs, confirmed state or an unfinished operation | [Campaign records](references/artifacts.md) |
