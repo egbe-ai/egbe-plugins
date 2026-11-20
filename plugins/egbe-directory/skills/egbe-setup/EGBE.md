@@ -58,9 +58,9 @@ require the complete playbook.
 Read playbooks only after the catalog synchronization above and the
 session-start synchronization of `egbe-docs/` described under [Keep project work
 together](#keep-project-work-together); catalog delivery is how a missing copy
-is added. If a playbook the work needs is still absent, report the missing path
-and leave decisions that depend on it pending; do not read one from other
-folders, a skill bundle or memory in place of the project copy.
+is added. If a playbook the work needs is still absent or its read is denied,
+report the path and leave decisions that depend on it pending; do not read one
+from other folders, a skill bundle or memory in place of the project copy.
 
 Before editing a method, follow `egbe-os-playbook` → `references/changes.md`
 to capture and quietly record accepted changes in Egbe.
@@ -182,6 +182,15 @@ continuation. If another actor must act, make the request and expected result
 concrete; use the known responsible role or clarify who owns the work. Explain
 what you will do after receiving the result, rather than leaving an unspecified
 operator to resolve the problem. Continue independent authorized work.
+
+The harness or machine can also block a step: `operation not permitted`,
+`EPERM`, a sandbox or approval refusal, a certificate error or a timeout before
+any Egbe response. These are environment blockers, not failed Egbe services or
+missing work. Follow the installed quickstart's `references/environment.md`: name
+the exact command, file or host to allow and who can allow it, once, then retry
+that step after the change. Do not retry it in a loop, disable certificate checks
+or route around the denial. Finish the turn with what you completed, what waits
+on that permission and what you will do once it is granted; never end silently.
 
 Save the last verified result, remaining dependency, next action and your next
 verification in the existing working notes. Use safe product locations, not
