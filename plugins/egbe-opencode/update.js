@@ -30,7 +30,7 @@
 // under `update` in the plugin's state file.
 import { createHash, randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
-import { chmodSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { gunzipSync } from "node:zlib";
@@ -292,15 +292,23 @@ export async function checkForUpdate({
       const suffix = randomBytes(4).toString("hex");
       staged = await stage({ registry: settings.registry, packument, version: latest, capabilities, fetchImpl, mcpUrl,
         stagingDir: path.join(scope, `.opencode-${latest}-${suffix}`) });
-      const previous = path.join(scope, `.opencode-previous-${version}-${suffix}`);
-      renameSync(where.packageDir, previous);
+      // A copy swapped in earlier that OpenCode hasn't loaded yet is replaced; the rollback copy
+      // stays the version that actually runs, so it is kept and stays tracked.
+      const pending = readState(environment).update;
+      // The rollback copy stays recorded until the new version loads, even if a check failed meanwhile.
+      const keep = onDisk && compareVersions(onDisk, version) > 0 && pending?.previous
+        && existsSync(pending.previous) ? pending.previous : null;
+      const previous = keep ?? path.join(scope, `.opencode-previous-${version}-${suffix}`);
+      const displaced = keep ? path.join(scope, `.opencode-unloaded-${onDisk}-${suffix}`) : previous;
+      renameSync(where.packageDir, displaced);
       try {
         renameSync(staged, where.packageDir);
       } catch (error) {
-        renameSync(previous, where.packageDir);
+        renameSync(displaced, where.packageDir);
         throw error;
       }
       staged = undefined;
+      if (keep) rmSync(displaced, { recursive: true, force: true });
       return record({ result: `installed ${latest}; OpenCode loads it at its next start`, latest, status: "installed",
         from: version, to: latest, previous, at: new Date().toISOString() });
     }
