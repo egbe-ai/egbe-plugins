@@ -102,9 +102,11 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
   -d '{"to":"someone@example.com","subject":"Hello","text":"Sent by my agent."}'
 ```
 
-Optional `from_name` sets the display name the recipient sees, for example
+Without `from_name`, recipients see the business name, or the product name
+for an unnamed business. Optional `from_name` sets another display name, for example
 `"from_name":"Acme Team"` gives `Acme Team <you@egbe.app>`. The address is always
-your mailbox. Use your product's or your own name, never one that claims to be another
+your mailbox. Use the business's or product's name, or a real person's name only with
+their consent; never invent a person or claim to be another
 company, including Egbe itself unless the business belongs to the Egbe team. Up to 64 characters, without `@`, `<`, `>`, quotes or line breaks.
 
 ### Attachments
