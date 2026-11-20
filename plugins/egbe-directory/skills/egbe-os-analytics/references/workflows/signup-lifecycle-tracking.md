@@ -140,10 +140,36 @@ row. Never overwrite non-empty first-touch fields during login, profile edits,
 or later visits.
 
 The Site Gateway product-metrics fallback discovers these fields automatically
-on `users`, `signups`, `waitlist`, and `subscribers` tables. It prefers
-`first_utm_*`, supports their camelCase ORM equivalents, and falls back to
-legacy `utm_*` columns. Rows without a complete source/campaign pair remain in
-the report's `other` bucket.
+on the app's registration table. It prefers `first_utm_*`, supports their
+camelCase ORM equivalents, and falls back to legacy `utm_*` columns. Rows
+without a complete source/campaign pair remain in the report's `other` bucket.
+
+### Registration source
+
+Dashboard Analytics counts **Signups** from the product's durable account rows,
+not from `signup_completed` events. For a PostgreSQL app it uses the first of
+`users`, `signups`, `waitlist` or `subscribers` that has an `email` column and a
+registration timestamp (`created_at`, `createdAt`, `inserted_at`, `joined_at` or
+`subscribed_at`). Several apps of one business can share a database, so give an
+app with a different account table, such as `pm_users`, a runtime env
+declaration on its next deploy instead of renaming tables or adding views:
+
+```json
+{"env": {
+  "EGBE_ANALYTICS_USERS_TABLE": "pm_users",
+  "EGBE_ANALYTICS_USERS_EMAIL_COLUMN": "email",
+  "EGBE_ANALYTICS_USERS_CREATED_AT_COLUMN": "created_at"
+}}
+```
+
+The table may be schema-qualified (`plate_math.users`); the column keys are
+optional when the defaults above match. Use plain letters, digits and
+underscores only. The declared table is the app's only registration source:
+other conventional tables are not consulted, and existing rows count from their
+stored timestamp. An invalid or missing declared table or column makes
+Dashboard Signups unavailable rather than counting another table, so confirm
+they exist in the app's database before deploying. Convex apps keep the
+conventional table names.
 
 Do not send raw email addresses to Umami. The email-to-UTM join happens inside
 the product database and is exposed only through the authenticated internal

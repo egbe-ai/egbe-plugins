@@ -159,8 +159,9 @@ references/workflows/signup-lifecycle-tracking.md
 
 That workflow explains browser `signup_started` / `signup_submitted` delivery,
 backend-confirmed `signup_completed`, conditional `email_verified`, first-touch
-attribution handoff, and the short-lived pending queue pattern for redirecting
-signup flows.
+attribution handoff, the short-lived pending queue pattern for redirecting
+signup flows, and how an app declares an account table other than `users` so
+Dashboard Analytics can count its registrations.
 
 ## Activation Tracking
 
