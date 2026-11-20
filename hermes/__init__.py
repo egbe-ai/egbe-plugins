@@ -65,6 +65,30 @@ def _mcp_server() -> dict | None:
     return {key: entry[key] for key in ("url", "auth", "enabled") if key in entry}
 
 
+def _tokens_mtime(hermes_home: Path | None) -> int | None:
+    """When Hermes last saved Egbe's sign-in (`mcp-tokens/<server>.json`), or None."""
+    try:
+        return (hermes_home / "mcp-tokens" / f"{SERVER}.json").stat().st_mtime_ns if hermes_home else None
+    except OSError:
+        return None
+
+
+def signed_in(server: dict | None, hermes_home: Path | None, before: int | None = None) -> bool:
+    """Whether this profile has Egbe's OAuth server entry and Hermes saved its sign-in after `before`.
+
+    `hermes mcp add` and `hermes mcp login` exit 0 even when their OAuth flow failed, so the exit
+    code alone doesn't say Egbe is connected; a failed retry also leaves an earlier sign-in's file."""
+    if not server or server.get("url") != MCP_URL or server.get("auth") != "oauth":
+        return False
+    saved = _tokens_mtime(hermes_home)
+    return saved is not None and (before is None or saved > before)
+
+
+NOT_CONNECTED = ("Egbe isn't connected yet: the sign-in didn't finish. If Hermes said its MCP support or the MCP "
+                 "SDK's auth module is missing, run `hermes setup` to install MCP support. Then run "
+                 "`hermes egbe connect` again and approve the connection in your browser.")
+
+
 def _installed_version() -> str:
     """The version on disk, which an update changes before this process reloads the plugin."""
     try:
@@ -144,11 +168,14 @@ def _cli(ctx, updater):
                 print(f"mcp_servers.{SERVER} already points elsewhere; remove it with `hermes mcp remove {SERVER}` first.")
                 return 1
             print("Connecting Egbe: sign in to Egbe in your browser and approve the connection.")
+            before = _tokens_mtime(_hermes_home())
             code = subprocess.call(connect_command(server))
-            if code == 0:
-                print("Egbe is connected. In an open chat, send /reload-mcp or start a new session, "
-                      "then ask Hermes to set up Egbe.")
-            return code
+            if code != 0 or not signed_in(_mcp_server(), _hermes_home(), before):
+                print(NOT_CONNECTED)
+                return code or 1
+            print("Egbe is connected. In an open chat, send /reload-mcp or start a new session, "
+                  "then ask Hermes to set up Egbe.")
+            return 0
         report = status(ctx)
         if getattr(args, "json", False):
             print(json.dumps(report, indent=2))

@@ -37,7 +37,9 @@ language, to connect once:
 3. Send `/reload-mcp` here, or start a new session, and say when it's done.
 
 `hermes egbe connect` is the same as `hermes mcp add egbe --url
-https://os.hz.egbe.dev/mcp --auth oauth`. In Hermes Desktop or the web
+https://os.hz.egbe.dev/mcp --auth oauth`, and it says whether the sign-in was
+saved. If it reports that Hermes's MCP support is missing, ask the founder to
+run `hermes setup` to install it first. In Hermes Desktop or the web
 dashboard, the MCP server's **Authorize** button signs in too. Don't run these
 commands yourself from this session: the sign-in waits for the founder in a
 terminal.
