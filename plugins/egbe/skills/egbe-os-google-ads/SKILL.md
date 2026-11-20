@@ -141,6 +141,14 @@ Preserve unrelated settings and intentionally paused objects. Save recoverable
 inputs before the call. Use the operation's retry rules: temporary caches, durable
 receipts and desired-state assignments are not interchangeable.
 
+OS already retries reads briefly when the ads service is restarting or
+unreachable. A failure that remains has `data.upstream_status`, `data.retryable`
+and `data.attempts`; `data.error: "upstream_unavailable"` means Egbe or Google
+was temporarily unavailable, not that a campaign changed. Keep the last confirmed
+state, re-read later and report persistent failure through support. A write that
+ends in 502/503/504 has an unknown outcome: read the object back before repeating
+it. Pause reports its own confirmation; see [Delivery](references/delivery.md).
+
 Approval covers the exact write it describes. After a failed or rejected write,
 reconcile an unknown outcome first, then retry without asking only with the same
 approved inputs and as the operation's retry rules allow. If the fix changes the

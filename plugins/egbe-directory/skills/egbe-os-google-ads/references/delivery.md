@@ -75,6 +75,22 @@ Pause changes the campaign only. Enabled children under a paused campaign are
 harmless and are NOT drift for expect=PAUSED; do not spend extra writes pausing
 them. The default readback expectation is ENABLED, so use PAUSED explicitly.
 
+The pause response says whether fresh provider state confirms the stop:
+
+- `data.status_confirmed: true`, `confirmation: "readback"`: the campaign's
+  configured status reads PAUSED. This also settles a pause request that itself
+  failed (`write_outcome` `unknown` or `rejected`, details in `write_error`);
+  do not resend it.
+- `status_confirmed: false`, `confirmation: "pause_not_confirmed"`: the stop is
+  not established. `configured_status` is what the readback showed, or null when
+  it failed (`readback_error`). A failed request keeps its HTTP error status with
+  `data.error: "pause_not_confirmed"`. Treat the campaign as possibly serving and
+  follow `data.next_action`.
+
+Pausing an already paused campaign changes nothing, so resending a pause after
+`pause_not_confirmed` cannot enable anything; it does use mutate quota. Prefer a
+fresh `readback?expect=PAUSED` first when the failure was temporary.
+
 Record a successful pause's actual confirmation time, not a planned deadline.
 If the cause of a confirmed stop is unknown, say unknown rather than infer
 manual stop or budget exhaustion. A failed pause or stopped monitor is not
@@ -84,7 +100,7 @@ rather than replacing it when balances or time later change.
 Launch/pause have no durable idempotency receipt through these routes. Repeating
 campaign status still sends a mutation and uses quota. A failed post-write
 readback can return delivering=null after successful mutation. After an uncertain
-response, read state and reconcile before repeating the requested change.
+launch response, read state and reconcile before repeating the requested change.
 
 ## Set all child statuses
 
