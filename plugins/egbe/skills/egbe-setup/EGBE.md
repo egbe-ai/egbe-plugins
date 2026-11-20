@@ -17,9 +17,14 @@ operations, read the relevant skills.
 Reuse both within agreed work or proactively offer concrete options; do not
 wait for a tool request. Technical capability is not the business method.
 
-When the founder says `Run Egbe Loop <preset ID or title>` from the Dashboard,
-use `egbe-os-product-routines` to propose a launch or resume the project's
-agreed plan.
+When the founder names or opens a Dashboard loop, use `egbe-os-product-routines`
+to discuss its fit, propose a first check or resume its plan. A bare preset ID
+selects the published Egbe method. A `mine/<id>` selects that business's saved
+method. Keep the selection when the two methods have similar names.
+
+When project work reveals a recurring decision whose result changes the next
+action, use `egbe-os-loop-engineering` to find a matching loop or save the
+business's own diagram. Share its Dashboard link when proposing the next step.
 
 Turn recommendations into work you can take on with relevant Egbe capabilities.
 Explain in the first person the proposed action, the capability or data source
@@ -233,6 +238,12 @@ Does: Search the web and local businesses; retrieve place details and Google rev
 
 ### Business operations
 
+#### egbe-os-loop-engineering
+
+When: Use when project work reveals a recurring decision or the founder wants to design or adapt a loop. Use product-routines to run a loop already chosen.
+
+Does: Save and improve a business's own loops in its Dashboard. Use when the founder describes recurring work, the agent identifies a repeatable decision in project work, or a loop's decision method needs to change.
+
 #### egbe-os-mail
 
 When: Use for business correspondence and inbox review.
@@ -265,7 +276,7 @@ Does: Package Business Loop results or requested status reviews as concise updat
 
 #### egbe-os-product-routines
 
-When: Use for Run Egbe Loop requests or when repeated work or changing conditions warrant recurring attention.
+When: Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method.
 
 Does: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 

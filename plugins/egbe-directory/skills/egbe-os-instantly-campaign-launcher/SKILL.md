@@ -154,7 +154,6 @@ Files in the bundle that this plugin leaves out:
 - `scripts/lib/instantly-client.js`
 - `scripts/lib/outreach-db.js`
 - `scripts/lib/recipient-exclusion/index.js`
-- `scripts/lib/replenish-test-harness.js`
 - `scripts/lib/reply-queue.js`
 - `scripts/lib/run-config.js`
 - `scripts/lib/sender-selection.js`

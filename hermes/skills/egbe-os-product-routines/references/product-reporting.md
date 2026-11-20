@@ -9,8 +9,8 @@ delivery. It does not introduce a daemon or require a hosted Egbe agent.
 
 Resolve the verified business, workspace, timezone and supported destination.
 Read saved choices and inspect actual jobs, including jobs owned by another
-harness or machine. Connecting Egbe does not authorize scheduling. Create a
-Business Loop only after explicit agreement; preserve a prior decline or
+harness or machine. Connecting Egbe does not authorize scheduling. Enable a
+Business Loop schedule only after explicit agreement; preserve a prior decline or
 disable unless the founder explicitly reverses it. A manual report or broad
 request to configure reports is not consent to this new recurring responsibility.
 
@@ -68,6 +68,12 @@ promise that a sleeping device or session-bound task keeps running, or substitut
 an external scheduler without agreement. Installing a skill is not registration.
 
 ## Shared settings and ownership
+
+For a named Dashboard loop, keep its settings and checkpoints in the individual
+plan selected by [Start or resume a Dashboard loop](run-preset.md). Include the
+business ID and full loop command in the native job identity. Reconcile, pause
+or update only that job. Leave other loop plans and the project's reporting job
+intact. The record below belongs to the business-wide reporting responsibility.
 
 Reuse versioned `egbe-docs/routines.json`; preserve unrelated entries. Keep the
 existing `product_reporting` record keyed by verified business ID, with:

@@ -1,32 +1,21 @@
-# Start or resume a Dashboard preset
+# Start or resume a Dashboard loop
 
-For `Run Egbe Loop <ID or title>`, first look under this business's `egbe-docs/`
-for an existing plan matching the requested ID or saved title. Resume it from
-the last verified result or outstanding decision, even if the preset has since
-changed or left the catalog. Keep its agreed scope and paused jobs. A repeat
-command can continue manual work without repeating completed actions.
+Use the selected business and the exact command from its Dashboard. Look in its `egbe-docs/` for an existing agreement and last verified result. Keep the pause state, permissions and limits. A repeated command can resume manual work.
 
-For a new launch, look up the ID or title in the published
-`references/presets/index.md` of `egbe-os-product-routines` and read the
-linked `references/presets/<id>.md`. Through the connector, use
-`egbe_skill(name="egbe-os-product-routines", resource=<path>)`. With HTTP,
-read `GET /skills/egbe-os-product-routines/resources/<path>` on the connected
-OS. If the service is unavailable, use the installed copies when present.
-If neither is available, explain that the catalog could not be read. Offer
-available choices for an unknown or ambiguous name. If a title
-resolves to an ID already in a project plan, continue that plan.
+## Find the right method
 
-**Agree the launch.** Use the preset's suggested sequence and the project's
-`egbe-docs/playbooks/product/business-loop.md` to choose a starting point.
-Propose the first action, who owns it, what the agent may do independently,
-material time or spending limits, and the result that will guide the next
-decision. Incorporate corrections and get the founder's agreement before
-starting. Offer a manual launch or a schedule suited to the next evidence.
+An exact ID or card URL selects the method even during an informal discussion. A bare ID or `/loops/<id>` card selects the published preset; `mine/<id>` or `/loops/mine/<id>` selects the business loop. Apply the requested method even if a related private copy or shared original exists. Use title matching only when the founder supplied neither an ID nor a link.
 
-**Carry it forward.** Save the agreement, preset ID, title and version, next
-action and checkpoint in the project's existing plan. For a new plan, use
-`egbe-docs/loops/<preset-id>.md`. Do the first agreed agent-owned action and
-record its result, or note what the founder needs to do first. Use the relevant
-project playbooks for execution. If the founder wants scheduled continuation,
-follow [Business Loop and reporting schedules](product-reporting.md) with the
-actual plan path. The same chat command resumes the agreement.
+- **`Run Egbe Loop mine/<id>`** opens this business's saved loop. Read `GET /loops/<id>?format=markdown`, including on a fresh chat and before each scheduled continuation. With MCP pass `business` and `query={"format":"markdown"}` to `egbe_read`. Compare `data.revision` to the last revision in the plan. Apply the current method from `data.markdown` to the outstanding checkpoint. A changed diagram cannot approve new spending or restart a paused job. If the private definition is unavailable, report the pending check before taking dependent action.
+- **`Run Egbe Loop <preset-id>`** opens the published preset. Resume an existing plan even if the shared preset changed or left the catalog. For a new launch, read `references/presets/index.md` in `egbe-os-product-routines` and its linked `references/presets/<id>.md`. Use `egbe_skill(name="egbe-os-product-routines", resource=<path>)` or `GET /skills/egbe-os-product-routines/resources/<path>`; the installed copy also works offline.
+- **A title** may match a saved plan, a business loop from `GET /loops`, or a shared preset. If distinct matches share a name, offer their commands and let the founder choose. If a catalog could not be read, say which one needs checking.
+
+## Agree the launch
+
+Use the loop and `egbe-docs/playbooks/product/business-loop.md` to choose a starting point that fits the project. Trying a shared preset with the founder's own audience, sources, budget or first check uses the existing preset and a local plan.
+
+For a new launch, use **Scope and limits** to propose the work, time and budget. Propose a first action, its owner, and the result that determines the next step. Offer a manual launch or a schedule that matches the next evidence. Get the founder's agreement before starting. A planning-only conversation ends with the proposed plan. On resumption the recorded agreement applies. Bring only changes that need the founder's decision back for approval, such as raising a spending cap.
+
+Save the agreement and checkpoint in the existing plan. For new plans use `egbe-docs/loops/<preset-id>.md` for a shared preset and `egbe-docs/loops/mine/<id>.md` for a private loop. Keep the full command, business ID, title and shared preset version or business revision. After an authorized action, record its result or the pending founder action. If results call for improving or adapting the definition, use **egbe-os-loop-engineering**.
+
+For scheduled continuation use [Business Loop and reporting schedules](product-reporting.md) with the actual plan path. Identify the responsibility by both business and full loop command. Record and reconcile its own native job, pause state, last occurrence and next check in that loop's plan. Repeating the command reuses the same job. Two different loops can run on different cadences.

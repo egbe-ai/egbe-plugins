@@ -2,7 +2,7 @@
 name: egbe-os-product-routines
 description: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 metadata:
-  egbe-when: "Use for Run Egbe Loop requests or when repeated work or changing conditions warrant recurring attention."
+  egbe-when: "Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method."
   egbe-visible: "true"
   egbe-title: "Keep your product moving"
   egbe-description: "Keep agreed work moving with a recurring Business Loop, product checks and reports in your agent."
@@ -62,8 +62,14 @@ and guidance, not a managed scheduler.
 
 ## Choose the entry
 
-For `Run Egbe Loop <preset ID or title>`, follow
-[Start or resume a Dashboard preset](references/run-preset.md).
+For a named preset, a Dashboard card, `Run Egbe Loop <preset-id>`, `Run Egbe Loop mine/<id>` or a saved title, follow
+[Start or resume a Dashboard loop](references/run-preset.md). Read a bare ID directly from this skill's `references/presets/<id>.md`. The OS `/loops` API serves private definitions and title discovery.
+
+When recurring work has a decision of its own (for example, choosing which part
+of onboarding to improve after each cohort), use **egbe-os-loop-engineering**
+to find or save its diagram as part of planning or configuring the work.
+Link the saved loop to its existing plan for continuation. A fixed reminder
+or report can follow its ordinary scheduling workflow.
 
 For the Business Loop, existing product reports, or a change/disable request,
 follow [Business Loop and reporting schedules](references/product-reporting.md).
