@@ -67,8 +67,9 @@ selects it from your key. If no database exists, provision it through
 ## Read and inspect
 
 `POST /db/query` accepts one read SQL query and a `params` array. Use `$1`, `$2`,
-etc. for values. SELECT, joins, aggregates and read-only CTEs work. Supply SQL
-without a trailing comment after its final semicolon.
+etc. for values. SELECT, joins, aggregates and read-only CTEs work; other keys
+have narrower limits (see Read-only keys). Supply SQL without a trailing comment
+after its final semicolon.
 
 ```bash
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/db/query" -s  \
@@ -92,9 +93,37 @@ ordering/continuation on all key columns. A `truncated: true` response is
 incomplete: reduce the page size/selected fields and repeat that page. Separate
 requests do not share a snapshot; concurrent changes may affect an export.
 
-The repository normally describes the schema. If needed, inspect
-`information_schema.columns` or PostgreSQL catalogs using `/db/query`; there is
-no separate schema-discovery endpoint.
+The repository normally describes the schema. If needed, the owner's key can
+inspect `information_schema.columns` or PostgreSQL catalogs using `/db/query`;
+there is no separate schema-discovery endpoint.
+
+### Read-only keys
+
+Any key other than the owner's full `OS_API_KEY`, such as an evaluation key or a
+key allowed to read but not change the database, gets a stricter query check.
+It accepts one SELECT, including joins, aggregates, window functions, UNION and
+read-only CTEs, using common built-in functions, operators and casts. Each
+referenced table must be a plain table in this project's schema whose every
+column, selected or not, has a common built-in type (boolean, numbers, text,
+bytea, date/time/interval, uuid, json/jsonb, network addresses, bit) or an array
+of one. It rejects views, partitioned, foreign or inherited tables, row-level
+security, other column types, expression/partial indexes or other stored custom
+logic, PostgreSQL catalogs, other schemas, `SELECT INTO`, row locks and overly
+complex queries.
+
+Schema discovery is limited to reduced `information_schema.tables`
+(`table_schema`, `table_name`, `table_type`) and `information_schema.columns`
+(`table_name`, `column_name`, `ordinal_position`, `is_nullable`, `data_type`,
+`udt_name`). `data_type` is the PostgreSQL type name, such as `int4` or
+`timestamptz`; other fields return 400. These lists can include views and other
+tables this check rejects.
+
+A rejected query returns 403 `database_read_query_unsupported` without running
+it. Rewrite it with plain tables and built-in expressions. If the needed data
+lives only in an ineligible table or view, or restricted reads return 503
+`database_api_unavailable`, report that data as unavailable and its value as
+unknown, not as zero or absent. Do not look for another key or admin
+credentials, and do not write or copy data to work around the check.
 
 ## Correct one record
 
