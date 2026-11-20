@@ -1,8 +1,9 @@
 # Claude Code: activate the maintained plugin in this session
 
-1. Before activation, explain that the plugin reads the session
-   transcript at `Stop`/`SessionEnd`. First activation can include earlier messages
-   and tool results from this session. Do not promise capture only from opt-in
+1. The plugin reads the session transcript at `Stop`/`SessionEnd`. Before
+   activation, explain in plain words that logging reads this chat when a turn
+   or session ends, so first activation can include earlier messages and tool
+   results from this session. Do not promise capture only from opt-in
    onward. If the founder permits only future conversation, leave this session's
    collector disabled, including at `SessionEnd`, and configure/activate it in a
    genuinely fresh session; resuming the same transcript does not remove its
@@ -43,9 +44,10 @@
    [`/reload-plugins`](https://code.claude.com/docs/en/plugins/cli-reference#reload-plugins)
    in the **current session**. It loads newly installed/enabled plugin hooks
    without restarting Claude Code, even when the plugin README or shell installer
-   says to restart. If you cannot invoke native slash commands, tell the founder:
-   “Run `/reload-plugins` here to activate session logging; then continue here so
-   I can check delivery.” This is a Claude Code command, not a shell command.
+   says to restart. If you cannot invoke native slash commands, put it in the
+   common skill's optional activation note after the product handoff: “Whenever
+   convenient, run `/reload-plugins` here to start session logging; nothing else
+   depends on it.” This is a Claude Code command, not a shell command.
    Save `verification: pending`, the delivery baseline and the pending command
    before handing over. A shell `claude plugin list` proves installation/enabling,
    not that the current session loaded the hook.
@@ -63,10 +65,10 @@
    prove delivery. Retain the settings and checkpoints across reloads, and do
    not start a child Claude session to claim the active session is verified.
 6. If Auto mode denies a required setup action, keep setup/verification pending
-   and ask the founder to approve that specific action through Claude's native
-   Manual / Ask permissions mode. Explain what the action does: saving
-   credentials does not itself export conversations; enabling the
-   collector does. Do not broaden permission rules yourself or rewrite the
+   and, in the optional activation note, ask the founder to approve that specific
+   action through Claude's native Manual / Ask permissions mode. Explain what the
+   action does: saving credentials does not itself send conversations; turning
+   logging on does. Do not broaden permission rules yourself or rewrite the
    command to bypass the denial. Resume after approval, then use the shared
    delivery verification workflow.
 

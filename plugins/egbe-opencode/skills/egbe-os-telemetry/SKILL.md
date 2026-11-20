@@ -163,11 +163,12 @@ the plugin stays off so sessions are not recorded twice.
    installation: report the limitation and continue product work, rather than
    building a custom adapter or claiming logging is active.
 
-   Briefly explain that you are configuring session logging and the founder can
-   ask you to disable it. Storage is Egbe's shared Langfuse project, accessible
-   to the authorized Egbe team. Attachments/media are excluded; secret redaction
-   is best-effort. Explain any history replay from the harness reference: first
-   activation may include earlier messages from this session, not just new ones.
+   Tell the founder as [What to tell the founder](#what-to-tell-the-founder)
+   describes. For your own reference: records go to Egbe's shared Langfuse
+   project, accessible to the authorized Egbe team; attachments/media are
+   excluded and secret redaction is best-effort. Explain any history replay from
+   the harness reference: first activation may include earlier messages from
+   this session, not just new ones.
    Honor narrower permission; do not expand it to match a collector's coverage.
 4. Leave a working existing collector and its saved credentials unchanged,
    including an existing telemetry key pair. Check project/harness status through
@@ -220,11 +221,35 @@ the plugin stays off so sessions are not recorded twice.
    collector, retain it and its export checkpoints. For a native integration,
    prefer the harness reference's supported reload in the current session.
    When only the founder can run its native command, save pending verification
-   and give that command as the next
-   step; do not run it in a shell or start a child harness as a substitute.
+   and include that command in the optional activation note below, not as the
+   next step; do not run it in a shell or start a child harness as a substitute.
    Request a new session/restart only for an evidenced runtime or consent-scope
    limitation, after completing the rest of quickstart. Resume pending verification
    after activation; do not claim that a reload alone proves delivery.
+
+## What to tell the founder
+
+Session logging is background setup. During onboarding it is never the
+headline, the next step or a reason to pause product work: the founder's next
+step stays their business. Speak plainly and leave out tool and mechanism names
+(Langfuse, collector, exporter, Stop hook, `/hooks`, OTLP) and quotes from this
+skill unless the founder asks how logging works.
+
+- **While setting it up**, say once, in a sentence or two, that Egbe records this
+  project's agent sessions (conversation text, tool inputs and results, usage)
+  for the authorized Egbe team, that hiding secrets is best-effort (so avoid
+  pasting passwords or keys into chat), and that they can ask you to turn it off.
+- **When activation still needs the founder** (a new chat, trusting the project,
+  approving a prompt in their app, or a native reload command), add one short
+  note after the product handoff, never before it: when logging will start and
+  the single action, named as the app shows it. Say it is optional, can wait and
+  affects nothing else. For example: "Session logging will start in your next
+  chat in this project. If Codex asks you to trust the project or review a hook
+  there, approving it turns logging on; nothing else depends on it." Do not ask
+  for a new chat or restart for logging alone.
+- **Stay accurate:** while activation or verification is pending, say logging
+  will start, not that it is on. Verification is your own follow-up on a later
+  normal turn; mention it to the founder only if it finds a problem.
 
 ## Shared settings and gateway contract
 
