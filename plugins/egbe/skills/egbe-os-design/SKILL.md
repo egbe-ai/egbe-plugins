@@ -139,26 +139,40 @@ specific fields instead of the whole document:
 
 ## Errors
 
-- `503` — the mirror is still warming on a freshly started gateway (first walk
-  is ~1 min). Retry in ~30s; after that it is memory-fast and refreshes daily.
-  If `data.last_error` is set, an earlier build failed; treat repeats like `502`.
+Unavailability is always `503` with a typed `data`: `error`, `reason`,
+`retryable`, `retry_after_seconds` and the `mirror` status. An empty or
+unavailable catalog is never returned as an empty `200` result.
+
+- `data.error: "design_catalog_warming"` — the mirror is still being built on
+  a freshly started gateway (first walk is ~1 min). Retry after
+  `retry_after_seconds` (~30s); after that it is memory-fast and refreshes daily.
+- `data.error: "design_catalog_unavailable"` — facets, search or browse cannot
+  be served: the upstream catalog failed and the gateway has no copy. The
+  message carries the upstream reason.
+  - `reason: "upstream_forbidden"`, `retryable: false` — the upstream refuses
+    access (HTTP 401/403). Do not retry. Continue without a catalog reference,
+    as below, and tell the user the design catalog is unavailable.
+  - Other reasons, `retryable: true` — retry after `retry_after_seconds` (~1 min)
+    at most 2–3 times, then continue without a catalog reference.
+- `data.error: "design_style_unavailable"` — one style's detail or `design.md`
+  could not be fetched and was not cached. Try at most one other result, then
+  build from the search result's fonts and colours or continue without a
+  catalog reference.
 - `422` — `style_id` must be a uuid from a search result.
-- `502` — the upstream catalog is unreachable and we have no cached copy. The
-  message carries the upstream reason; facets, search and browse also return
-  the mirror status (with `last_error`) in `data`, while style detail and
-  `design.md` return `data: null`. If the message says the upstream catalog
-  refused access (HTTP 401 or 403), do not retry: continue without a catalog
-  reference and tell the user the design catalog is unavailable. Otherwise the
-  message says to retry in about a minute; do so at most 2–3 times, then do
-  the same.
+
+Continuing without a catalog reference means: use the accepted
+`product/design.md` direction, the user's brand or existing product UI, or
+references the user supplies; otherwise make a deliberate, restrained choice of
+one type pairing, a small named palette with roles and a spacing scale, and
+record it as your own decision. Do not present it as a catalog reference, do
+not invent a `style_id` or attribution, and do not block the build on the catalog.
 
 When the upstream fails after a copy exists, the gateway keeps serving its last
-good copy, including after a restart. `data.mirror.degraded: true` in
-`GET /design` means that copy could not be refreshed. Search, browse and facets
-still work from it, and so do style detail and `design.md` for styles the
-gateway fetched before. Other styles return the `502` above: try at most one
-other result, then build from the search result's fonts and colours or
-continue without a catalog reference.
+good copy, including after a restart. `data.availability` in `GET /design`
+reports `available`, `state` (`ready`, `stale`, `degraded`, `warming` or
+`unavailable`) and `reason`; `degraded` means the copy could not be refreshed.
+Search, browse and facets still work from it, and so do style detail and
+`design.md` for styles the gateway fetched before.
 
 Semantic search never returns an error of its own: no ai-api credential, a
 still-building vector cache, or an embeddings-call failure all degrade silently
