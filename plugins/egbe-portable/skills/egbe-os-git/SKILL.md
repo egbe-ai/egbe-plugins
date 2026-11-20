@@ -234,35 +234,40 @@ Limits: 10 MB per file, 50 MB and 2,000 paths per commit, 500 entries per batch,
 (2 hours at most); `GET /git/commit-sessions/<session_id>` shows its state, staged
 paths and result, and `DELETE` discards it.
 
-A 409 whose `data.head` differs from your `base` means the branch moved; nothing
-was written. Read the changed files at `data.head`, reapply your edits where
-needed, then repeat the commit call with `"base": "<data.head>"`: the staged files
-replace those paths at that head. Egbe never force-pushes. After a timeout or a
-lost response, repeat the same session's commit call: a finished session returns
-its commit again with `replayed: true`. For a one-shot request, read the tree
-first; if its `commit` differs from your base, check whether your change is
-already there before committing again.
+A failed commit call names its cause in `data.reason`, with `data.retryable`
+saying whether repeating the same request later can succeed. Act on the reason,
+not the HTTP status (a 403 with `data.reason` is a Git refusal, not a missing key
+scope). Unless the reason says otherwise, nothing was written; a session's commit
+call leaves the session open (discard it with `DELETE` if you will not retry it),
+and a refused one-shot request keeps no session, so send it again in full.
 
-When the Git server refuses the push and the branch did not move, the commit
-call answers with `data.reason` (a 403 with `data.reason` is this refusal, not a
-missing key scope). Nothing was written. A session's commit call leaves the
-session open: discard it with `DELETE` if you will not retry it. A refused
-one-shot request keeps no session; send it again in full.
-
+- `moved` (409, `data.head` differs from your `base`): the branch moved. Read
+  the changed files at `data.head`, reapply your edits where needed, then repeat
+  the commit call with `"base": "<data.head>"`: the staged files replace those
+  paths at that head. Egbe never force-pushes.
+- `source_moved` (409, retryable): the `from_branch` you started a new branch
+  from moved while committing. Repeat the same commit call; nothing was written.
 - `protected_branch` (403): the branch is protected. Do not retry or work
   around it; ask the founder to allow the push or name another branch, then
   commit there with `"base": ""` and `from_branch`.
-- `permission_denied` (403): the Git server denied Egbe write access. Do not
-  retry; contact Egbe support.
+- `permission_denied` (403): the Git server denied Egbe access. Do not retry;
+  contact Egbe support.
 - `too_large` (422): the push was too large. Commit the change in smaller parts.
 - `rejected` (409, `data.head` equals your base): a server hook or ref check
   declined the update. Read the branch head, retry once with it as base, and ask
   the founder if it is refused again.
-- `unreachable` (502): the Git server could not be reached. Without `data.head`
-  the outcome is unknown: read the tree and check whether your change is
+- `unreachable` (502) or `git_unavailable` (503): the Git server or Egbe's Git
+  could not be reached. Retry later. When the response has no `data.head`, the
+  push outcome may be unknown: read the tree and check whether your change is
   already there before committing again. Contact Egbe support if it persists.
+- `timeout` (504): the outcome is unknown. Repeat the same session's commit
+  call: a finished session returns its commit again with `replayed: true`. For a
+  one-shot request, read the tree first; if its `commit` differs from your base,
+  check whether your change is already there before committing again.
 - `refused` (502): an unrecognized refusal. Retry once later, then contact Egbe
   support with the time and repository.
+- `internal` (500) or `configuration` (502): an Egbe-side fault. Do not retry;
+  contact Egbe support with the time and repository.
 
 ## Product backlog
 
