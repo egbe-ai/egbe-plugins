@@ -10,8 +10,14 @@ It works with OpenCode 1.x (1.18.29 or later) and OpenCode 2.x.
 
 ## Get started
 
-1. Add the plugin to your OpenCode configuration (`opencode.json` in your
-   project, or `~/.config/opencode/opencode.json` for every project):
+1. Add the plugin for every project:
+
+   ```bash
+   opencode plugin @egbe-ai/opencode -g
+   ```
+
+   Without `-g` it goes into the current project's `opencode.json`. You can
+   also add it to the configuration by hand:
 
    ```jsonc
    // OpenCode 2.x
@@ -23,7 +29,6 @@ It works with OpenCode 1.x (1.18.29 or later) and OpenCode 2.x.
    { "plugin": ["@egbe-ai/opencode"] }
    ```
 
-   In OpenCode 2.x, `opencode plugin add @egbe-ai/opencode` does the same.
    OpenCode installs the package from npm when it starts.
 2. Sign in to Egbe once: run `opencode mcp auth egbe` in a terminal (in OpenCode
    2.x, `/mcps` in OpenCode works too), sign in in the browser that opens and
