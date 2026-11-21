@@ -127,8 +127,8 @@ run the installed quickstart's `scripts/sync-artifacts.py` with Python from the
 project root; a scheduled or other unattended run does this before reading
 project files. If the task or connection allows reads only, pass `--pull-only`:
 local drafts stay here and are not published. Only synchronized work can be
-restored in a fresh workspace. For deletions, moves, interruptions and conflicts,
-follow the quickstart's `references/artifact-sync.md`.
+restored in a fresh workspace. For failures, deletions, moves, interruptions
+and conflicts, follow the quickstart's `references/artifact-sync.md`.
 
 Reserve Git-ignored `.local/` for credentials and machine/process-only state;
 ignore env secrets, locks and temporary files too. Exclude all `egbe-docs/` from
