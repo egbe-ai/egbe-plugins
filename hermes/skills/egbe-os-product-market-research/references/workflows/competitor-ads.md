@@ -60,11 +60,18 @@ same command replays cached data instead of spending actor runs again.
 Identity is destination-verified: Google ads are collected by the domain
 their ads point to (advertiser legal names — e.g. ClickUp advertising as
 "Mango Technologies, Inc." — are found automatically), and Meta ads count
-only when their landing destination resolves to the target domain or the
-page name is an exact brand match. Same-name lookalikes are excluded from
-the scoped sample and listed separately — never hand-patch them back in.
-A presence span may include gaps and creative rotation. An empty sample means
-no matches in the reviewed scope, not absent advertising or absent demand.
+only when their landing destination resolves to the target domain or, when the
+destination is missing or unresolved (an app store, link hub, shortener or
+tracking redirect), the page name is an exact brand match; such ads keep the
+store or redirect URL as provenance; behind a shortener or redirect, a
+displayed caption domain that names the target still verifies the ad. Foreign
+destinations, social-platform or messaging links, same-name lookalikes and
+store or redirect destinations without an exact page name are
+excluded from the scoped sample and listed separately with their reason —
+never hand-patch them back in. An exclusion is not evidence that the
+competitor does not advertise. A presence span may include gaps and creative
+rotation. An empty sample means no matches in the reviewed scope, not absent
+advertising or absent demand.
 
 If the runner reports no competitor domains: pass `--domains` with
 competitors supplied for the assignment when they exist. When the workspace has

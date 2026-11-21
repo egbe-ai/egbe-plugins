@@ -206,13 +206,15 @@ class OsUnreachable(ChannelFootprintError):
 SOURCE_BREAKER_FAILURES = 2
 # Hosts that are not a competitor's destination but the platform itself or a
 # store/link hub: the advertiser name decides for those rows.
-NEUTRAL_DESTINATION_HOSTS = {
-    # the platforms themselves and their messaging / short hosts
-    "facebook.com", "instagram.com", "fb.me", "fb.com", "fb.watch", "fb.gg", "m.me", "ig.me", "messenger.com",
-    "whatsapp.com", "wa.me", "t.me", "reddit.com", "redd.it", "linkedin.com", "lnkd.in", "tiktok.com", "vm.tiktok.com",
-    "youtu.be", "youtube.com", "t.co", "x.com", "twitter.com",
-    # stores and link hubs
-    "apps.apple.com", "itunes.apple.com", "play.google.com", "linktr.ee", "lnk.to", "lnk.bio",
+# The platforms themselves and their messaging hosts.
+PLATFORM_DESTINATION_HOSTS = frozenset({
+    "facebook.com", "instagram.com", "fb.com", "fb.watch", "fb.gg", "m.me", "ig.me", "messenger.com",
+    "whatsapp.com", "wa.me", "t.me", "reddit.com", "linkedin.com", "tiktok.com", "youtube.com", "x.com", "twitter.com",
+})
+STORE_DESTINATION_HOSTS = frozenset({"apps.apple.com", "itunes.apple.com", "play.google.com"})
+NEUTRAL_DESTINATION_HOSTS = PLATFORM_DESTINATION_HOSTS | STORE_DESTINATION_HOSTS | {
+    # the platforms' short hosts and link hubs
+    "fb.me", "redd.it", "lnkd.in", "vm.tiktok.com", "youtu.be", "t.co", "linktr.ee", "lnk.to", "lnk.bio",
     # shorteners and attribution/deep-link hosts (the real destination is hidden)
     "bit.ly", "tinyurl.com", "ow.ly", "buff.ly", "hubs.ly", "hubs.la", "amzn.to", "rebrand.ly", "cutt.ly",
     "onelink.me", "app.link", "adjust.com", "adj.st", "go.link", "smart.link", "page.link",

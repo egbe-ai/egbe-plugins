@@ -20,10 +20,13 @@ Competitor Set, then the Keyword Economics evidence file (the
 `competitor_domain` rows discovered on the demand surface). Identity is
 destination-first: Google rows are collected by destination domain (the
 actor's `domains` input); Meta rows are kept when their landing destination
-resolves to the competitor's domain or, when the ad carries no destination,
-when the page name is an exact brand match (`verified_by: exact_name`);
-contains-only namesakes and foreign destinations are excluded and reported
-separately.
+(or, behind a shortener or redirect, its displayed caption domain) resolves to
+the competitor's domain or, when the destination is missing or unresolved (an
+app store, link hub, shortener or tracking redirect), when the page name is an
+exact brand match (`verified_by: exact_name`, the store or
+redirect URL kept as provenance); contains-only namesakes, unverified store
+and redirect destinations, social-platform or messaging links and foreign
+destinations are excluded and reported separately.
 
 Caching and spend provenance mirror the Keyword Economics runner: every
 provider response is cached under the runtime directory keyed by request
@@ -52,6 +55,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
@@ -347,6 +351,15 @@ class OsClient:
 # ── deterministic helpers ──────────────────────────────────────────────────
 
 _KEYWORD_ECONOMICS: ModuleType | None = None
+_CHANNEL_FOOTPRINT: ModuleType | None = None
+EXCLUSION_REASONS = {
+    "destination_mismatch": "destination is a different site",
+    "platform_destination": "destination is a social platform or messaging link, not the competitor's site",
+    "name_contains_only": "page name only contains the brand",
+    "app_store_unverified": "app-store destination without an exact brand page name",
+    "unresolved_redirect": "shortened or redirect destination without an exact brand page name",
+}
+UNRESOLVED_KIND_REASONS = {"app_store": "app_store_unverified", "unresolved_redirect": "unresolved_redirect"}
 
 
 def registrable_domain(value: str) -> str:
@@ -356,6 +369,46 @@ def registrable_domain(value: str) -> str:
     if _KEYWORD_ECONOMICS is None:
         _KEYWORD_ECONOMICS = _load_script("run-keyword-economics.py", "pmr_keyword_economics_for_competitor_ads")
     return _KEYWORD_ECONOMICS.registrable_domain(value)
+
+
+def _channel_footprint() -> ModuleType:
+    global _CHANNEL_FOOTPRINT
+    if _CHANNEL_FOOTPRINT is None:
+        _CHANNEL_FOOTPRINT = _load_script("run-channel-footprint.py", "pmr_channel_footprint_for_competitor_ads")
+    return _CHANNEL_FOOTPRINT
+
+
+def resolved_destination(value: Any) -> str:
+    """The registrable domain an ad destination resolves to, or '' when it is
+    not an address or is unresolved: the platform itself, an app store, a link
+    hub, a shortener or a tracking redirect (the Channel Footprint rules, which
+    also unwrap l.facebook.com-style click wrappers)."""
+    return _channel_footprint().usable_destination(value)
+
+
+def unresolved_destination_kind(value: Any, _depth: int = 0) -> str | None:
+    """For a destination that does not resolve: `app_store` for a store
+    listing, `platform` for the social platform or a messaging link,
+    `unresolved_redirect` for any other address (link hub, shortener,
+    tracking redirect), None for display text such as 'Download now'. Click
+    wrappers are classified by the address they carry."""
+    footprint = _channel_footprint()
+    text = str(value or "").strip().lower()
+    if not text or " " in text or "." not in text:
+        return None
+    parsed = urllib.parse.urlparse(text if "//" in text else "//" + text)
+    host = (parsed.hostname or "").rstrip(".").removeprefix("www.")
+    if host in footprint.STORE_DESTINATION_HOSTS:
+        return "app_store"
+    if host in footprint.REDIRECT_WRAPPER_HOSTS or ("www." + host) in footprint.REDIRECT_WRAPPER_HOSTS:
+        params = urllib.parse.parse_qs(parsed.query)
+        wrapped = params.get("u") or params.get("q") or []
+        if wrapped and _depth < 2:
+            return unresolved_destination_kind(urllib.parse.unquote(wrapped[0]), _depth + 1) or "unresolved_redirect"
+    if host in footprint.PLATFORM_DESTINATION_HOSTS or registrable_domain(host) in footprint.PLATFORM_DESTINATION_HOSTS:
+        if host not in footprint.NEUTRAL_DESTINATION_HOSTS - footprint.PLATFORM_DESTINATION_HOSTS:
+            return "platform"
+    return "unresolved_redirect"
 
 
 def brand_token(domain: str) -> str:
@@ -385,37 +438,38 @@ def verify_ad_identity(
     Identity policy, strongest evidence first:
     1. destination — the ad's landing destination resolves to the target
        domain (Meta snapshot link_url/caption, official
-       ad_creative_link_captions);
-    2. exact_name — no destination data, but the advertiser/page name
-       normalizes exactly to the brand token;
-    3. anything else (contains-only namesakes, foreign destinations) is
-       EXCLUDED from all verdicts and reported separately — a lookalike's ads
-       must never prove a competitor's channel."""
+       ad_creative_link_captions; click wrappers unwrapped);
+    2. a destination that resolves to another site is EXCLUDED
+       (`destination_mismatch`), and so is a social platform or messaging
+       link (`platform_destination`), as before;
+    3. exact_name — the destination is missing or unresolved (an app store,
+       link hub, shortener or tracking redirect never names the competitor's
+       site), and the advertiser/page name normalizes exactly to the brand
+       token; the unresolved URL and its `destination_kind` stay as provenance;
+    4. anything else (contains-only namesakes, store or redirect destinations
+       without an exact name) is EXCLUDED from all verdicts and reported
+       separately — a lookalike's ads must never prove a competitor's
+       channel."""
     target = registrable_domain(target_domain)
     verified: list[dict[str, Any]] = []
     excluded: list[dict[str, Any]] = []
     for ad in ads:
         destination = ad.pop("_destination", None)
-        if destination:
-            if registrable_domain(destination) == target:
-                verified.append({**ad, "verified_by": "destination"})
-            else:
-                excluded.append(
-                    {
-                        "type": "excluded_namesake",
-                        "domain": target_domain,
-                        "platform": ad.get("platform"),
-                        "advertiser": ad.get("advertiser"),
-                        "ad_id": ad.get("ad_id"),
-                        "destination": destination,
-                        "reason": "destination_mismatch",
-                        "tier": "B",
-                    }
-                )
+        resolved = resolved_destination(destination) if destination else ""
+        if resolved == target:
+            verified.append({**ad, "verified_by": "destination"})
             continue
-        if _normalize_name(ad.get("advertiser") or "") == brand:
-            verified.append({**ad, "verified_by": "exact_name"})
+        kind = None if resolved else unresolved_destination_kind(destination)
+        if resolved:
+            reason = "destination_mismatch"
+        elif kind == "platform":
+            reason = "platform_destination"
+        elif _normalize_name(ad.get("advertiser") or "") == brand:
+            provenance = {"destination": destination, "destination_kind": kind} if kind else {}
+            verified.append({**ad, "verified_by": "exact_name", **provenance})
             continue
+        else:
+            reason = UNRESOLVED_KIND_REASONS.get(kind or "", "name_contains_only")
         excluded.append(
             {
                 "type": "excluded_namesake",
@@ -423,8 +477,8 @@ def verify_ad_identity(
                 "platform": ad.get("platform"),
                 "advertiser": ad.get("advertiser"),
                 "ad_id": ad.get("ad_id"),
-                "destination": None,
-                "reason": "name_contains_only",
+                "destination": destination or None,
+                "reason": reason,
                 "tier": "B",
             }
         )
@@ -532,25 +586,27 @@ def normalize_google_ad(row: dict[str, Any], domain: str) -> dict[str, Any] | No
 
 def normalize_meta_actor_ad(row: dict[str, Any], domain: str, today_iso: str) -> dict[str, Any] | None:
     page = str(row.get("page_name") or row.get("pageName") or "")
-    snapshot_peek = row.get("snapshot") or {}
-    peek_destination = str(
-        snapshot_peek.get("link_url") or snapshot_peek.get("caption") or ""
+    snapshot = row.get("snapshot") or {}
+    link_url = str(snapshot.get("link_url") or "").strip()
+    caption = str(snapshot.get("caption") or "").strip()
+    # The caption is the displayed destination domain: it decides only when
+    # the link is missing or hidden behind a shortener or tracking redirect.
+    # An explicit app-store, social-platform or messaging link keeps its own
+    # classification, whatever the caption names.
+    caption_decides = bool(caption) and resolved_destination(caption) and (
+        not link_url
+        or (not resolved_destination(link_url) and unresolved_destination_kind(link_url) == "unresolved_redirect")
     )
+    destination = (caption if caption_decides else link_url or caption) or None
     # Admit a candidate when the page name resembles the brand OR the ad's
     # destination points at the target domain (a page named after the product
     # line, not the brand, still counts); verify_ad_identity decides.
-    if not name_matches_brand(page, brand_token(domain)) and registrable_domain(
-        peek_destination
+    if not name_matches_brand(page, brand_token(domain)) and resolved_destination(
+        destination
     ) != registrable_domain(domain):
         return None
-    snapshot = row.get("snapshot") or {}
     body = snapshot.get("body") or {}
     text = body.get("text") if isinstance(body, dict) else None
-    destination = (
-        str(snapshot.get("link_url") or "").strip()
-        or str(snapshot.get("caption") or "").strip()
-        or None
-    )
     first = _epoch_to_iso(row.get("start_date") or row.get("startDate"))
     last = _epoch_to_iso(row.get("end_date") or row.get("endDate"))
     is_active = row.get("is_active")
@@ -580,7 +636,7 @@ def normalize_meta_official_ad(row: dict[str, Any], domain: str, today_iso: str)
     page = str(row.get("page_name") or "")
     captions_peek = row.get("ad_creative_link_captions") or []
     peek_destination = str(captions_peek[0]) if captions_peek else ""
-    if not name_matches_brand(page, brand_token(domain)) and registrable_domain(
+    if not name_matches_brand(page, brand_token(domain)) and resolved_destination(
         peek_destination
     ) != registrable_domain(domain):
         return None
@@ -711,8 +767,10 @@ def render_section(
         "domain their ads point to (advertiser legal names like ClickUp's "
         "'Mango Technologies, Inc.' are found automatically), and Meta ads "
         "count only when their landing destination resolves to the target "
-        "domain or the page name is an exact brand match; same-name "
-        "lookalikes are excluded and listed below."
+        "domain or, when the destination is missing or unresolved (an app "
+        "store, link hub, shortener or redirect), the page name is an exact "
+        "brand match; foreign destinations, social-platform or messaging "
+        "links and same-name lookalikes are excluded and listed below."
     )
     add("")
     add(
@@ -735,13 +793,24 @@ def render_section(
     add("")
     add("No matches means no matching ads in this bounded sample, not absent advertising or absent demand.")
     add("")
+    unverified_destinations = sum(1 for a in ads if a.get("destination_kind"))
+    if unverified_destinations:
+        add(
+            f"{unverified_destinations} Meta ad(s) were attributed by exact page name "
+            "because their app-store or redirect destination does not name the "
+            "competitor's site; the destination URL is kept as provenance, not as "
+            "independent proof of identity."
+        )
+        add("")
     if excluded_namesakes:
         by_name: dict[str, int] = {}
         for row in excluded_namesakes:
-            key = f"{row.get('advertiser')} ({row.get('platform')}, {row.get('reason')})"
+            reason = EXCLUSION_REASONS.get(str(row.get("reason")), str(row.get("reason")))
+            key = f"{row.get('advertiser')} ({row.get('platform')}, {reason})"
             by_name[key] = by_name.get(key, 0) + 1
         add(
-            "Excluded same-name lookalikes (not attributed to the scoped competitors): "
+            "Excluded from attribution (not counted for the scoped competitors; "
+            "an exclusion is not evidence that the competitor does not advertise): "
             + "; ".join(f"{name} × {count}" for name, count in sorted(by_name.items()))
             + "."
         )
