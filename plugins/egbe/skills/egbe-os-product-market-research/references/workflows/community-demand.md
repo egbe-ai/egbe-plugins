@@ -5,8 +5,8 @@ catalog ID remains `community_demand`.
 
 Read `../contracts/research-artifacts.md`. This section uses NO OS Research
 job and no free-form web research: the bundled deterministic runner searches
-Hacker News (keyless Algolia API), fresh Reddit (a pinned Apify actor,
-posts and comments from the last 12 months), and YouTube comments under
+Hacker News (keyless Algolia API), recent public Reddit posts and comments
+(Apify, last 12 months), and YouTube comments under
 the top videos per query (OS `/tools/youtube`; best-effort — a provider
 failure is recorded as an excluded source, never a dead section) for
 public demand language — payment mentions, tool-seeking asks, pain

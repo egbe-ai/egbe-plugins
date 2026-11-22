@@ -5,13 +5,12 @@ People asking for tools, describing workarounds, or naming prices in public
 communities are demand evidence that precedes any paid channel: the exact
 pain language feeds offers, and the communities themselves are organic and
 paid placements (subreddit ads target subreddits). This runner collects
-both from two sources:
+both from three sources:
 
   - Hacker News via the keyless Algolia search API (stories + comments;
     free, longitudinal);
   - fresh Reddit (last 12 months) via the Apify actor
-    `trudax/reddit-scraper-lite` (posts + comments across all of Reddit —
-    the official Reddit API is commercially unviable and is never used);
+    `harshmaur/reddit-scraper` (keyword search for public posts and comments);
   - YouTube comments under the top videos per query (OS `/tools/youtube`,
     metered per claw against a fleet-shared Google quota) — best-effort:
     a failure is recorded as an excluded source, never a dead section.
@@ -75,7 +74,7 @@ RUNTIME_REL = Path(_artifact_path("egbe-docs/research/market/work")) / SECTION_I
 EVIDENCE_REL = Path(_artifact_path("egbe-docs/research/market/evidence/community-demand.json"))
 REPORT_REL = Path(_artifact_path("egbe-docs/research/market/full-report.md"))
 
-REDDIT_ACTOR = "trudax/reddit-scraper-lite"
+REDDIT_ACTOR = "harshmaur/reddit-scraper"
 
 # One Reddit actor run, two HN calls, and up to three best-effort YouTube
 # calls (one search + comments of the top videos) per query.
@@ -83,10 +82,10 @@ MAX_QUERIES = 5
 MAX_ACTOR_RUNS_PER_ATTEMPT = 6
 MAX_HN_CALLS_PER_ATTEMPT = 16
 MAX_YT_CALLS_PER_ATTEMPT = 18
-# 60 items fits Apify's 300s sync-endpoint ceiling; 100 exceeded it on a
-# live run (HTTP 408 run-timeout-exceeded). Recall scales via MORE QUERIES,
-# not deeper single runs.
-REDDIT_ITEMS_PER_QUERY = 60
+# Bound the billable rows at the actor, not just the download.
+REDDIT_POSTS_PER_QUERY = 30
+REDDIT_COMMENTS_PER_QUERY = 30
+REDDIT_ITEMS_PER_QUERY = REDDIT_POSTS_PER_QUERY + REDDIT_COMMENTS_PER_QUERY
 HN_STORY_HITS = 30
 HN_COMMENT_HITS = 50
 HN_RECENCY_DAYS = 3 * 365
@@ -769,37 +768,45 @@ def normalize_reddit_row(row: dict[str, Any], query: str) -> dict[str, Any] | No
     data_type = str(_clean(row.get("dataType")) or "")
     if data_type not in ("post", "comment"):
         return None
+    is_post = data_type == "post"
     row_id = str(_clean(row.get("id")) or "")
+    prefix = "t3_" if is_post else "t1_"
     community = str(
         _clean(row.get("parsedCommunityName"))
         or str(_clean(row.get("communityName")) or "").removeprefix("r/")
+        or _clean(row.get("subredditName"))
         or ""
     ).strip()
-    username = str(_clean(row.get("username")) or "").strip().lower()
-    title = _plain_text(row.get("title")) if data_type == "post" else ""
+    username = str(_clean(row.get("authorName")) or _clean(row.get("username")) or "").strip().lower()
+    title = _plain_text(row.get("title")) if is_post else ""
     body = _plain_text(row.get("body"))
     text = " ".join(part for part in (title, body) if part)
     if not row_id or not community or not text:
         return None
     if username in _BOT_USERNAMES or "i am a bot" in text.lower():
         return None
-    if data_type == "post" and _SELF_PROMO_RE.search(text):
+    if is_post and _SELF_PROMO_RE.search(text):
         return None  # the author is selling, not asking
-    url = str(_clean(row.get("url")) or _clean(row.get("link")) or "")
+    url = str(_clean(row.get("postUrl")) or _clean(row.get("url")) or _clean(row.get("link")) or "")
     if not url:
         permalink = str(_clean(row.get("permalink")) or "")
         url = f"https://www.reddit.com{permalink}" if permalink.startswith("/") else ""
+    votes = row.get("upVotes") if is_post else row.get("commentUpVotes", row.get("upVotes"))
+    replies = (
+        row.get("commentsCount", row.get("numberOfComments")) if is_post else row.get("numberOfReplies")
+    )
+    created = _clean(row.get("commentCreatedAt")) or _clean(row.get("createdAt"))
     return {
-        "id": f"reddit_{row_id}",
+        "id": f"reddit_{prefix}{row_id.removeprefix(prefix)}",
         "source": "reddit",
         "community": f"r/{community}",
         "kind": data_type,
         "query": query,
         "text": text,
         "url": url or None,
-        "votes": _to_int(row.get("upVotes")) or 0,
-        "replies": _to_int(row.get("numberOfComments") if data_type == "post" else row.get("numberOfReplies")),
-        "created": str(_clean(row.get("createdAt")) or "")[:10] or None,
+        "votes": _to_int(votes) or 0,
+        "replies": _to_int(replies),
+        "created": str(created)[:10] if created else None,
     }
 
 
@@ -1257,17 +1264,14 @@ def run_pipeline(client: OsClient, inputs: RunInputs) -> dict[str, Any]:
             lambda: client.run_actor(
                 REDDIT_ACTOR,
                 {
-                    "searches": [query],
+                    "searchTerms": [query],
                     "searchPosts": True,
                     "searchComments": True,
-                    "searchCommunities": False,
-                    "searchUsers": False,
-                    "skipUserPosts": True,
-                    "includeMediaLinks": True,
-                    "sort": "relevance",
-                    "time": "year",
-                    "maxItems": REDDIT_ITEMS_PER_QUERY,
-                    "proxy": {"useApifyProxy": True},
+                    "searchSort": "relevance",
+                    "searchTime": "year",
+                    "commentedAfter": "365 days",
+                    "maxPostsCount": REDDIT_POSTS_PER_QUERY,
+                    "maxCommentsCount": REDDIT_COMMENTS_PER_QUERY,
                 },
                 limit=REDDIT_ITEMS_PER_QUERY,
             ),
