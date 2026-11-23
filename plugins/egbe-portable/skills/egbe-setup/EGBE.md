@@ -469,7 +469,7 @@ Does: Build or repair accounts, sessions, protected routes and navigation, prese
 
 When: Use for interface design; offer when inconsistent visuals need a coherent reference.
 
-Does: Search the design-reference catalog and retrieve concrete design systems for interface work.
+Does: Search real product design references (styles, screens, user flows) and retrieve concrete design systems for interface work.
 
 #### egbe-os-design-landing-page
 

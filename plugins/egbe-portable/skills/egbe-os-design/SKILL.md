@@ -1,11 +1,11 @@
 ---
 name: egbe-os-design
-description: Search the design-reference catalog and retrieve concrete design systems for interface work.
+description: Search real product design references (styles, screens, user flows) and retrieve concrete design systems for interface work.
 metadata:
   egbe-when: "Use for interface design; offer when inconsistent visuals need a coherent reference."
   egbe-visible: "true"
   egbe-title: "Design systems"
-  egbe-description: "Give your product a consistent visual language using reference design systems for typography, colors and components."
+  egbe-description: "Give your product a consistent visual language and proven page layouts using real design systems, screens and user flows."
   egbe-category: "Product & design"
 ---
 
@@ -70,68 +70,55 @@ lists these cases.
 
 # Design references
 
-Search reference design systems from shipped product sites and retrieve their
-concrete values and source attribution. The caller chooses the direction and
-scope; a catalog reference is not a mandatory design or approval of a brand.
+Search references from shipped products and retrieve their concrete values and
+source attribution:
 
-Authenticate with `Authorization: Bearer $OS_API_KEY`. Mirrored catalog reads,
-facets, browsing and lexical search have no per-call charge. Semantic search
-uses the caller's wallet-tracked `ai-api` credential: each semantic query pays
-for its query embedding, and the caller that starts a cold or refreshed shared
-corpus build also pays for embedding the roughly 1,300 catalog entries. A
-restart, catalog update or embedding-model change can require that corpus
-build again. Check `scorer` in the response; a lexical fallback does not erase
-charges for embedding work already attempted.
+- **styles**: a visual direction distilled into a design system (colours with
+  roles, typography, layout, components, section recipes, do/don't rules);
+- **screens**: how a real product laid out one concrete page or state;
+- **flows**: how a real product sequenced a multi-step journey.
+
+The caller chooses the direction and scope; a catalog reference is not a
+mandatory design or approval of a brand.
+
+Authenticate with `Authorization: Bearer $OS_API_KEY`. There is no per-call
+wallet charge. Each call that reaches the catalog counts against the business's
+daily `design-references:calls` allowance (`GET /me/limits?resource=design-references`);
+repeated searches and details the gateway already holds are not counted, so
+reuse ids instead of searching again.
 
 ## Workflow
 
 ```
-GET /design/facets  ->  POST /design/styles/search  ->  GET /design/styles/{id}/design.md
+POST /design/styles/search  ->  GET /design/styles/{id}/design.md      (visual direction)
+POST /design/screens/search ->  GET /design/screens/{id}               (one per key page)
+POST /design/flows/search   ->  GET /design/flows/{id}                 (multi-step journeys)
 ```
 
-Save the returned markdown as `egbe-docs/product/design-reference.md` when using it
-as source material. Keep it distinct from the accepted `product/design.md` direction;
-preserve attribution and record the selected style ID/source with the task.
+Save the chosen style's markdown as `egbe-docs/product/design-reference.md` when
+using it as source material. Keep it distinct from the accepted
+`product/design.md` direction; preserve attribution and record the selected
+style, screen and flow ids with the task.
 
-## 1. See what the catalog actually contains
+Search is semantic: describe surfaces, type and mood (styles), or the concrete
+UI problem (screens, flows), in plain words; any language works. The catalog
+has no filters: write constraints such as "dark theme", "Geist font" or
+"one acid accent" into the query. Results come 10 per page; pass `page` for
+more.
 
-Search is **semantic** (embedding similarity — understands meaning, and other
-languages) when your account has an ai-api credential, and **lexical** (token
-overlap) otherwise. This is automatic; check the search response's `scorer`
-field to see which one answered. For lexical queries specifically, invented
-tags match nothing while words that exist in the catalog match well — start
-here and reuse these values as query terms either way.
-
-```bash
-OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/design/facets?theme=dark&limit=25" -s
-```
-
-Returns ranked `fonts` (Inter, Geist Mono, DM Sans…), `colors` (Graphite, Paper
-White, Ink Black…) and `themes` with counts.
-
-## 2. Search
+## 1. Pick a visual direction
 
 ```bash
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/design/styles/search" -s -X POST  \
  -H 'Content-Type: application/json' \
-  -d '{"query":"editorial serif on cream paper","theme":"light","limit":5}'
+  -d '{"query":"editorial serif on cream paper, warm and calm","limit":5}'
 ```
 
-Each hit carries `style_id`, `site_name`, `url`, `theme`, `north_star` (a
-one-line description of the visual direction), `fonts`, `colors`,
-`thumbnail_url` and `score`. With semantic search, describe surfaces, type and
-mood in any language ("тёплый editorial минимализм на кремовой бумаге" works);
-with lexical, stick to English words from the catalog's own vocabulary
-("near-black canvas, mono labels, one acid accent") rather than a business
-category.
+Each hit carries `style_id`, `name`, `site_name`, `url`, `north_star` (the
+visual direction in a sentence), `fonts`, `colors` (`name`, `hex`) and
+`thumbnail_url`. Pagination is in `page`, `next_page`, `total` and `total_pages`.
 
-Browsing works too, when you already know the constraint:
-
-```bash
-OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/design/styles?font=Geist&theme=dark&limit=10" -s
-```
-
-## 3. Take the design system
+## 2. Take the design system
 
 ```bash
 mkdir -p egbe-docs/product
@@ -139,59 +126,172 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
  | python3 -c 'import sys,json;print(json.load(sys.stdin)["data"]["markdown"])' > egbe-docs/product/design-reference.md
 ```
 
-`GET /design/styles/{id}` returns the same content as JSON when you want to read
+`GET /design/styles/{id}` returns the same system as JSON when you want to read
 specific fields instead of the whole document:
 
-- `colors` — hex + name + **role** ("the one chromatic button in the system")
-- `surfaces` — elevation levels with the hex for each
-- `typography` / `type_scale` — families, weights, sizes, letter-spacing per role
-- `spacing` — page max width, section gap, element gap, card padding, radii
-- `components` — spec text per component (button, card, nav, input…)
-- `dos` / `donts` — the rules that keep a copy from looking like a knock-off
-- `guides` — an "Agent Prompt Guide" with ready component prompts, when present
-- `similar` — sibling styles with their `style_id`, for a second opinion
+- `north_star`, `essentials` — the direction and the handful of rules that make it;
+- `colors` — `token`, `name`, `hex`, `group`, `usage` and where each is used;
+- `fonts` — `role`, `family`, `use`, a free `substitute` and a `fallback` stack;
+- `dos` / `donts` — the rules that keep a copy from looking like a knock-off;
+- `design` — every section as Refero wrote it: `typography` (styles per role),
+  `layout`, `corner_radius`, `surfaces_and_depth`, `components`,
+  `imagery_and_graphics`, `section_recipes`, `page_flow`, `writing`,
+  `motion_and_responsive`.
+
+Use the substitutes for licensed fonts unless the user owns them, and do not
+reuse the source's names, logos, artwork or copy.
+
+## 3. Lay out each key page from a real screen
+
+```bash
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/design/screens/search" -s -X POST  \
+ -H 'Content-Type: application/json' \
+  -d '{"query":"pricing page with three plans and a yearly toggle","platform":"web","limit":5}'
+```
+
+`platform` is `web` (default) or `ios`. Each screen carries `screen_id`,
+`site_name`, `page_url`, `refero_url`, `thumbnail_url`, `colors`, `page_types`,
+`ux_patterns`, `ui_elements`, `description` and the `flows` it belongs to.
+
+- `GET /design/screens/{id}` adds `layout`, `functions`, `fonts` and `preview_url`.
+- `GET /design/screens/{id}/similar?limit=5` returns comparable screens.
+- `GET /design/screens/{id}/image?size=thumbnail|full` returns the screenshot as
+  `b64` with `mime_type`, when you need to look at it; `thumbnail_url` is a
+  public image and needs no call.
+
+Take structure, hierarchy, states and copy patterns from screens; take the
+visual language from the chosen style.
+
+## 4. Sequence journeys from a real flow
+
+```bash
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/design/flows/search" -s -X POST  \
+ -H 'Content-Type: application/json' \
+  -d '{"query":"signup and first-run onboarding","platform":"web","limit":3}'
+```
+
+`GET /design/flows/{flow_id}` returns `problem`, `related_queries` and every
+step with `name`, `screen_id`, `goal`, `action`, `system_response` and its
+screen description. Use it for step count, entry and exit states, decision
+points and recovery paths, not for visual style.
 
 ## Errors
 
-Unavailability is always `503` with a typed `data`: `error`, `reason`,
-`retryable`, `retry_after_seconds` and the `mirror` status. An empty or
-unavailable catalog is never returned as an empty `200` result.
+Every failure is typed in `data`; an unavailable reference is never an empty
+`200` result.
 
-- `data.error: "design_catalog_warming"` — the mirror is still being built on
-  a freshly started gateway (first walk is ~1 min). Retry after
-  `retry_after_seconds` (~30s); after that it is memory-fast and refreshes daily.
-- `data.error: "design_catalog_unavailable"` — facets, search or browse cannot
-  be served: the upstream catalog failed and the gateway has no copy. The
-  message carries the upstream reason.
-  - `reason: "upstream_forbidden"`, `retryable: false` — the upstream refuses
-    access (HTTP 401/403). Do not retry. Continue without a catalog reference,
-    as below, and tell the user the design catalog is unavailable.
-  - Other reasons, `retryable: true` — retry after `retry_after_seconds` (~1 min)
-    at most 2–3 times, then continue without a catalog reference.
-- `data.error: "design_style_unavailable"` — one style's detail or `design.md`
-  could not be fetched and was not cached. Try at most one other result, then
-  build from the search result's fonts and colours or continue without a
-  catalog reference.
-- `422` — `style_id` must be a uuid from a search result.
+- `503`, `data.error: "design_catalog_unavailable"`, with `reason`,
+  `retryable`, `retry_after_seconds` and `upstream` status:
+  - `reason: "upstream_forbidden"` or `"not_configured"`, `retryable: false` —
+    the catalog refuses this gateway or is not set up. Do not retry. Continue
+    without a catalog reference, as below, and tell the user the design catalog
+    is unavailable.
+  - `reason: "upstream_rate_limited"` or `"upstream_error"`, `retryable: true` —
+    retry after `retry_after_seconds` at most 2–3 times, then continue without a
+    catalog reference.
+- `429`, `data.error: "design_quota_exceeded"` — this business used its daily
+  allowance; `resets_at` says when it returns. Continue from references already
+  fetched (they stay readable) or without a new reference. Do not loop.
+- `404`, `data.error: "design_reference_not_found"` — the id is unknown; use an
+  id from a search result on this gateway.
+- `410`, `data.error: "design_route_retired"` — `GET /design/facets` and
+  `GET /design/styles` no longer exist; search instead.
+- `422` — a style or screen id must be a uuid, a flow id a positive integer,
+  `platform` `web` or `ios`.
 
-Continuing without a catalog reference means: use the accepted
-`product/design.md` direction, the user's brand or existing product UI, or
-references the user supplies; otherwise make a deliberate, restrained choice of
-one type pairing, a small named palette with roles and a spacing scale, and
-record it as your own decision. Do not present it as a catalog reference, do
-not invent a `style_id` or attribution, and do not block the build on the catalog.
+Continuing without a catalog reference means following
+[Designing without the catalog](#designing-without-the-catalog) below: the same
+best-effort quality bar, built from the accepted `product/design.md`, the
+user's brand, references they supply, ids fetched earlier and real products you
+can study, recorded as your own design. Do not invent an id or attribution, and
+do not block the build on the catalog.
 
-When the upstream fails after a copy exists, the gateway keeps serving its last
-good copy, including after a restart. `data.availability` in `GET /design`
-reports `available`, `state` (`ready`, `stale`, `degraded`, `warming` or
-`unavailable`) and `reason`; `degraded` means the copy could not be refreshed.
-Search, browse and facets still work from it, and so do style detail and
-`design.md` for styles the gateway fetched before.
+When the catalog fails after the gateway has fetched a style, screen or flow,
+that copy keeps being served, including after a restart. `GET /design` reports
+`availability` (`available`, `state`: `ready`, `checking` or `unavailable`,
+`reason`).
 
-Semantic search never returns an error of its own: no ai-api credential, a
-still-building vector cache, or an embeddings-call failure all degrade silently
-to the lexical result for that one request — `scorer` in the response tells you
-which one you got.
+## Designing without the catalog
 
-Catalog content © Refero (`styles.refero.design`), mirrored unmodified and
-attributed at the bottom of every downloaded design reference.
+Use this when the design catalog cannot answer: `503 design_catalog_unavailable`
+after the allowed retries, `429 design_quota_exceeded`, or no useful result for
+the product. The bar does not drop: aim for the best design you can make for
+this product and audience, as distinctive and finished as one built from a
+reference. The catalog is a source of examples, not the source of quality.
+
+### 1. Collect what already exists
+
+In this order, and use everything that applies:
+
+1. The accepted `egbe-docs/product/design.md` direction. If it exists, it rules;
+   use the steps below only for what it leaves open.
+2. The user's brand: logo, colours, fonts, tone, existing product UI or
+   marketing pages. Extend them; do not replace them.
+3. References the user supplies, and catalog ids fetched earlier for this
+   project: `GET /design/styles/{id}`, `/design/screens/{id}` and
+   `/design/flows/{id}` keep answering from the gateway's copy during an outage.
+4. Real products you can open: the competitors and adjacent products from the
+   project's research, and well-designed products in the same category. Study
+   how they structure pages, sequence onboarding and present pricing and proof.
+   Take structure and patterns, never their names, logos, artwork or copy.
+
+### 2. Decide the direction
+
+Write down, before any styling:
+
+- who the product is for, what they must feel and do on the first screen;
+- three to five adjectives for the personality, and what it must not look like;
+- one signature idea that makes the product recognisable: a type treatment, a
+  colour, a layout motif, an illustration or photography style, a motion detail.
+
+Pick the direction that best serves the audience and the product's job, not
+the safest or the most generic one.
+
+### 3. Build the system
+
+Make every value concrete; an agent building pages must not have to interpret prose.
+
+- **Typography:** families you may use (open licence, the user's own, or system
+  stacks) with roles: display, text, and mono or accent if the product needs
+  them. A type scale per role: size, weight, line height, letter spacing, for
+  desktop and mobile.
+- **Colour:** a neutral ramp (canvas, surfaces, borders, text levels), the
+  brand or accent colours with what each is for, and semantic colours (success,
+  warning, error, info). Check contrast: at least 4.5:1 for body text and 3:1
+  for large text and interface controls. Define dark mode only if the product
+  needs it.
+- **Layout and spacing:** a spacing scale on a 4 or 8 px base, container widths,
+  grid and breakpoints, section rhythm, corner radii, borders, shadows and
+  elevation levels.
+- **Components:** navigation, buttons (each variant with hover, focus, pressed
+  and disabled), inputs with validation, cards, tables or lists, modals, toasts,
+  footer, and the empty, loading and error states of each data view.
+- **Imagery and icons:** one icon set, the image or illustration style, how
+  images are cropped and framed, and what to show when there is no image.
+- **Motion:** what moves, durations and easing, and the reduced-motion behaviour.
+
+### 4. Structure pages and journeys
+
+For every key page: its job, the sections in order, the hierarchy within each,
+and the primary action. For multi-step journeys (signup, onboarding, checkout):
+the steps, the entry and exit points, decisions, validation and recovery from
+errors. Design from the product's jobs and the user's task, not from a template.
+
+### 5. Record it
+
+Write the direction and the system into `egbe-docs/product/design.md` using the
+same headings as a catalog reference (overview, colours, typography, layout,
+components, imagery, page recipes, do/don't), so later skills read it the same
+way. Mark the source as your own design, list what it was derived from (brand,
+user references, products studied), and do not invent a catalog id or attribution.
+
+### 6. Verify the rendered result
+
+Build, render and screenshot the key pages at desktop and mobile widths, check
+them with `egbe-os-product-build` → `references/interface-quality.md`, and
+iterate until they meet the direction. Tell the user the design catalog was
+unavailable and that the design is your own; when the catalog is back, a
+reference can still be used to refine it.
+
+Content © Refero (refero.design), attributed at the bottom of every downloaded
+design reference.
