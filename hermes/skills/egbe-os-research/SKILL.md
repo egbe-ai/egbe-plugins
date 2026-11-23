@@ -78,11 +78,17 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
   }'
 ```
 
+`query`, `instructions` and `idempotency_key` are required and non-blank.
+
 - `query` contains the question and relevant product context.
 - `instructions` contains stable scope, evidence, and output requirements.
-- `depth` is `standard` or `deep`.
+- `depth` is `standard` (default) or `deep`.
 - `idempotency_key` identifies this exact logical attempt. Repeating it returns
-  the same job and does not spend another quota unit.
+  the same job and does not spend another quota unit. Use 1-128 characters from
+  `A-Z a-z 0-9 . _ : -` only: no slashes or spaces, so never an artifact path.
+
+A 422 rejects the body without creating a job and names each invalid field
+(`Invalid request: <field>: <reason>`); fix that field and submit again.
 
 Persist `data.id` before doing other work. Through the Egbe connector without a
 project folder, persist it, and later the result you rely on, in Egbe's artifact
