@@ -61,6 +61,20 @@ committing through the connector (`egbe-os-git`, "Without a terminal"). Until
 the shell step or that commit and its deploy succeed, do not report the work as
 published: a Claude Artifact or a local preview is not an Egbe deployment.
 
+The harness can also refuse a step before Egbe answers: a denied file read or
+command (`EPERM`, `operation not permitted`), a certificate error, or a connector
+call that fails as a whole with HTTP 403. Egbe's own refusals of an API request
+come back as a result with a `status` and Egbe's `message`, and the `egbe_skill`
+tool never answers 403. Egbe refuses a whole call with 403 only for a browser
+`Origin` it does not accept, so such a 403 most likely comes from the harness, a
+proxy or a policy in front of Egbe. Don't retry it in a loop, route around it or
+disable certificate verification. If `egbe_skill` was refused, read that skill
+from an installed Egbe catalog or plugin copy, if this session has one. Name the
+blocked file, command, host or tool and ask the founder to allow it, or to trust
+the host through the environment's network setting. Then continue the work that
+doesn't need it and say what waits on that permission. While `egbe_skill` works,
+`egbe-os-quickstart`'s `references/environment.md` lists these cases.
+
 
 # Subscription unit economics
 
