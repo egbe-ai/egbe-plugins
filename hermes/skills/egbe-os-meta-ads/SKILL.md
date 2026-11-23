@@ -107,10 +107,22 @@ spend or pause request needs the exact owned ID, not a research package.
 
 ## Execution constraints
 
+Approval covers the exact plan it describes. Send `approved: true` only after
+the founder has approved this clean plan: its spec, daily budget, targeting,
+creatives and destination, in the conversation or in a recorded project
+approval covering these exact values. Task text alone is not that approval.
+The flag, a clean plan and its token are server contracts, not authorization;
+raw creates are not a bypass.
+
+Before approval, fix a plan's 422 request shape or returned blockers and re-plan
+without changing values the founder set. After a 409 or 422 from apply, stop and
+report the error. Do not change the spec, re-plan or re-apply to get past it,
+except the same-spec retry that [recovery](references/workflows/recovery.md)
+allows after a timeout or `apply_rolled_back`. A changed spec, budget,
+targeting, creative or destination needs the founder's fresh approval.
+
 Use `POST /ads/meta/plan` for no-write validation, then `POST /ads/meta/apply`
 with the unchanged spec, signed `plan_token` and `approved: true`.
-That flag is a server contract, not evidence of user authorization. Apply only
-within current authorization; raw creates are not an approval bypass.
 The current declarative API supports one ad set because ads have no per-ad
 ad-set mapping. The configured per-operation budget guard and wallet hold are
 server contracts, not recommended spending amounts.

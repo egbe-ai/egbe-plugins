@@ -15,8 +15,9 @@ via per-level status routes; preserve evidence. Unclear identity/ownership needs
 Egbe team reconciliation, not guessing from names or another create.
 
 Once reconciliation confirms no surviving tree, retry the same payload/token if
-usable; if expired, re-plan only after that confirmation. Repair local validation
-failures locally, never with another campaign.
+usable; if expired, re-plan the unchanged approved spec only after that
+confirmation. A changed spec needs the founder's fresh approval. Repair local
+validation failures locally, never with another campaign.
 
 Resolve real locale/interest IDs for targeting errors; do not remove language
 restrictions to bypass blockers. Missing binding, permissions or regulated-market

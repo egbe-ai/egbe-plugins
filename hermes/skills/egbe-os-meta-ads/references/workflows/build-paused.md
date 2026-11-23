@@ -20,8 +20,11 @@ Conversion optimization requires the verified product `custom_conversion_id`.
    establish consent. A clean plan verifies configuration; its conversion
    eligibility does not prove live event matching. Use the
    [pixel checks](../runtime/pixel-install.md#verification) for tracking evidence.
-3. Apply only with required approval and current authorization:
-   `POST /ads/meta/apply` with `{"spec": {...}, "plan_token": "...", "approved": true}`.
+3. Stop before apply: show the founder this clean plan (spec, daily budget,
+   targeting, creatives, destination) and wait for their explicit approval of
+   it, unless a recorded project approval covers these exact values. Only then
+   send `POST /ads/meta/apply` with
+   `{"spec": {...}, "plan_token": "...", "approved": true}`.
    OS derives the retry key from this token. Exactly one ad set is supported
    because there is no per-ad ad-set mapping.
 4. Save campaign/ad-set/ad IDs immediately. Apply contains campaign-level
@@ -32,5 +35,7 @@ Conversion optimization requires the verified product `custom_conversion_id`.
 Per-operation budget guards and wallet reserves are server-owned. Do not impose
 a local daily cap or bypass a rejected budget via raw calls.
 Apply compensation is best-effort, not proof of an empty account.
-After timeout or `apply_rolled_back`, use [recovery](recovery.md) before
-re-planning. The tree stays PAUSED; building does not activate it.
+After a 409 or 422 from apply, stop and report; do not change the spec, re-plan
+or re-apply to get past it. After timeout or `apply_rolled_back`, use
+[recovery](recovery.md) before its same-spec retry. The tree stays PAUSED;
+building does not activate it.
