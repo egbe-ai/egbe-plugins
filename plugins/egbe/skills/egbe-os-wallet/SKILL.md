@@ -63,6 +63,9 @@ the project's current policy before inferring a charge or funded runway.
 Base URL: `https://os.hz.egbe.dev`. Authenticate every call with
 `Authorization: Bearer $OS_API_KEY`.
 
+Wallet operations are `GET /wallet/balance`, `GET /wallet/policy` and
+`POST /wallet/topup`. Per-service usage limits are `GET /me/limits` (`egbe-os-me`).
+
 ## Check balance
 
 ```bash
@@ -119,8 +122,9 @@ budgets and hold API amounts remain underlying-service amounts: a $10 provider
 budget reserves $11.50 including the fee. For an approved total Wallet budget,
 fit the provider budget and fee inside it. Unused reservations are released
 without a fee. Fractional cents carry forward; do not round up each request.
-Journal metadata exposes `usage_base_cents`, `egbe_usage_fee_cents` and
-`usage_total_cents` for itemized charges. Fees apply only to new usage journals;
+Wallet journal metadata records `usage_base_cents`, `egbe_usage_fee_cents` and
+`usage_total_cents` for itemized charges; Egbe OS has no route that lists
+journal entries or transactions. Fees apply only to new usage journals;
 retries do not add another fee.
 
 Additional service usage is separate from the periodic fee. This snapshot and a
