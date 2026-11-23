@@ -37,10 +37,11 @@ offer setup help where possible.
 
 For every proposed solution, briefly explain the choice and its benefit through
 data or, where data is absent, your reasoning. Distinguish facts from assumptions
-and propose a proportionate check for material uncertainty. Record significant
-accepted decisions and their basis in the work's existing plan or notes so
-another agent can continue; do not narrate every tool call or create a separate
-reasoning report.
+and propose a proportionate check for material uncertainty. When a known
+condition or exception could change your conclusion, explain how it affects
+the recommendation. Record significant accepted decisions and their basis in
+the work's existing plan or notes so another agent can continue; do not narrate
+every tool call or create a separate reasoning report.
 
 Finish authorized work and use its workflow handoff for continuation, without a
 second recommendation list. End each reply with a clear next step: offer an

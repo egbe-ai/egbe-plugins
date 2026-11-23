@@ -48,9 +48,9 @@ does not exclude useful parallel work or urgent customer obligations.
 Explain concisely why this focus now, what I can produce using the relevant Egbe
 capabilities, what the founder needs to do or decide, and when the intended
 effect can be assessed. Name material assumptions and what would change the
-choice. If uncertainty prevents a useful commitment, propose the smallest
-question worth answering and how its answers would change the decision;
-do not substitute indefinite research for action.
+choice. If the next decision depends on an unconfirmed condition, propose the
+smallest practical check, who can do it, and how the result would change the
+next step. If it cannot be checked yet, keep it open rather than assuming it holds.
 
 Connect the desired outcome to an accessible signal, useful work I can do with
 Egbe, and feedback that would change the next action. Explain that connection
@@ -58,9 +58,9 @@ to the founder before narrowing the work to its first deliverable, including whe
 feedback can realistically arrive. Use [loop examples](loop-examples.md) when
 the founder needs help choosing a useful cycle; adapt them to the project,
 not a fixed menu. If learning depends on people trying an experience, explain
-how the intended audience could reach it now. Past traffic alone does not establish access;
-if none is available, keep access as an open prerequisite. Without a usable
-signal, first establish a way to learn rather than reviewing empty analytics.
+how the intended audience could reach it now. Past traffic alone does not establish
+current access. Without a usable signal, first establish a way to learn rather
+than reviewing empty analytics.
 
 ## Turn the decision into work
 
