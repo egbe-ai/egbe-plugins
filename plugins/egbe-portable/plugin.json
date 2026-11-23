@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "egbe",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "Give your agent your Egbe business stack: hosting, databases, email, analytics, payments, ads, research, search and more for the business you build with Egbe.",
   "author": {
     "name": "Egbe",

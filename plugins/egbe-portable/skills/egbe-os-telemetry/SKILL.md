@@ -69,32 +69,46 @@ deployment.
    Reopen setup only on an explicit request to reverse the previous choice;
    routine reruns and harness changes do not qualify.
 
-   Otherwise, reuse applicable permission from the standard prompt or a saved
-   grant without asking again. The prompt authorizes conversation text, tool
-   inputs/results and usage through Egbe for access by the authorized Egbe team.
-   The Egbe plugin's session-logging hook applies when the plugin's own copy of
-   this skill, whichever copy you follow, carries its route ("With the Egbe
-   plugin in Claude Code or Cowork" below the title; the plugin's directory build
-   has none) and this project folder is set up for Egbe with a private
-   `.env.local`. There,
-   installing the plugin is the applicable permission for harness `claude-code`
-   only, for the same scope, disclosed by its README and Egbe's setup. Do not
-   ask; during setup tell the founder once that Egbe records this folder's
-   sessions and that they can ask you to turn it off, then save authorization
-   source `egbe-plugin-install`. A saved grant from another source keeps its
-   source and scope; add the plugin's collector without overwriting them.
-   Another harness does not reuse an `egbe-plugin-install` grant; it needs its
-   own applicable permission. That hook is the managed exporter (step 3);
-   install no second collector for it.
-   Without applicable permission, keep logging off and continue product work;
-   silence is not consent. If an explicit logging request leaves its scope
-   unresolved, ask only about the missing scope.
+   Otherwise, permission applies from one of these sources:
+
+   - **The founder's own consent:** the standard prompt, their explicit yes or
+     logging request in this conversation, or a saved grant. Reuse it without
+     asking again. The prompt authorizes conversation text, tool inputs/results
+     and usage through Egbe for access by the authorized Egbe team. If an
+     explicit logging request leaves its scope unresolved, ask only about the
+     missing scope. Another harness does not reuse an `egbe-plugin-install`
+     grant; it needs its own applicable permission.
+   - **The Egbe plugin's session-logging hook**, for harness `claude-code` only,
+     when both hold: the plugin's own copy of this skill, whichever copy you
+     follow, carries its route ("With the Egbe plugin in Claude Code or Cowork"
+     below the title; the plugin's directory build has none), and this project
+     folder is set up for Egbe with a private `.env.local`. Installing the
+     plugin is then the applicable permission, for the same scope, disclosed by
+     its README and Egbe's setup. Do not ask; during setup tell the founder once
+     that Egbe records this folder's sessions and that they can ask you to turn
+     it off, then save authorization source `egbe-plugin-install`. A saved grant
+     from another source keeps its source and scope; add the plugin's collector
+     without overwriting them. That hook is the managed exporter (step 3);
+     install no second collector for it. Another Egbe plugin's session-logging
+     route for its own harness, below this skill's title or in that plugin's
+     `egbe` skill, applies the same way with the harness and source it names.
+   - **None applies, or you cannot tell.** If you cannot confirm that a source
+     above applies, for example because reading this skill or the plugin's copy
+     failed and you do not know which copy you follow, no permission applies.
+     Save no grant and do no collector work. Tell the founder once, briefly,
+     that you did not set up session logging and that they can ask you to turn
+     it off, then continue product work; silence is not consent. Do not say
+     logging is off: an Egbe plugin you could not confirm may still record this
+     folder by default until a saved decline or Disable stops it.
 
    Save `consent: granted`, `declined` or `skipped`, the verified project ID,
    choice date, authorization source and any scope restriction, preserving
    connection and collector records. A missing answer is not a saved founder
    choice. `skipped` means an explicit dismissed offer, never a grant. A later
    explicit re-enable replaces the saved choice with `granted` and reuses records.
+   Before step 2, read `setup.json` back: continue only when it records
+   `consent: granted` and a source above applies to this harness; otherwise set
+   up no logging.
 2. Read `GET /telemetry`. If `data.available` is false, report that logging is
    unavailable and continue Egbe setup without it.
 3. Check whether the environment already supplies a managed session exporter.
