@@ -53,6 +53,9 @@ destination and agreed action scope. For a Business Loop, include readable paths
 `EGBE.md`, current `egbe-docs/playbooks/product/business-loop.md`, relevant concrete
 plans/results and `egbe-os-product-report`. The runner must read the actual
 project methods and adaptations, not a stale copy pasted into its task prompt.
+Tell the runner in the prompt that if the harness refuses to read a listed path
+or run a step, it names that path or step and who can allow it, once, continues
+other authorized work and ends the turn with what finished and what waits.
 Keep credentials in the project's credential store, never in that prompt.
 An explicitly requested report-only schedule instead invokes `egbe-os-product-report`
 with its period, mode and read-only scope; do not turn that request into a Business Loop.

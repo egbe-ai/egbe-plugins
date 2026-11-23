@@ -86,6 +86,12 @@ Preserve an outstanding decision without repeatedly sending the same request.
 A recurring review is not authorization for new spending, outreach, publication
 or changes to the product.
 
+A harness denial (`operation not permitted`, `EPERM`, a sandbox or approval
+refusal, a certificate error or a timeout before Egbe answers) is an environment
+blocker, not a failed Loop. Handle it by the "Resume unfinished work" rule in
+`EGBE.md`, continue independent work, and end the turn with a reply stating what
+finished, what waits on the permission and what you will retry once it is granted.
+
 ## Observe what can change the next decision
 
 Tie monitoring to active work: what needs checking, which evidence or condition
