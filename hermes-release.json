@@ -1,12 +1,12 @@
 {
-  "version": "0.1.35",
-  "commit": "a02666bbb812f31d58424bc20648cf31ef7c6094",
+  "version": "0.1.36",
+  "commit": "1a0b5805531d141afcea8b5f72c050c3a53bede0",
   "files": {
     "LICENSE": "31466a3cfd5e56e90893ddf905dda35fa9720d595aab1e3c9283ec9ab712ca1c",
     "README.md": "bdea46585c42e431682e374ba37764c8258288f9fd170e70eddb4d804c382b77",
     "__init__.py": "fe00b7b23c82b71b20f689ceb6d05aff5b56047a7673514632062ffc84a3910e",
     "after-install.md": "b0a874ae49d569867bd1ae8bb85bc526c7b204f1ce7ee82add14dce8382c6a23",
-    "plugin.yaml": "1ba2f16d8e5e6132021d5cb17653fdd9d66c458767a79f50331e51fd7885a526",
+    "plugin.yaml": "0d26562010b5051e2f78b668de636aed59e6b5da923eebe2f18657d331b1e669",
     "session_log.py": "2dc1dc0d8bba71100e4e9a781dc5446acc5ef1387bb0ee1cc3065da20c50f2d4",
     "skills/.egbe-catalog/manifest.json": "48eee5c67988d2dda7eb9ed060f6b83cc8297467dce861694ed4efccc2be4ad2",
     "skills/egbe/SKILL.md": "bcbe6a919c7ed275d8ec018232a84fd28935f5b1b80446fe65f8aa1abd42b336",
@@ -480,7 +480,7 @@
     "skills/egbe-os-tools/references/theona.md": "1dd80cc1acb3941d344ba2c819587a5a8157ae37dcb80d78413597fcc4a6874b",
     "skills/egbe-os-wallet/SKILL.md": "ad2b8084ff4c6ac98e18a3703940c0add5195a5af28a233e28526bb70341b535",
     "skills/egbe-setup/EGBE.md": "eaa1105268f863e1f6ad6eb9b7bc6b2aeb39abe2881d42e19486a8aac6df42c8",
-    "skills/egbe-setup/SKILL.md": "af2d9c3edf1dedc4b33296f1ff6eeea5d004e13192f19713fff1bd6919d3efac",
+    "skills/egbe-setup/SKILL.md": "b70c98c13778cb7f3eab1017cf48d3b21f703b002857ef9107277e9d9ec4dd69",
     "skills/egbe-setup/references/project.md": "0fef818275b10a5161f1fd2b5408834869d2c0fcfc06dcde49bb62ec35275192",
     "updater.py": "a88c13fc3f070f1b5ceeedcf3b31197d46af0b27a4c08c2d24c413ff691630c1"
   },
