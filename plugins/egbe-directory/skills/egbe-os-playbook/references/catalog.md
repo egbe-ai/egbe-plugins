@@ -11,7 +11,7 @@ Read the guide with these substitutions:
   report one you could not add.
 - **Catalog check:** nothing to request. The verified source
   (`playbooks.source_directory`) is this skill's `playbooks/` folder and its
-  release (`playbooks.target`) is `f77259c993d609994640cf602c0eff688d8fd357d1a00dfb4b7a7a4a337c0042`. Review is required
+  release (`playbooks.target`) is `3e3d795ed282de05a23d5ff60b75e3e63bd4879744b7fe30aed7e758b1210697`. Review is required
   (`playbooks.review_required`) unless `egbe-docs/playbooks-sync.json` records
   that `reviewed_version`. Deliver missing files before comparing.
 - **Project guidance:** at the same check, if the project's `EGBE.md` is a

@@ -15,6 +15,11 @@ remaining questions. The playbook is not a place for this test's targeting,
 creative, spending amounts or schedule.
 
 Make the question, audience/market, offer, desired action and comparison clear.
+If a step produces an intermediate result, explain what happens next to reach
+the agreed outcome. If someone else needs to act, say what they need from this
+step and what they would do with it. If no one has agreed to take it on, leave
+that decision open until it matters; continue any work that does not depend on it.
+
 Carry forward applicable research and decisions; use [choose-test](choose-test.md)
 only for unresolved choices. Budget, window and stop/checkpoint conditions must
 fit the intended learning, available resources and uncertainty. State which
