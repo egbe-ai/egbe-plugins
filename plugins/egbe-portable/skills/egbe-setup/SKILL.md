@@ -78,20 +78,38 @@ copies.
      curl, shell command or local file.
 3. **Understand the project.** `project.limits` is the verified availability of
    this project. An unused zero allowance (`max_allowed: 0`, `current: 0`) means
-   unavailable, not exhausted. Mention a limit only if it affects requested work
-   or the next step. Review the context you already have, such as notes, to
-   recommend where to continue. Do not run a full audit.
+   unavailable, not exhausted. `egbe_read("/me/limits")` adds each allowance's
+   name, description and reset time. Mention a limit only if it affects requested work
+   or the next step. Read the business's saved records: list `/artifacts/files`
+   and read those that show earlier goals, decisions and work, as
+   `egbe_skill(name="egbe-os-quickstart", resource="references/artifact-sync.md")`
+   describes under "Through the Egbe connector"; an empty list means none yet.
+   Use them and the context you already have, such as notes, to recommend where
+   to continue. Do not run a full audit.
 4. **Offer useful follow-through.** Use the founder's goal and project evidence
    with `egbe_skill(name="egbe-os-quickstart", resource="references/offer-loop.md")`
    to recommend a preset or custom loop. Discuss the choice in this chat; keep
    ongoing work in a workspace with persistent access to the project.
-5. **Finish.** Call `egbe_complete_setup` once, then give a concise handoff in the
+5. **Finish.** Choose the continuation from the project's methods: in a set-up
+   workspace `egbe-docs/playbooks/<path>`, otherwise
+   `egbe_read("/playbooks/resources/<path>")`.
+   - **A task is already requested:** continue it within its authorized scope
+     through the relevant method and skill instead of offering to start again.
+   - **No product idea yet:** start that conversation now, as
+     `market-and-acquisition/market.md` describes, with an easy question about
+     the founder's experience, interests or the people they can reach, and say
+     what useful result you will prepare from the answer.
+   - **An idea but no product yet:** use `product.md` to propose the missing
+     definition or the first coherent release.
+   - **An existing product:** use its product method and the evidence from step
+     3 to propose a concrete next step, its benefit and deliverable.
+
+   Carry the founder's Business Loop choice from step 4 instead of offering it
+   again. Then call `egbe_complete_setup` once and give a concise handoff in the
    first person: what you can do with Egbe, a compact capabilities table and the
-   concrete next step. If no product idea exists yet, start that conversation
-   now with an easy question about the founder's experience, interests or the
-   people they can reach. If the founder asked to finish without questions, ask
-   none: give the next step and what you will prepare, and keep any question for
-   a later reply.
+   chosen next step. If input is needed, ask the actual question now, unless the
+   founder asked to finish without questions: then give the next step and what
+   you will prepare, and keep any question for a later reply.
 
 For any later Egbe work, use its advertised `name` from the skills list with
 `egbe_skill` and perform
