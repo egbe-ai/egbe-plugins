@@ -349,7 +349,12 @@ of both receipts verified through `POST /payments/validation-receipts/verify`
 (Preflight items 7-8) and the `GET /payments/evidence` readback taken before and after
 those requests. A build or type check alone does not make checkout ready;
 without both verified receipts and both readbacks, report checkout readiness as
-unconfirmed and name the missing check. State separately whether the real
-Stripe handoff has been observed. Unknown plans, foreign
+unconfirmed and name the missing check. If both receipts are verified and only
+the final provider readback is missing, first recover it or repeat only
+`GET /payments/evidence` for the same scope and compare it with the saved baseline.
+Repeat checkout validation only if that comparison can no longer establish what
+happened during the original attempts.
+
+State separately whether the real Stripe handoff has been observed. Unknown plans, foreign
 provider ids, duplicate subscriptions, unsafe return URLs, and provider errors
 fail without changing entitlement state.
