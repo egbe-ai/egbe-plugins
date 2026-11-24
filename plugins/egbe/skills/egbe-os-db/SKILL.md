@@ -189,7 +189,7 @@ not execute arbitrary write SQL, INSERT, bulk changes or DDL.
 
 These SQL endpoints operate on attached PostgreSQL, not Convex.
 
-### Read Convex documents without a terminal
+### Read Convex documents through OS
 
 `GET /db/convex/tables/<table>` returns one page of a table of the account's
 Convex backend, like `npx convex data <table>`, with the same key and no admin
@@ -209,9 +209,11 @@ too large to return gives 413; export from a workspace instead.
 ### Export, run functions and change data: workspace only
 
 `npx convex export`, `npx convex run <function> <args>`, `npx convex import` and
-direct document edits need a workspace with Node. Obtain the backend details
-through `GET /deploy/<slug>/convex`, configure `CONVEX_SELF_HOSTED_URL` and
-`CONVEX_SELF_HOSTED_ADMIN_KEY`, and use the project's installed Convex CLI.
+direct document edits use the project's installed Convex CLI. Reuse the
+configured credentials when present. The project owner can explicitly fetch
+`deploymentUrl` and `adminKey` through `GET /deploy/<slug>/convex/credentials`
+with the primary OS key and set `CONVEX_SELF_HOSTED_URL` and
+`CONVEX_SELF_HOSTED_ADMIN_KEY` in a private workspace.
 Function execution uses deployed queries, mutations or actions. Check the
 installed CLI/backend versions before relying on newer options such as inline
 queries. Without a workspace, correct data through the product's own functions:

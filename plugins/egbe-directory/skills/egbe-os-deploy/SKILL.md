@@ -359,20 +359,21 @@ Dockerfile. Each business has one Convex backend; its site is served from
 `POST /deploy/<slug>/convex?async=true` returns `202` with a `jobId` at once
 (the `Prefer: respond-async` header does the same). Poll
 `GET /deploy/<slug>/convex/jobs/<jobId>` until `status` is `succeeded`
-(usually under 4 minutes); `result` has `deploymentUrl` and `siteUrl`, not the
-admin key. Without `async` the call waits for the backend and returns
-`deploymentUrl`, `siteUrl` and `adminKey` in one response. Re-provisioning
-returns the same backend.
+(usually under 4 minutes). The result has `deploymentUrl` and `siteUrl`.
+Without `async` the call waits and returns the same connection metadata.
+`GET /deploy/<slug>/convex` reads those addresses for an existing backend.
+Re-provisioning returns the same backend.
 
 Include the exact chosen business name in the optional JSON body:
 `{"business_name":"FirstSignal"}`. It is saved independently of the URL slug;
 existing chosen names are preserved.
 
-### 2a. Publish without a terminal
+### 2. Publish from Git through OS
 
-Commit the app through a commit session as in "Publish without a terminal"
-(`package.json`, `package-lock.json`, `convex/`, `src/`, `index.html`; no
-`node_modules/`, `dist/` or `.env*`), then:
+Push through the OS Git remote from a terminal, or commit through an OS commit
+session as in "Publish without a terminal". Include `package.json`,
+`package-lock.json`, `convex/`, `src/` and `index.html`. Exclude
+`node_modules/`, `dist/` and `.env*`. Publish the resulting full commit SHA.
 
 ```bash
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/deploy/my-app/convex/deploy" -s -X POST \
@@ -411,13 +412,19 @@ a `build` script, and the static-hosting component set up in
 Build-time public values must be passed in `build_env` (the sandbox has no
 `.env` files). Verify the live URL in a browser after `succeeded`.
 
-### 2b. Publish from a terminal
+### Manual Convex CLI access
 
-With Node in a workspace, fetch the admin key with `GET /deploy/<slug>/convex`
-and run the same steps yourself:
+Use the managed publish above from a terminal as well. For workflows that need
+the native Convex CLI, the project owner can explicitly request
+`GET /deploy/<slug>/convex/credentials` with the primary OS key. Existing
+locally configured Convex keys still work. Clients that used the key from the
+old provisioning or metadata response should use this explicit endpoint.
+
+Use the returned values in a private workspace:
 
 ```bash
-export CONVEX_SELF_HOSTED_URL=<deploymentUrl> CONVEX_SELF_HOSTED_ADMIN_KEY=<adminKey>
+export CONVEX_SELF_HOSTED_URL='<deploymentUrl>'
+export CONVEX_SELF_HOSTED_ADMIN_KEY='<adminKey>'
 npx convex deploy -y && npm run build && npx @convex-dev/static-hosting upload -d dist
 ```
 
