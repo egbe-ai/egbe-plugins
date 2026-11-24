@@ -17,10 +17,14 @@ egbe_complete_setup call.
 
 **First setup or a return.** `setup_completed: true` in this result, or saved
 records with earlier goals and work (step 3), mean the founder already uses Egbe:
-skip step 1's introduction, say in a line or two where you left off, and continue
-from their request or the saved next step. Otherwise this is their onboarding:
-finish every step in this conversation. If they opened with a request, keep the
-introduction short, do the request, and complete the rest afterwards.
+skip step 1's introduction, read the saved records (step 3), say in a line or
+two where you left off, and continue from their request or the saved next step.
+If the records hold no saved goal and next step, as for a setup finished before
+they were kept, establish the goal as step 3 describes and save it as step 5
+does before you continue. Without either sign the founder is new and this is
+their onboarding: finish every step in this conversation. If they opened with a
+request, keep the introduction short, do the request, and complete the rest
+afterwards.
 
 This setup runs from the Egbe plugin, which provides Egbe's skills in every
 session. Read those skills and their files from the plugin; use `egbe_skill`
