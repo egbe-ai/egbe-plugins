@@ -11,7 +11,7 @@ Read the guide with these substitutions:
   report one you could not add.
 - **Catalog check:** nothing to request. The verified source
   (`playbooks.source_directory`) is this skill's `playbooks/` folder and its
-  release (`playbooks.target`) is `506d0029c4ffe93380f9a7e5154410d6e46fbbc0ee152d02bb54d719d2cc8cf1`. Review is required
+  release (`playbooks.target`) is `39c5cbe407915b715d3def3b9f8b7e2d003b3f4a87f902e0a473a66b97cb526b`. Review is required
   (`playbooks.review_required`) unless `egbe-docs/playbooks-sync.json` records
   that `reviewed_version`. Deliver missing files before comparing.
 - **Project guidance:** at the same check, if the project's `EGBE.md` is a
@@ -64,9 +64,11 @@ active method or a history of prior Egbe releases.
 
 `playbooks.review_required` means that source release has not been fully
 considered. It is distinct from successful delivery and from accepting any
-particular recommendation. If delivery failed or remains partial, preserve
-current methods and retry the reported problem; do not mark an unavailable
-release reviewed. Existing usable methods can still guide independent work.
+particular recommendation. If the check or delivery failed or remains partial,
+preserve current methods and retry the reported problem as the
+[catalog update](https://os.hz.egbe.dev/skills/egbe-os-quickstart/resources/references/skill-updates.md) describes; do not
+mark an unavailable release reviewed. Existing usable methods can still guide
+independent work.
 An unreviewed source does not invalidate the current project method or an agreed
 plan. Continue that work when source review would interrupt it, leaving the marker
 unchanged until consideration is complete. When review is not required, use the

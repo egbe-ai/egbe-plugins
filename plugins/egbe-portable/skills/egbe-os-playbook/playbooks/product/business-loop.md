@@ -91,6 +91,10 @@ refusal, a certificate error or a timeout before Egbe answers) is an environment
 blocker, not a failed Loop. Handle it by the "Resume unfinished work" rule in
 `EGBE.md`, continue independent work, and end the turn with a reply stating what
 finished, what waits on the permission and what you will retry once it is granted.
+This includes the catalog check or update at the start of the turn: a failed or
+denied sync does not end the turn. Handle it as quickstart's
+`references/skill-updates.md` describes and continue the Loop with the usable
+installed skills and the current project playbooks.
 
 ## Observe what can change the next decision
 
