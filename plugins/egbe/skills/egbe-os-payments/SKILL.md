@@ -97,11 +97,15 @@ CTA/auth continuation, product enforcement or usage behavior, design and
 navigation adaptation, analytics, and semantic verification. Repair integration
 defects without creating competing billing state or bypassing its contracts.
 
+For a new integration, use the [payment status API](references/security/server-integration.md#checkout-and-status-through-os)
+to create Checkout and read the outcome through OS. It works on Egbe and
+external hosts. Keep signed webhook delivery for products already using it
+until the founder chooses to switch and existing payment records are verified.
+
 For a repository without it, implement against the established application and
 database conventions. The bundled `assets/scaffolds/billing-nextjs-subscription/`
-is an optional starting point for a compatible new subscription integration,
-not a one-time purchase engine. Do not overwrite working code or add a marker
-without the implementation it describes.
+contains the signed-webhook subscription foundation. Do not overwrite working
+code or add a marker without the implementation it describes.
 
 Product Build's `references/foundations.md` documents the optional local scaffold
 helper's `--subscriptions` selection, which previews and installs this foundation
@@ -114,6 +118,8 @@ offer on a compatible stack; provider setup and product integration remain here.
   metrics** in the `egbe-os-analytics` skill (`GET /analytics/skill`).
 - For catalog, provider setup, checkout, and pricing handoff,
   read [references/workflows/product-checkout.md](references/workflows/product-checkout.md).
+- For app-bound checkout and status reads on either hosting path,
+  read [Checkout and status through OS](references/security/server-integration.md#checkout-and-status-through-os).
 - For a one-time purchase and its delivery/access lifecycle, also read
   [references/workflows/one-time-purchase.md](references/workflows/one-time-purchase.md).
 - For coupons, customer-entered promotion codes, automatic Checkout discounts,
@@ -139,9 +145,10 @@ Read only the workflow relevant to the requested payment capability.
   an automatic discount.
 - Treat provider state from `GET /payments/evidence` as Stripe readback and the
   product database as the source of account entitlement state.
-- Report checkout ready or done only after naming both verified validation
-  receipt outcomes and the `GET /payments/evidence` readback before and after
-  them; otherwise report readiness as unconfirmed.
+- For signed-webhook Checkout, apply the existing completion check. Report
+  checkout ready or done only after naming both verified validation receipt
+  outcomes and the `GET /payments/evidence` readback before and after them;
+  otherwise report readiness as unconfirmed.
 - Treat working Auth as an upstream input. Reuse its private validation identity
   and normal server-side session lookup for authenticated Billing work instead
   of replaying signup, password, or email-link entry. Never add a public
@@ -151,15 +158,16 @@ Read only the workflow relevant to the requested payment capability.
 - Keep provider ids, scoped keys, webhook secrets, customer ids, and checkout
   creation on the server. Never expose them through `NEXT_PUBLIC_*` or browser
   code.
-- Use only the `OS_URL` and `OS_API_KEY` supplied to the current workload. The
-  Site Gateway injects the separate product identity; never mint, copy, rename,
-  or deploy a payments-specific OS key.
-- A checkout return URL is navigation, not payment proof. Grant access only
-  after a signed live event is durably and idempotently applied.
+- On Egbe hosting, Site Gateway supplies `OS_URL` and `OS_API_KEY`. For external
+  hosting the owner installs the app-bound key in the server environment as
+  described in the payment status workflow.
+- Use the checkout return URL to resume navigation. Grant access only after
+  verifying live payment facts and applying them durably and idempotently
+  through the selected integration.
 - Reading account or billing state must not create a provider customer,
   Checkout Session, or Customer Portal Session. Provider creates happen only
   from an explicit user mutation and remain idempotent.
-- Checkout and portal server actions implement the portable validate-only
+- Signed-webhook checkout and portal server actions implement the portable validate-only
   request contract documented in their workflows. Probe requests reuse the
   normal auth and binding path, return an opaque short-lived OS receipt, and
   never fall through to provider create.

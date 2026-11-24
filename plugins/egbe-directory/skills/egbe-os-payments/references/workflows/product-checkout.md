@@ -1,5 +1,9 @@
 # Product Checkout Workflow
 
+For the app-bound status API, use [Checkout and status through OS](../security/server-integration.md#checkout-and-status-through-os) for
+checkout, runtime credentials and payment verification. The signed delivery
+steps here apply to apps using the webhook integration.
+
 Use this workflow to implement an accepted offer's catalog, pricing handoff and
 Checkout Session creation. `one_time` uses `mode: "payment"`; `subscription`
 uses `mode: "subscription"` with a recurring price. Do not choose a commercial
