@@ -270,7 +270,7 @@ Does: Save and improve a business's own loops in its Dashboard. Use when the fou
 
 When: Use for business correspondence and inbox review.
 
-Does: Send and read email through the business's @egbe.app mailbox.
+Does: Send and read email through the business's own egbe.app mailbox.
 
 #### egbe-os-me
 

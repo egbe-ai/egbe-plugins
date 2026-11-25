@@ -64,11 +64,15 @@ and a refused compound command does not stall setup.
   review, not delivery.
 - **Project guidance.** Copy `EGBE.md` from this skill's folder to the project
   root as a regular file: read it and write the same text with the file tools,
-  since a plugin folder can be protected from shell commands. Add this exact
-  line to the project instruction file this agent reads at the start of every
-  session, such as the root `AGENTS.md`, keeping existing instructions and
-  reusing an equivalent entry:
-  `Read and apply EGBE.md when working on this project.` Then read the whole
+  since a plugin folder can be protected from shell commands. Connect it in the
+  project instruction file this agent reads at the start of every session,
+  keeping existing instructions and reusing an equivalent entry, for
+  example `Read and apply EGBE.md when working on this project.` in the
+  root `AGENTS.md`. Where the agent can load the file itself, use that
+  instead: in OpenCode add `"EGBE.md"` to the `instructions` list of the
+  root `opencode.json`; in Gemini CLI use
+  `Read and apply @./EGBE.md when working on this project.` in the root
+  `GEMINI.md`. Then read the whole
   `EGBE.md` once and use it for the rest of setup.
 
 - **Session logging.** The plugin records this folder's sessions by default.

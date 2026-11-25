@@ -1,6 +1,6 @@
 ---
 name: egbe-os-mail
-description: Send and read email through the business's @egbe.app mailbox.
+description: Send and read email through the business's own egbe.app mailbox.
 metadata:
   egbe-when: "Use for business correspondence and inbox review."
   egbe-visible: "true"

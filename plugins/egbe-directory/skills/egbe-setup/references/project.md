@@ -66,8 +66,10 @@ compound command does not stall setup.
   root as a regular file: read it and write the same text with the file tools.
   Claude Code treats its plugin folder as protected, so `cp` from there can be
   refused. Add this exact line to the root `CLAUDE.md`, keeping
-  existing instructions and reusing an equivalent entry:
-  `Read and apply EGBE.md when working on this project.` Then read the whole
+  existing instructions, reusing an equivalent `@EGBE.md` entry and replacing
+  an older line without `@`:
+  `Read and apply @EGBE.md when working on this project.` The `@` makes
+  Claude Code load `EGBE.md` into every session. Then read the whole
   `EGBE.md` once and use it for the rest of setup.
 
 - **Session logging.** Ask the founder once whether Egbe may record this

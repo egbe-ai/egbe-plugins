@@ -17,7 +17,9 @@ Read the guide with these substitutions:
 - **Project guidance:** at the same check, if the project's `EGBE.md` is a
   regular file that differs from `EGBE.md` in the `egbe-setup` skill's folder,
   replace it with that copy. Ask the founder first if the project's Git history
-  shows that it changed the file itself.
+  shows that it changed the file itself. Also bring the entry that connects
+  `EGBE.md` in line with the `egbe-setup` skill's project setup, for example
+  the older Claude Code line in `CLAUDE.md` without `@`.
 - Egbe's skills update with the plugin.
 
 The editable files in `egbe-docs/playbooks/` are the project's active methods.
