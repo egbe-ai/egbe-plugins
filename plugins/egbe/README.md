@@ -46,6 +46,13 @@ You need an Egbe account. Manage or disconnect connected assistants at
 
 - **A session-logging hook** (`hooks/session-log.sh`), which records your
   sessions in project folders set up for Egbe (see below).
+- **A Business Loop reminder** (in `hooks/hooks.json`). After Claude publishes an
+  app, creates a payment link, launches an ad campaign or activates an email
+  campaign through Egbe, it reminds Claude to check once whether a recurring
+  Business Loop, such as a weekly report, would help, and to suggest it to you.
+  Claude saves or starts a loop only if you agree, and doesn't suggest one again
+  after you decline or ask for no suggestions. The reminder sends nothing
+  anywhere.
 
 **In a project folder** in Claude Code, Claude also sets the project up for
 Egbe, which plain chats skip. It saves your project's Egbe key in the folder's
