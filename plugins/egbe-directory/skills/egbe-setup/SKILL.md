@@ -124,8 +124,8 @@ copies.
    conversation, and keep a question about a consequential gap for the handoff
    rather than a questionnaire. Do not run a full audit.
 4. **Offer useful follow-through.** Use the founder's goal and project evidence
-   with `egbe_skill(name="egbe-os-quickstart", resource="references/offer-loop.md")`
-   to recommend a preset or custom loop. Discuss the choice in this chat; keep
+   with `egbe_skill(name="egbe-os-product-routines", resource="references/run-preset.md")`
+   (its "Offer a Business Loop") to recommend a preset or custom loop. Discuss the choice in this chat; keep
    ongoing work in a workspace with persistent access to the project.
 5. **Finish.** Choose the continuation from the project's methods: in a set-up
    workspace `egbe-docs/playbooks/<path>`, otherwise

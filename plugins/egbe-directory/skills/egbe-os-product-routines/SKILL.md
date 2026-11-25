@@ -1,8 +1,8 @@
 ---
 name: egbe-os-product-routines
-description: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
+description: Handle “Run Egbe Loop” commands from the Dashboard, offer a fitting Business Loop after a project milestone, and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 metadata:
-  egbe-when: "Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method."
+  egbe-when: "Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, after verified work reaches a milestone a loop could carry forward (a live product, working payments or analytics, a built campaign, delivered research, first signups or sales), or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method."
   egbe-visible: "true"
   egbe-title: "Keep your product moving"
   egbe-description: "Keep agreed work moving with a recurring Business Loop, product checks and reports in your agent."
@@ -76,8 +76,13 @@ and guidance, not a managed scheduler.
 
 ## Choose the entry
 
+At setup, or after verified work reaches a milestone that a loop could carry
+forward, follow [Offer a Business Loop](references/run-preset.md#offer-a-business-loop). It checks
+saved loops and earlier offers, chooses one fitting loop, explains it to the
+founder and saves it for the business once they agree.
+
 For a named preset, a Dashboard card, `Run Egbe Loop <preset-id>`, `Run Egbe Loop mine/<id>` or a saved title, follow
-[Start or resume a Dashboard loop](references/run-preset.md). Read a bare ID directly from this skill's `references/presets/<id>.md`. The OS `/loops` API serves private definitions and title discovery.
+[Start or resume a Dashboard loop](references/run-preset.md#start-or-resume-a-dashboard-loop). Read a bare ID directly from this skill's `references/presets/<id>.md`. The OS `/loops` API serves private definitions and title discovery.
 
 When recurring work has a decision of its own (for example, choosing which part
 of onboarding to improve after each cohort), use **egbe-os-loop-engineering**
@@ -107,7 +112,7 @@ and access requirements, not a ranking of business priorities. If the purpose
 is still undecided, return that decision to the caller's project method before
 scheduling. Check actual access and existing jobs; preserve saved choices,
 including declines. Do not activate an additional routine from a recommendation
-alone; quickstart has no automatic scheduling exception.
+alone; quickstart and milestone offers have no automatic scheduling exception.
 
 ## Configure the agreed work
 

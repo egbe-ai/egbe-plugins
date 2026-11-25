@@ -73,7 +73,7 @@ an external scheduler without agreement. Installing a skill is not registration.
 ## Shared settings and ownership
 
 For a named Dashboard loop, keep its settings and checkpoints in the individual
-plan selected by [Start or resume a Dashboard loop](run-preset.md). Include the
+plan selected by [Start or resume a Dashboard loop](run-preset.md#start-or-resume-a-dashboard-loop). Include the
 business ID and full loop command in the native job identity. Reconcile, pause
 or update only that job. Leave other loop plans and the project's reporting job
 intact. The record below belongs to the business-wide reporting responsibility.

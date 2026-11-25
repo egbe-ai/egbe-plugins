@@ -61,7 +61,9 @@ Respect declined proposals, active work and unchanged decisions.
 
 For worthwhile recurring work, explain the responsibility, sources, sensible
 cadence and notification/decision condition, then use `egbe-os-product-routines`
-to configure and verify the agreed schedule. Reuse an existing Business Loop or
+to configure and verify the agreed schedule. When a verified result is a
+milestone that a saved or published loop could carry forward, offer that loop
+as "Offer a Business Loop" in the skill's `references/run-preset.md` describes. Reuse an existing Business Loop or
 reporting responsibility when it already covers the need. A lack of traffic may call for waiting to a decision
 point, not a new recommendation every run. Preserve observations and remaining
 work so the next run continues rather than restarting the analysis.

@@ -72,7 +72,7 @@ doesn't need it and say what waits on that permission. While `egbe_skill` works,
 
 Use the project's goals, playbooks, plans and evidence. When the work reveals a recurring decision and you can explain how different observations change the next action, save the method in this business's Dashboard on your own initiative. The founder can also describe the task in ordinary language. Keep work local if the founder asks only for discussion, a draft or offline work.
 
-Look for a match in the business's saved loops (`GET /loops`) and in `egbe-os-product-routines` → `references/presets/index.json`. Reuse a loop that already covers the decision. A project's audience, budget or first check belongs in that loop's launch plan. Save a business version when the project calls for different decisions, actions or owners, or when the founder explicitly wants their own copy. Read the original before adapting it.
+Look for a match in the business's saved loops (`GET /loops`) and in `egbe-os-product-routines` → `references/presets/index.json`. Reuse a loop that already covers the decision. A project's audience, budget or first check belongs in that loop's launch plan. Save a business version when the project calls for different decisions, actions or owners, when the founder explicitly wants their own copy, or when they accept a preset through "Offer a Business Loop" in `egbe-os-product-routines` → `references/run-preset.md`. Read the original before adapting it.
 
 ## From conversation to diagram
 

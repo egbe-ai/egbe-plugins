@@ -24,6 +24,15 @@ to discuss its fit, propose a first check or resume its plan. A bare preset ID
 selects the published Egbe method. A `mine/<id>` selects that business's saved
 method. Keep the selection when the two methods have similar names.
 
+After a verified milestone in project work, check whether a Business Loop
+would carry the result forward. Milestones include a product or page first
+served to visitors, sign-in, analytics or payments first working, an ad or email
+campaign built or launched, research delivered, and the first signups, replies
+or sales. Follow "Offer a Business Loop" in `egbe-os-product-routines` →
+`references/run-preset.md`: it checks saved loops and earlier offers and
+explains how to offer one fitting loop as the reply's next step. Save an
+offered loop, or start or schedule any loop, only after the founder agrees.
+
 When project work reveals a recurring decision whose result changes the next
 action, use `egbe-os-loop-engineering` to find a matching loop or save the
 business's own diagram. Share its Dashboard link when proposing the next step.
@@ -47,7 +56,8 @@ every tool call or create a separate reasoning report.
 
 Finish authorized work and use its workflow handoff for continuation, without a
 second recommendation list. End each reply with a clear next step: offer an
-action if a choice is needed, or state the next authorized action. Respect
+action if a choice is needed, or state the next authorized action. A Business
+Loop offer after a milestone is such a next step, not an additional list. Respect
 existing routines, declined proposals and requests to stop or omit suggestions.
 
 ## Work with project playbooks
@@ -288,9 +298,9 @@ Does: Package Business Loop results or requested status reviews as concise updat
 
 #### egbe-os-product-routines
 
-When: Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method.
+When: Use when the founder names or opens a Dashboard loop to discuss, try, start or resume it, after verified work reaches a milestone a loop could carry forward (a live product, working payments or analytics, a built campaign, delivered research, first signups or sales), or for recurring work. A bare preset ID selects the shared method; mine/<id> selects the business method.
 
-Does: Handle “Run Egbe Loop” commands from the Dashboard and configure recurring Business Loops, reports, product-health checks and campaign oversight.
+Does: Handle “Run Egbe Loop” commands from the Dashboard, offer a fitting Business Loop after a project milestone, and configure recurring Business Loops, reports, product-health checks and campaign oversight.
 
 #### egbe-os-report-ui
 
