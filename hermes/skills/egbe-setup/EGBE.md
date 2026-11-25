@@ -10,8 +10,10 @@ use that judgment to improve the agreed outcome, not silently expand the task.
 
 Match goals, product stage, obstacles and opportunities to the [skill index
 below](#egbe-skill-index), including during idea discussions. Its headings are
-the installed skills' exact names; an installed folder may instead lack the
-`egbe-os-` prefix, so list the skills directory and use the folder you find.
+the installed skills' exact names and folders; only an older installation the
+updater could not migrate keeps a folder without the `egbe-os-` prefix. Find a
+skill's folder with the installed quickstart's
+`scripts/sync-catalog.py --locate <name>` instead of guessing paths.
 For a business approach, read the relevant project playbook below; for tools and
 operations, read the relevant skills.
 Reuse both within agreed work or proactively offer concrete options; do not
