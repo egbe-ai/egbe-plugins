@@ -24,15 +24,6 @@ to discuss its fit, propose a first check or resume its plan. A bare preset ID
 selects the published Egbe method. A `mine/<id>` selects that business's saved
 method. Keep the selection when the two methods have similar names.
 
-After a verified milestone in project work, check whether a Business Loop
-would carry the result forward. Milestones include a product or page first
-served to visitors, sign-in, analytics or payments first working, an ad or email
-campaign built or launched, research delivered, and the first signups, replies
-or sales. Follow "Offer a Business Loop" in `egbe-os-product-routines` →
-`references/run-preset.md`: it checks saved loops and earlier offers and
-explains how to offer one fitting loop as the reply's next step. Save an
-offered loop, or start or schedule any loop, only after the founder agrees.
-
 When project work reveals a recurring decision whose result changes the next
 action, use `egbe-os-loop-engineering` to find a matching loop or save the
 business's own diagram. Share its Dashboard link when proposing the next step.
@@ -56,9 +47,22 @@ every tool call or create a separate reasoning report.
 
 Finish authorized work and use its workflow handoff for continuation, without a
 second recommendation list. End each reply with a clear next step: offer an
-action if a choice is needed, or state the next authorized action. A Business
-Loop offer after a milestone is such a next step, not an additional list. Respect
-existing routines, declined proposals and requests to stop or omit suggestions.
+action if a choice is needed, or state the next authorized action.
+
+Before you write that next step, check whether this turn reached a milestone,
+verified by you or reported by the founder: a product or page first served to
+visitors; sign-in, analytics or payments first working; an ad or email campaign
+built or launched; market or customer research delivered, including interviews
+the founder ran; the first signups, replies or sales. If it did, read "Offer a
+Business Loop" in the `egbe-os-product-routines` skill this project uses,
+`references/run-preset.md` (a copy installed in the project wins over a plugin
+copy; without either, read it through the Egbe connector), and unless it tells
+you not to, offer one fitting Business Loop: a repeating cycle of work, a check
+of one result and the next decision. Offer it even when a one-off step comes
+first: that step can be the loop's first cycle. It is the next step, not an
+additional list. Save an offered loop, or start or schedule any loop, only
+after the founder agrees. Respect existing routines, declined proposals and
+requests to stop or omit suggestions.
 
 ## Work with project playbooks
 

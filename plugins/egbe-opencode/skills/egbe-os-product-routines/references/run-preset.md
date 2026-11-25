@@ -11,14 +11,23 @@ loop could carry forward. Examples of such milestones:
 - a product or page is first served to visitors;
 - sign-in, analytics or payments first work in the live product;
 - an ad or cold email campaign is built or launched;
-- market, competitor or customer research is delivered;
+- market, competitor or customer research is delivered, including interviews
+  the founder ran;
 - the first signups, replies or sales arrive.
 
-A milestone counts once its own verification has passed, not when it is only
-planned or drafted. The offer is the reply's next step, not an extra list of
-recommendations. Offer at most one loop per milestone. Offer only in a
-conversation with the founder: a scheduled or unattended run records the
-milestone in the existing plan for the next conversation instead.
+A milestone counts once you have verified it or the founder confirms a result
+they observed, for example payments they saw in their Stripe dashboard. A plan
+or draft is not a milestone. A record that calls itself a test or contradicts
+the project's data counts only after the founder confirms it. Don't hold the
+offer back for a check you could not finish, such as reconciling payments with
+records: say it is still pending and make it the loop's first step.
+
+The offer is the reply's next step, not an extra list of recommendations.
+Make it even when a one-off step should come first, such as asking the founder's
+own contacts to try the product: present that step as the loop's first cycle.
+Offer at most one loop per milestone. Offer only in a conversation with the
+founder: a scheduled or unattended run records the milestone in the existing
+plan for the next conversation instead.
 
 ### Check what already exists
 
