@@ -33,6 +33,17 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f \"${CLAUDE_PROJECT_DIR:-.}/EGBE.md\" ] && printf '%s\\n' 'Egbe: before ending your reply, check whether this turn reached a milestone, verified by you or reported by the founder: a product or page first live; sign-in, analytics or payments first working; an ad or email campaign built or launched; research or customer interviews delivered; the first signups, replies or sales. If it did and you are talking with the founder, follow \"Offer a Business Loop\" in the egbe-os-product-routines skill (references/run-preset.md) and offer one fitting Business Loop as your next step, unless that section says not to.'; exit 0",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }

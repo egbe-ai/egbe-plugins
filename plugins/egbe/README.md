@@ -53,6 +53,12 @@ You need an Egbe account. Manage or disconnect connected assistants at
   Claude saves or starts a loop only if you agree, and doesn't suggest one again
   after you decline or ask for no suggestions. The reminder sends nothing
   anywhere.
+- **A milestone reminder** (in `hooks/hooks.json`). In project folders set up
+  for Egbe, each of your messages comes with a short note asking Claude to check,
+  before it replies, whether the turn reached a milestone, such as a first live
+  page, first sales or customer interviews you ran, and if so to suggest one
+  fitting Business Loop. It adds a few lines to Claude's context, nothing else,
+  and sends nothing anywhere.
 
 **In a project folder** in Claude Code, Claude also sets the project up for
 Egbe, which plain chats skip. It saves your project's Egbe key in the folder's
