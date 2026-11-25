@@ -1,14 +1,14 @@
 {
-  "version": "0.1.49",
-  "commit": "f3d972846d05388d17e4ce948c1f0e081016688e",
+  "version": "0.1.50",
+  "commit": "3cc13d00a12a2c5eb61b0600619981a2fb1e3618",
   "files": {
     "LICENSE": "31466a3cfd5e56e90893ddf905dda35fa9720d595aab1e3c9283ec9ab712ca1c",
     "README.md": "bdea46585c42e431682e374ba37764c8258288f9fd170e70eddb4d804c382b77",
     "__init__.py": "fe00b7b23c82b71b20f689ceb6d05aff5b56047a7673514632062ffc84a3910e",
     "after-install.md": "b0a874ae49d569867bd1ae8bb85bc526c7b204f1ce7ee82add14dce8382c6a23",
-    "plugin.yaml": "646744ac07f872cbcf1ebb806cdf84e0a39082d14e7c1caaf6d38d73e1043ec9",
+    "plugin.yaml": "e3d831d2a8af6c71c6bf3aa9674a45e284ed5d4cf529d8793c6b8a56548f9ac3",
     "session_log.py": "2dc1dc0d8bba71100e4e9a781dc5446acc5ef1387bb0ee1cc3065da20c50f2d4",
-    "skills/.egbe-catalog/manifest.json": "64b7502a6770d6ab81786ebe514dd8845447131094a75689743720bd8056f4f8",
+    "skills/.egbe-catalog/manifest.json": "737fd930fa9803cdd5cc3f9aa298f926f5bc30f93257ae220f4925ea93fd42ea",
     "skills/egbe/SKILL.md": "bcbe6a919c7ed275d8ec018232a84fd28935f5b1b80446fe65f8aa1abd42b336",
     "skills/egbe-os-analytics/SKILL.md": "fc11fb2634745dcc6dd97635b36fc92ca1559f4e54031082c47a1f8e0915751e",
     "skills/egbe-os-analytics/canonical-events.v1.json": "d2590afd0238147127fa9c34787a954d693a847176e5334f18aa48db2d58cab5",
@@ -479,7 +479,7 @@
     "skills/egbe-os-tools/SKILL.md": "37885d8992086bbd073f693af844b667d280434275b4531d684eb298baf4fea3",
     "skills/egbe-os-tools/references/theona.md": "1dd80cc1acb3941d344ba2c819587a5a8157ae37dcb80d78413597fcc4a6874b",
     "skills/egbe-os-wallet/SKILL.md": "ad2b8084ff4c6ac98e18a3703940c0add5195a5af28a233e28526bb70341b535",
-    "skills/egbe-setup/EGBE.md": "ac05bcdb820a9f2b191b856907400870579603d5fe31fdb083040f9438ea854a",
+    "skills/egbe-setup/EGBE.md": "f504d3215e17fa1465c7ac11761a0feb35e5441dd3fe74c60d9b01d0ab4dcb53",
     "skills/egbe-setup/SKILL.md": "3cfc16641709b7b111f033c16721beda68f4594f6e6383e42c195325bc121227",
     "skills/egbe-setup/references/project.md": "372d2cb6bfaae38cb8ec10760ba835e71fbbe56c7e41b0b06dcbe67d1310577c",
     "updater.py": "a88c13fc3f070f1b5ceeedcf3b31197d46af0b27a4c08c2d24c413ff691630c1"
