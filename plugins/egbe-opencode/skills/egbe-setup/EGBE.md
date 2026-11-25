@@ -2,6 +2,26 @@
 
 Use Egbe's infrastructure, services and skills to deliver the founder's outcome.
 
+## After a milestone, offer a Business Loop
+
+Apply this before ending every reply. If this turn reached a milestone, verified
+by you or reported by the founder, the reply's next step is an offer of one
+fitting Business Loop: a repeating cycle of work, a check of one result and the
+next decision. Milestones:
+
+- a product or page first served to visitors;
+- sign-in, analytics or payments first working;
+- an ad or email campaign built or launched;
+- market or customer research delivered, including interviews the founder ran;
+- the first signups, replies or sales.
+
+Read "Offer a Business Loop" in the `egbe-os-product-routines` skill this
+project uses, `references/run-preset.md` (a copy installed in the project wins
+over a plugin copy; without either, read it through the Egbe connector), and
+follow it, including when it says not to offer. Offer the loop even when a
+one-off step comes first: that step can be its first cycle. Save an offered
+loop, or start or schedule any loop, only after the founder agrees.
+
 ## Choose how to help with Egbe
 
 Make the work deeper and better, not automatically broader. Notice consequential
@@ -49,20 +69,9 @@ Finish authorized work and use its workflow handoff for continuation, without a
 second recommendation list. End each reply with a clear next step: offer an
 action if a choice is needed, or state the next authorized action.
 
-Before you write that next step, check whether this turn reached a milestone,
-verified by you or reported by the founder: a product or page first served to
-visitors; sign-in, analytics or payments first working; an ad or email campaign
-built or launched; market or customer research delivered, including interviews
-the founder ran; the first signups, replies or sales. If it did, read "Offer a
-Business Loop" in the `egbe-os-product-routines` skill this project uses,
-`references/run-preset.md` (a copy installed in the project wins over a plugin
-copy; without either, read it through the Egbe connector), and unless it tells
-you not to, offer one fitting Business Loop: a repeating cycle of work, a check
-of one result and the next decision. Offer it even when a one-off step comes
-first: that step can be the loop's first cycle. It is the next step, not an
-additional list. Save an offered loop, or start or schedule any loop, only
-after the founder agrees. Respect existing routines, declined proposals and
-requests to stop or omit suggestions.
+After a milestone, that next step is the Business Loop offer described at the
+top of this file. Respect existing routines, declined proposals and requests to
+stop or omit suggestions.
 
 ## Work with project playbooks
 
