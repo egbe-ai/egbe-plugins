@@ -43,7 +43,8 @@ Otherwise:
 
 - If an active or `accepted` loop covers the goal, don't offer a new one. Record
   the milestone in that loop's plan and offer to continue it at its next
-  checkpoint.
+  checkpoint. If its entry still has `"save": "pending"` and this connection
+  can save loops, save it first; the acceptance needs no new agreement.
 - If the founder declined or paused this loop, don't offer it again unless they
   ask. A different loop that fits a new milestone can still be offered.
 - An unanswered offer stays open. Don't repeat it; you can mention it once when
@@ -124,7 +125,8 @@ for a custom loop. Preserve unrelated entries:
 
 `status` is `offered`, `accepted`, `declined` or `no-signal`. Update the same
 entry when the founder answers; after an accepted preset, `command` holds the
-saved business command. Synchronize project files as `EGBE.md` describes.
+saved business command. An accepted loop that could not be saved yet also has
+`"save": "pending"` and `"save_blocked_by"` naming the missing access. Synchronize project files as `EGBE.md` describes.
 Without a project workspace, keep the outcome in the project's records through
 the connector's artifact exchange when it is available.
 
@@ -152,7 +154,18 @@ The founder's yes covers saving the loop and agreeing its launch. Starting
 work, enabling a schedule, spending, publishing and outreach still need the
 agreement that [Start or resume a Dashboard loop](#start-or-resume-a-dashboard-loop)
 and the project's decision rules require. If the founder's answer explicitly
-includes them, record it as that agreement; don't ask again.
+includes them, record it as that agreement; don't ask again. A yes that
+withholds spending, outreach or a schedule is still a yes to the loop.
+
+If the loop cannot be saved now, because this connection is read-only, lacks
+the `loops` permission, or Egbe refuses or times out, the acceptance still
+stands. Record it as `accepted` with `"save": "pending"` and the reason, keep
+the agreed first action, its owner and limits in the loop's plan under
+`egbe-docs/loops/`, and carry on with the first agent-owned step that needs no
+save. Tell the founder once, in one line, that the loop is accepted and that
+saving it to the Dashboard waits for access, and who can restore that access.
+Do not ask them to adopt the loop again or claim it was saved; the next session
+that can save it does so and continues under its `mine/<id>` command.
 
 Without a persistent project workspace, the connector can still save the loop.
 For running it, offer a manual review in this chat and give the founder the
@@ -174,7 +187,7 @@ An exact ID or card URL selects the method even during an informal discussion. A
 
 ### Agree the launch
 
-Use the loop and `egbe-docs/playbooks/product/business-loop.md` to choose a starting point that fits the project. Trying a shared preset with the founder's own audience, sources, budget or first check uses the existing preset and a local plan. A preset the founder accepted through [Offer a Business Loop](#offer-a-business-loop) is already saved for the business; continue under its `mine/<id>` command.
+Use the loop and `egbe-docs/playbooks/product/business-loop.md` to choose a starting point that fits the project. Trying a shared preset with the founder's own audience, sources, budget or first check uses the existing preset and a local plan. A preset the founder accepted through [Offer a Business Loop](#offer-a-business-loop) is already saved for the business; continue under its `mine/<id>` command. If its `loop_offers` entry has `"save": "pending"`, no `mine/<id>` exists yet: save it first when this connection can, and otherwise continue the plan under `egbe-docs/loops/<preset-id>.md`; once saved, move the plan to `egbe-docs/loops/mine/<id>.md` and continue under `mine/<id>`.
 
 For a new launch, use **Scope and limits** to propose the work, time and budget. Propose a first action, its owner, and the result that determines the next step. Offer a manual launch or a schedule that matches the next evidence. Get the founder's agreement before starting. A planning-only conversation ends with the proposed plan. On resumption the recorded agreement applies. Bring only changes that need the founder's decision back for approval, such as raising a spending cap.
 
