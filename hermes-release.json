@@ -1,14 +1,14 @@
 {
-  "version": "0.1.45",
-  "commit": "f2bb6f2d163d1fd47279443a714d74f03efa9941",
+  "version": "0.1.46",
+  "commit": "a950bf954570ff9b4f9cfb5d1ece52d138c03437",
   "files": {
     "LICENSE": "31466a3cfd5e56e90893ddf905dda35fa9720d595aab1e3c9283ec9ab712ca1c",
     "README.md": "bdea46585c42e431682e374ba37764c8258288f9fd170e70eddb4d804c382b77",
     "__init__.py": "fe00b7b23c82b71b20f689ceb6d05aff5b56047a7673514632062ffc84a3910e",
     "after-install.md": "b0a874ae49d569867bd1ae8bb85bc526c7b204f1ce7ee82add14dce8382c6a23",
-    "plugin.yaml": "33b36c990a76e36fafda3a7315279ebb57dc487c2d0fe1db563b396b096ac7e0",
+    "plugin.yaml": "1e3fbbe15bf5dd3d38b391790409fcfe33230e17d1a67307c6373a2ae6c9469c",
     "session_log.py": "2dc1dc0d8bba71100e4e9a781dc5446acc5ef1387bb0ee1cc3065da20c50f2d4",
-    "skills/.egbe-catalog/manifest.json": "6bac7be70584aa6bd0fdf9d84682fc25f9ca5c1b45a046370fd987d03972f34c",
+    "skills/.egbe-catalog/manifest.json": "680f32837249735e878798255e43bc9df1924fe361d910e0acab7312c7b542a0",
     "skills/egbe/SKILL.md": "bcbe6a919c7ed275d8ec018232a84fd28935f5b1b80446fe65f8aa1abd42b336",
     "skills/egbe-os-analytics/SKILL.md": "fc11fb2634745dcc6dd97635b36fc92ca1559f4e54031082c47a1f8e0915751e",
     "skills/egbe-os-analytics/canonical-events.v1.json": "d2590afd0238147127fa9c34787a954d693a847176e5334f18aa48db2d58cab5",
