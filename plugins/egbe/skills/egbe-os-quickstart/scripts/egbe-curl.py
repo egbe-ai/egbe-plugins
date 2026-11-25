@@ -6,6 +6,9 @@ release. Those with a single destination are also traced: they exit 22 on an HTT
 status of 400 or above (the body is still printed, as with `curl --fail-with-body`)
 and end with one stderr line
 `egbe-curl: status=<code> request_id=<id> route=<METHOD> <path> catalog=<release>`.
+When curl stopped without a complete response (a certificate, TLS,
+name-resolution, connection, proxy or timeout failure), one line naming the host
+and the environment guide precedes it; curl's exit code is kept.
 `--egbe-run <command>` instead starts a bundled client with the saved settings
 from `.env.local` in its environment.
 """
@@ -214,6 +217,35 @@ def command(arguments, environment):
     return result + arguments
 
 
+# curl exits that end a request without a complete Egbe response.
+CERTIFICATE_EXITS = {35: "TLS handshake failed", 51: "server certificate rejected",
+                     58: "client certificate problem", 60: "certificate not trusted"}
+UNREACHED_EXITS = {5: "proxy name not resolved", 6: "host name not resolved", 7: "could not connect"}
+# These can also stop after Egbe received the request.
+INTERRUPTED_EXITS = {28: "timed out", 56: "connection or proxy tunnel failed"}
+NETWORK_EXITS = UNREACHED_EXITS | INTERRUPTED_EXITS
+ENVIRONMENT_GUIDE = "See the Egbe quickstart's references/environment.md."
+
+
+def transport_failure(code, host):
+    """Why curl's exit code ended a request to host without a complete Egbe response, or None."""
+    if code in CERTIFICATE_EXITS:
+        return (f"certificate or TLS failure reaching {host} (curl exit {code}: {CERTIFICATE_EXITS[code]}), "
+                "so no Egbe response arrived. Usually a sandbox or intercepting proxy, not an Egbe outage "
+                f"or a key problem: ask for {host} to be allowed or trusted through this environment's "
+                f"network setting; do not disable certificate verification. {ENVIRONMENT_GUIDE}")
+    if code in UNREACHED_EXITS:
+        return (f"{host} was not reached (curl exit {code}: {UNREACHED_EXITS[code]}), so no Egbe response "
+                "arrived. Often this environment's network or proxy setting (a sandbox denial), otherwise "
+                f"an Egbe outage; not a key problem: ask once for {host} to be allowed. {ENVIRONMENT_GUIDE}")
+    if code in INTERRUPTED_EXITS:
+        return (f"the request to {host} ended without a complete Egbe response (curl exit {code}: "
+                f"{INTERRUPTED_EXITS[code]}); Egbe may still have processed it, so check its result before "
+                "repeating a write. If this recurs before any response, this environment's network or proxy "
+                f"setting may need to allow {host}. {ENVIRONMENT_GUIDE}")
+    return None
+
+
 def request_method(arguments):
     """The HTTP method curl uses for these (supported) options."""
     method, head, get, data = None, False, False, False
@@ -287,6 +319,9 @@ def run_traced(args, arguments, url):
         separate = True
     sys.stdout.flush()
     line = trailer(status, request_id, request_method(arguments), url, catalog_release())
+    hint = transport_failure(code, urlsplit(url).hostname)
+    if hint:
+        line = "egbe-curl: " + hint + "\n" + line
     print(("" if separate else "\n") + line, file=sys.stderr)
     return code
 
