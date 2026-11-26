@@ -54,7 +54,10 @@ checkout. If both `X-Egbe-Payment-Probe: validate-only` and a valid
 `POST /payments/portal-sessions/validate`, return its opaque
 `validation_receipt` in bounded JSON, and do not create or redirect to a real
 Customer Portal Session. Normal user requests still create a fresh portal
-session. Never persist the receipt.
+session. Never persist the receipt. Verify a portal receipt through
+`POST /payments/validation-receipts/verify` with the body shown in the
+[checkout workflow's](product-checkout.md#preflight-before-deploy) Preflight
+receipt verify step, using `"operation": "portal"`.
 
 ## Completion
 

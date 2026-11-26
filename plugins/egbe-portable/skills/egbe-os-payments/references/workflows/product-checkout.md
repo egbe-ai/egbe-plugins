@@ -331,7 +331,29 @@ Check the implementation once against this list before deploying:
    the product checkout endpoint using the validate-only headers. Both responses
    must return the real
    `data.validation_receipt`; verify both receipts through
-   `POST /payments/validation-receipts/verify`.
+   `POST /payments/validation-receipts/verify`. Send one request per receipt
+   with this JSON body:
+
+   ```json
+   {
+     "receipt": "<validation_receipt returned by that request>",
+     "probe_id": "<X-Egbe-Payment-Probe-ID sent with that request>",
+     "operation": "checkout"
+   }
+   ```
+
+   All three fields are required. `operation` is `"checkout"` for checkout
+   receipts (`"portal"` for Customer Portal validation receipts); a receipt
+   verifies only with the probe id and operation it was issued for. Receipts
+   expire five minutes after issue, so verify them promptly. A successful
+   response carries `data.valid: true` and the signed `data.claims` checked in
+   item 8. Verify failures arrive as `payments upstream: {"error": ...}` and
+   are not OS key failures: `403 validation_receipt_probe_mismatch` or
+   `validation_receipt_operation_mismatch` means resend the same receipt with
+   the probe id and operation of its request; `401 expired_validation_receipt`
+   means repeat that validate-only request, with the item 8 readbacks, and
+   verify the new receipt at once; `401 invalid_validation_receipt` means the
+   receipt was altered or is not one Egbe OS issued.
 8. Verified claims bind the expected app, plan, owned product/price, current
    buyer/order reference, and one stable idempotency fingerprint. Scoped provider readback is
    unchanged before and after both requests.
