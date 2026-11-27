@@ -83,6 +83,70 @@ complete measurement inventory for every product. Derive applicable coverage
 additively from the caller-supplied product requirements and real behavior.
 Never select one product-type minimum as a substitute for that inventory.
 
+## Reporting customer metrics
+
+For a paid-channel comparison, fetch a dedicated performance report for every
+selected campaign through its advertising skill before presenting spend or
+acquisition cost. Campaign lists identify objects and current configuration;
+embedded list metrics do not establish the reporting dates or freshness. Read
+the channel's reporting workflow for its required period parameters and units,
+then match that window to the product/payment outcomes below.
+For a since-launch decision, include current-day spend for every channel and
+start from its verified launch date. A default recent report can exclude today.
+Do not combine its spend/clicks with lifetime signups or payments, or relabel it
+as spend "so far" in an action confirmation. State the resolved dates with the
+figures; if windows cannot be matched, leave the combined ratio uncomputed.
+
+When reporting registrations, buyers, purchases, or revenue, exclude known
+synthetic activity from customer totals. Check the available account/payment
+records and product verification history for validation identities, agent or
+smoke/E2E runs, and explicit test markers such as `livemode=false` or
+`metadata.egbe_test`. A live-mode payment can still be a documented test.
+
+Use evidence tied to the account or transaction, not suspicious email spelling
+alone. Separate unresolved records from confirmed tests and qualify totals when
+their customer status is uncertain. Apply the same exclusions to related
+registration, buyer, purchase, and revenue calculations; count distinct accounts
+or buyers separately from payment/event counts. A pending checkout is not a
+purchase.
+
+Prefer the product's account records for registrations and confirmed payment
+records for purchases. If only aggregate analytics is available and test activity
+cannot be isolated, label it as unfiltered events, not verified customer totals.
+Do not estimate exclusions from unrelated periods or incomplete samples.
+
+Read confirmed payments through the scoped OS endpoint; direct Stripe access is
+not needed:
+
+```http
+GET /payments/metrics?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z&limit=1000
+```
+
+Both `from` and `to` are required UTC timestamps, with `to` after `from`. Match
+the campaign report's window. `data.payments` contains paid records with
+`appSlug`, `checkoutSessionId`, `createdAt`, `paymentStatus`, `amountCents`,
+`currency`, `utmSource`, `utmMedium` and `utmCampaign`. Join the actual saved
+campaign tags; do not infer campaign ownership from site-wide purchase totals
+or a signup-only advertising conversion action. Deduplicate payment rows by
+checkout session, distinguish payments from distinct buyers, and preserve rows
+without attribution as unassigned. Inspect `data.limitations`: a bounded or
+incomplete scan is not proof that no other payments exist. Use
+`GET /payments/evidence` when provider objects or test/live metadata are needed;
+the Payments skill owns that provider-readback contract.
+
+`data.payment_summary.byCampaign` provides exact `paymentCount` values by the
+returned `appSlug` and UTM tuple, deduplicated by checkout session. Use those
+counts instead of counting a long response mentally, and reconcile them with
+`payment_summary.paymentCount`. Keep `unattributedPaymentCount` separate; never
+credit the entire payment total to one channel. The summary describes returned
+paid transactions before customer/test exclusions, not distinct buyers or a
+complete historical total. Inspect its `status`, unresolved/conflicting record
+counts and inherited limitations; `unavailable` is not a zero.
+
+Briefly state the source, reporting period, excluded test counts and evidence,
+and any unresolved activity or coverage gaps. Filter the report, not the source
+records; use existing data rather than adding instrumentation for this answer.
+
 ## Canonical Event Contract
 
 Read the machine-readable event config:
@@ -434,30 +498,6 @@ analysis, use the [session evidence collector](references/session-funnel.md)
 to retain sanitized inputs and reproduce the calculation offline; through the
 Egbe connector alone, follow its
 [connector recipe](references/session-funnel.md#through-the-egbe-connector).
-
-## Reporting customer metrics
-
-When reporting registrations, buyers, purchases, or revenue, exclude known
-synthetic activity from customer totals. Check the available account/payment
-records and product verification history for validation identities, agent or
-smoke/E2E runs, and explicit test markers such as `livemode=false` or
-`metadata.egbe_test`. A live-mode payment can still be a documented test.
-
-Use evidence tied to the account or transaction, not suspicious email spelling
-alone. Separate unresolved records from confirmed tests and qualify totals when
-their customer status is uncertain. Apply the same exclusions to related
-registration, buyer, purchase, and revenue calculations; count distinct accounts
-or buyers separately from payment/event counts. A pending checkout is not a
-purchase.
-
-Prefer the product's account records for registrations and confirmed payment
-records for purchases. If only aggregate analytics is available and test activity
-cannot be isolated, label it as unfiltered events, not verified customer totals.
-Do not estimate exclusions from unrelated periods or incomplete samples.
-
-Briefly state the source, reporting period, excluded test counts and evidence,
-and any unresolved activity or coverage gaps. Filter the report, not the source
-records; use existing data rather than adding instrumentation for this answer.
 
 ## Public Dashboard Share Link
 

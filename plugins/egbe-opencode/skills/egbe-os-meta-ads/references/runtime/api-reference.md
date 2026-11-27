@@ -248,8 +248,9 @@ Instagram linkage was missing as a launch limitation when relevant.
 
 ## Update Existing Ad
 
-Use this only when the launch state already has an ad ID and a targeted repair
-is needed, such as attaching a repaired creative spec:
+Use this when the launch state already has an ad ID and the founder has
+authorized a creative/copy change or targeted repair. Read its current creative
+and preserve fields outside that approved change:
 
 ```bash
 POST $OS_URL/ads/meta/raw/ads/{ad_id}
@@ -268,8 +269,9 @@ POST $OS_URL/ads/meta/raw/ads/{ad_id}
 }
 ```
 
-Prefer creating clean objects in the first launch attempt. Use updates for
-recovery, not as the normal happy path.
+Create clean objects on the first build. For an approved change to an existing
+ad, update that ad and verify its creative instead of recreating its campaign
+or ad set. This operation does not change the campaign budget or authorize launch.
 
 ## Update Existing Ad Set
 

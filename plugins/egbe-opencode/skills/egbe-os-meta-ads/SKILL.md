@@ -88,10 +88,20 @@ call Meta directly or request provider secrets.
 Use the requested targeting, objective, budget and assets for writes. A status,
 spend or pause request needs the exact owned ID, not a research package.
 
+For lifetime performance or spend so far, read
+`GET /ads/meta/campaigns/{id}/results?period=MAXIMUM`, which includes the current
+day. An omitted/default recent period can exclude today; do not label it lifetime
+spend. Match signup/payment counts to the report's resolved dates before computing
+cost per customer, and preserve that window in the final handoff.
+
 ## Read only the relevant reference
 
 - Access and payloads: [API](references/runtime/api-reference.md).
 - Build paused: [plan/apply](references/workflows/build-paused.md).
+- Edit an existing ad's approved headline/creative: [update ad](references/runtime/api-reference.md#update-existing-ad).
+  Read and preserve its full creative, then use `POST /ads/meta/raw/ads/{ad_id}`
+  with `{"payload":{"creative":{...}}}`. A copy change does not require
+  deleting or rebuilding its campaign/ad set or placing a second campaign hold.
 - Read-only preflight: [launch readiness](references/workflows/launch-ready.md).
 - Activate/resume: [launch](references/workflows/launch.md).
 - Pause: [pause](references/workflows/pause.md).
@@ -126,6 +136,12 @@ with the unchanged spec, signed `plan_token` and `approved: true`.
 The current declarative API supports one ad set because ads have no per-ad
 ad-set mapping. The configured per-operation budget guard and wallet hold are
 server contracts, not recommended spending amounts.
+
+Apply can hold wallet funds even while the tree is paused. After building and
+any launch, refresh `GET /wallet/balance` before reporting funds. Distinguish
+settled balance, held reserves and available-to-spend funds; a top-up or
+pre-build balance is not the final available amount. If the read fails, report
+that uncertainty instead of calling the build free or reusing stale funds.
 
 Never create real objects to discover the schema. Build PAUSED. Save exact IDs,
 request identity and uncertainty; read before retrying. OS derives apply retry

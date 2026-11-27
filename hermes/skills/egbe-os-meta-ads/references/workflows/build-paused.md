@@ -12,6 +12,10 @@ Prepare the requested `CampaignSpec`: `name`, `product_slug`,
 `headline`, `primary_text` and supported `cta`. Resolve locale IDs through
 targeting search and include matching IDs in `targeting.locales`.
 Conversion optimization requires the verified product `custom_conversion_id`.
+Complete any requested destination/policy check and resolve resulting approved
+copy changes before apply reserves funds. If an approved copy change arrives
+after the paused build, use the existing ad's [update operation](../runtime/api-reference.md#update-existing-ad)
+and verify its creative; do not recreate the campaign merely to change a headline.
 
 1. `POST /ads/meta/plan` validates without Meta writes, quota consumption or a
    wallet hold. Resolve returned blockers, not by probing creates.
@@ -31,6 +35,11 @@ Conversion optimization requires the verified product `custom_conversion_id`.
    readback only. Read `/ads/meta/campaigns/{id}/state?expect=PAUSED` plus
    raw configuration to verify parent IDs, budget, media and destination.
    Keep requested values separate from observations.
+5. Read `GET /wallet/balance` after apply. A paused tree can already hold funds.
+   Report the returned settled, held and available amounts separately; a hold
+   is neither ad spend nor money still available. Refresh again after any launch
+   or budget mutation before the final handoff. Do not reuse the pre-build or
+   top-up balance as current availability.
 
 Per-operation budget guards and wallet reserves are server-owned. Do not impose
 a local daily cap or bypass a rejected budget via raw calls.

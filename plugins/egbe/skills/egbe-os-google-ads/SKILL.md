@@ -124,6 +124,14 @@ secrets out of chat, browser code and project evidence.
 
 ## Choose the operation
 
+For performance or cross-channel cost comparisons, read
+[Reporting](references/reporting.md) before requesting results. The default
+last-30-days report excludes today; it is not lifetime spend. For spend since
+launch, find the actual launch date in provider evidence or local campaign notes
+(even if a remote artifact read failed), then request that date through today.
+Use the same dates for the campaign's customer outcomes and keep those dates
+explicit in the final pause/keep confirmation too.
+
 | Task | Read |
 | --- | --- |
 | Query keyword ideas and interpret their fields | [Keyword ideas](references/keyword-ideas.md) |

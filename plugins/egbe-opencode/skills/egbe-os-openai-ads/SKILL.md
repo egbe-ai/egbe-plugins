@@ -104,6 +104,17 @@ Exact request schemas are at `$OS_URL/openapi.json`.
 For campaign work read the [artifact contract](references/runtime/artifacts.md),
 then only the relevant workflow. Resolve the existing campaign before writing.
 
+For a performance or cross-channel comparison, read
+[Monitoring and changes](references/workflows/monitoring.md) and fetch
+`GET /ads/openai/campaigns/{id}/results?start_time=<unix_seconds>&end_time=<unix_seconds>`
+for each selected campaign's reporting window. Both query parameters are
+required integers in UTC Unix **seconds**, not ISO date strings or milliseconds.
+For example, January 1–2, 2026 UTC uses `start_time=1767225600&end_time=1767312000`;
+convert the actual requested dates. Correct a missing/invalid-period 422 and retry
+the report before treating it as unavailable. A campaign list/detail can include a `metrics` snapshot, but it does not
+replace this report or establish its dates and freshness. Match the report's
+window to the product/payment outcomes before computing acquisition cost.
+
 | Request | Read |
 |---|---|
 | Inspect destination-specific requirements only | [Destination requirements](references/destination-requirements.md) |

@@ -4,6 +4,12 @@ Read [artifacts](../runtime/artifacts.md) and [API reference](../runtime/api-ref
 An audit/monitor request is read-only unless it explicitly includes optimization
 or a standing policy authorizes specific changes and safety stops.
 
+For a performance comparison, fetch the selected campaign's dedicated results
+report even if a campaign list/detail object includes a `metrics` field. Those
+object snapshots do not establish the requested reporting window, complete
+pagination or freshness and cannot replace the results read below. Configuration
+and pause verification still use the campaign's serving-state reads.
+
 ## Observe
 
 Resolve exact campaign ID and read previous checks/change-log before acting.
@@ -20,7 +26,10 @@ recreation, activation or budget/bid change. Then:
 1. Read `/campaigns/{id}/results` for the requested Unix time window. Follow all
    pages before totals; preserve currency, timezone, window, fetched time and
    `available/no_rows/error`. Do not add cumulative snapshots from overlapping
-   periods. Calculate CTR/CPC only from real counts and nonzero denominators.
+   periods. Supply both `start_time` and `end_time` as integer UTC Unix seconds,
+   not ISO date strings or milliseconds; correct and retry a period-validation
+   422 instead of substituting a list snapshot. Calculate CTR/CPC only from
+   real counts and nonzero denominators.
 2. Read `/campaigns/{id}/conversion-results` only when needed and available.
    Separate click-through from view-through; accepted CAPI receipts are not
    attributed conversions. Do not manufacture per-ad or search-term breakdowns

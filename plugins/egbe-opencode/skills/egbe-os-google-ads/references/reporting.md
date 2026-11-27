@@ -3,6 +3,64 @@
 Reporting is read-only. Use the requested date range and exact campaign ref;
 these calls do not change bids, budget, targeting or delivery.
 
+## Product analytics
+
+For a performance or scaling assessment, read the available product analytics or
+payment outcomes alongside Google results before calling reported conversions
+paying customers or concluding that downstream outcomes are unavailable. A
+Google conversion can be only a signup. Check the connected outcome records
+before asking the founder for a signup-to-paid rate; if those reads fail or
+tracking cannot attribute a sale, report that specific evidence gap.
+
+Keep each comparison row on one explicit window: spend, clicks, signups and paid
+customers must cover the same dates before computing acquisition cost. If the
+agreed decision uses lifetime performance, read from the campaign's creation
+date rather than substituting a recent seven- or thirty-day report. Check the
+resolved dates in the response; a correct keep/pause decision does not make a
+mixed-window table accurate. When matched evidence is unavailable, label the
+separate windows and leave their combined ratio uncomputed.
+
+Before choosing that window, inspect the existing campaign notes or launch
+record for this exact campaign ID/ref. With a local project folder, search and
+read its relevant files even if a remote artifact-store read failed; historical
+notes can live outside the current recommended layout. An absent provider start
+date or an artifact-store 404 does not make existing local notes unavailable.
+Never assume that two campaigns started together. Use the recorded launch date
+as historical context and the provider reads for current state.
+
+For paying-customer counts, revenue or signup-to-paid conversion, follow
+**Reporting customer metrics** in `GET /analytics/skill` and read the connected
+payment records for the same window and campaign. A campaign's signup activations
+and site-wide purchase event count alone do not establish its paying customers.
+
+Read the current analytics capability and canonical events:
+
+```http
+GET /analytics/skill
+GET /analytics/events
+GET /analytics/{product_slug}/tracking
+GET /analytics/{product_slug}/campaigns?period=all
+GET /analytics/{product_slug}/stats?period=24h
+```
+
+Preserve the campaign's stable attribution: utm_source=google,
+utm_medium=paid_search, utm_campaign equal to its channel-qualified slug,
+useful utm_content and utm_term when available. These are not product event names
+or experiment IDs. Keep existing durable business/product/launch/experiment/
+variant identity separate when supplied; do not invent it or change it to fit
+a campaign name.
+
+Use canonical events from /analytics/events, not new channel-specific event
+names. Do not emit synthetic product events to prove readiness. Google clicks
+are not product visits or conversions. If only site-wide product signals are
+available, label them non-attributed; never present them as exact campaign
+outcomes. Missing tracking, unavailable metrics and pending data are not zeros.
+
+Label saved observations with their actual date when live reads are unavailable;
+they are not current provider state. Preserve useful results as described in
+[Campaign records](artifacts.md). For metrics of one conversion action, see
+[Conversions](conversions.md).
+
 ## Campaign results
 
 ```http
@@ -105,33 +163,3 @@ provider diagnostics, not product-sales measurements.
 For delivery status use [Delivery](delivery.md). An eligible enabled path,
 observed impressions and campaign-attributed product outcomes are different
 pieces of evidence.
-
-## Product analytics
-
-Read the current analytics capability and canonical events:
-
-```http
-GET /analytics/skill
-GET /analytics/events
-GET /analytics/{product_slug}/tracking
-GET /analytics/{product_slug}/campaigns?period=all
-GET /analytics/{product_slug}/stats?period=24h
-```
-
-Preserve the campaign's stable attribution: utm_source=google,
-utm_medium=paid_search, utm_campaign equal to its channel-qualified slug,
-useful utm_content and utm_term when available. These are not product event names
-or experiment IDs. Keep existing durable business/product/launch/experiment/
-variant identity separate when supplied; do not invent it or change it to fit
-a campaign name.
-
-Use canonical events from /analytics/events, not new channel-specific event
-names. Do not emit synthetic product events to prove readiness. Google clicks
-are not product visits or conversions. If only site-wide product signals are
-available, label them non-attributed; never present them as exact campaign
-outcomes. Missing tracking, unavailable metrics and pending data are not zeros.
-
-Label saved observations with their actual date when live reads are unavailable;
-they are not current provider state. Preserve useful results as described in
-[Campaign records](artifacts.md). For metrics of one conversion action, see
-[Conversions](conversions.md).

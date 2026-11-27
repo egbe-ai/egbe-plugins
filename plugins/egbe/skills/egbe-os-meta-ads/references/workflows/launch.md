@@ -17,6 +17,9 @@ Save mutation responses and timestamped live readback. Only the state response
 establishes configured tree state; report `drift` when partial.
 `delivering:true` is an all-levels-ACTIVE check, not observed spend/impressions.
 Do not invent launch/restart time from intent or a later monitoring observation.
+Refresh `GET /wallet/balance` after the writes before reporting funds. Show held
+reserves separately from available funds and settled balance; the balance read
+before build/apply is stale even when the ad remains in review and has no spend.
 
 After an ambiguous response read first. Do not recreate or toggle to clear
 uncertainty. Report unconfirmed state and the required recovery read.
