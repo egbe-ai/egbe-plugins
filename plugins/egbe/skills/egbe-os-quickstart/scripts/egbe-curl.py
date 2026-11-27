@@ -10,7 +10,9 @@ When curl stopped without a complete response (a certificate, TLS,
 name-resolution, connection, proxy or timeout failure), one line naming the host
 and the environment guide precedes it; curl's exit code is kept.
 `--egbe-run <command>` instead starts a bundled client with the saved settings
-from `.env.local` in its environment.
+from `.env.local` in its environment. `--egbe-git <remote> <git arguments>` runs
+native Git against an Egbe Git remote with the saved key and the same identity
+headers.
 """
 import os
 import json
@@ -177,6 +179,11 @@ def egbe_destinations(arguments, environment):
     return destinations
 
 
+def connection_variable(agent):
+    """The `.env.local` key holding this agent's saved connection ID."""
+    return "OS_CONNECTION_ID_" + re.sub(r"[^A-Z0-9]+", "_", agent.upper()).strip("_")
+
+
 def command(arguments, environment):
     result = ["curl"]
     base = egbe_base(environment)
@@ -193,8 +200,7 @@ def command(arguments, environment):
         # Ignore ambient curl config only for identified requests: it may add
         # extra destinations or redirects. Other curl commands stay unchanged.
         result.append("--disable")
-        slug = re.sub(r"[^A-Z0-9]+", "_", agent.upper()).strip("_")
-        connection = environment.get("OS_CONNECTION_ID_" + slug)
+        connection = environment.get(connection_variable(agent))
         if not connection:
             raise ValueError("Run Egbe quickstart to save this agent's workspace connection ID first")
         connection = str(UUID(connection))
@@ -326,12 +332,50 @@ def run_traced(args, arguments, url):
     return code
 
 
+def identity_headers(url, environment):
+    """The connection identity and catalog headers an Egbe request to url carries."""
+    args = command([url], environment)
+    return dict(args[index + 1].split(": ", 1) for index, arg in enumerate(args) if arg == "-H")
+
+
 def connection_headers(url, settings_file=None):
     try:
-        args = command([url], project_environment(settings_file))
-        return dict(args[index + 1].split(": ", 1) for index, arg in enumerate(args) if arg == "-H")
+        return identity_headers(url, project_environment(settings_file))
     except (ValueError, OSError):
         return {}
+
+
+def run_git(arguments):
+    """Run native Git against an Egbe Git remote with the saved key and this agent's identity.
+
+    Each header reaches Git through `--config-env` scoped to the remote, so the key
+    stays out of argv and Git config. Without OS_AGENT_NAME or its saved connection
+    ID, Git still runs as an unidentified connection; invalid saved identity is refused."""
+    if len(arguments) < 2:
+        raise ValueError("--egbe-git requires an Egbe Git remote URL and Git arguments")
+    remote, git_arguments = arguments[0], arguments[1:]
+    environment = project_environment(saved_credentials=True)
+    key = environment.get("OS_API_KEY")
+    if not environment.get("OS_URL") or not key:
+        raise ValueError("Save OS_URL and OS_API_KEY in the project-local .env.local first")
+    base, target = egbe_base(environment), urlsplit(remote)
+    if (not is_egbe_url(remote, base) or target.username is not None or target.password is not None
+            or target.query or target.fragment or not target.path.startswith(base.path + "/git/http/")):
+        raise ValueError("--egbe-git requires a remote under the saved OS_URL's /git/http/")
+    agent = environment.get("OS_AGENT_NAME", "")
+    if not agent or not environment.get(connection_variable(agent)):
+        print("egbe-git: no connection identity (set OS_AGENT_NAME and save its connection ID), so Git runs "
+              "as an unidentified connection. See the Egbe quickstart's references/connection.md.", file=sys.stderr)
+        environment = {**environment, "OS_AGENT_NAME": ""}
+    # A saved but invalid ID or label is refused, as for --egbe-request.
+    headers = {"Authorization": "Bearer " + key, **identity_headers(remote, environment)}
+    git_environment, options = dict(os.environ), []
+    git_environment.setdefault("GIT_TERMINAL_PROMPT", "0")
+    for index, (name, value) in enumerate(headers.items()):
+        variable = f"EGBE_GIT_HEADER_{index}"
+        git_environment[variable] = name + ": " + value
+        options.append(f"--config-env=http.{remote}.extraHeader={variable}")
+    return subprocess.run(["git", *options, *git_arguments], env=git_environment).returncode
 
 
 def run_with_settings(arguments):
@@ -354,6 +398,13 @@ def main():
         except (ValueError, OSError):
             print("Could not load valid project connection settings or start the command. Check .env.local and the command.",
                   file=sys.stderr)
+            return 2
+    if len(sys.argv) >= 2 and sys.argv[1] == "--egbe-git":
+        try:
+            return run_git(sys.argv[2:])
+        except (ValueError, OSError):
+            print("Could not load valid project connection settings or start Git. Check .env.local, the remote "
+                  "URL (under the saved OS_URL's /git/http/) and that Git 2.31 or later is installed.", file=sys.stderr)
             return 2
     if len(sys.argv) == 5 and sys.argv[1] == "--identity-headers" and sys.argv[3] == "--env-file":
         print(json.dumps(connection_headers(sys.argv[2], sys.argv[4])))

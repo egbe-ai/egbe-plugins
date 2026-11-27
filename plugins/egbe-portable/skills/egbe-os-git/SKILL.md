@@ -105,7 +105,7 @@ Within the founder's existing publishing/deployment authorization:
 5. Verify deployment status, deployed revision and public URL per `/deploy/skill`.
 
 ```bash
-# OS_URL and OS_API_KEY come from the existing quickstart connection.
+# The helper loads OS_URL and OS_API_KEY from the project's .env.local (quickstart).
 # List first; create only if the intended repository is absent.
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/git/repos" -fsS
 OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-request "/git/repos" -fsS -X POST  \
@@ -114,8 +114,9 @@ OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart
   | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["os_http_url"])'
 # No Forgejo credentials or direct transport addresses are returned.
 
-# Add a dedicated remote without replacing an existing origin.
-REMOTE="$OS_URL/git/http/my-app.git"
+# Add a dedicated remote without replacing an existing origin. Write the
+# repository's os_http_url literally in each command; shells do not keep OS_URL.
+REMOTE="<os_http_url>"
 # Replace all fetch and push targets on this dedicated remote. A legacy pushurl
 # otherwise overrides url and can silently push directly to Forgejo.
 git config --local --replace-all remote.egbe.url "$REMOTE"
@@ -125,14 +126,23 @@ git var GIT_AUTHOR_IDENT
 git var GIT_COMMITTER_IDENT
 # Review git status/diff, stage intended source files, and commit before pushing.
 
-# Pass the key via a temporary environment variable, scoped to this remote.
-# Do not enable shell tracing, store this header in Git config, or print it.
-REMOTE="$OS_URL/git/http/my-app.git"
-export OS_GIT_AUTH="Authorization: Bearer $OS_API_KEY"
-git --config-env="http.$REMOTE.extraHeader=OS_GIT_AUTH" push -u egbe HEAD
-unset OS_GIT_AUTH
+# The helper runs Git with the saved key and this agent's connection identity,
+# scoped to this remote; neither reaches argv, Git config or output.
+REMOTE="<os_http_url>"
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-git "$REMOTE" push -u egbe HEAD
 git rev-parse HEAD
 ```
+
+`--egbe-git <remote> <git arguments>` loads `OS_URL` and `OS_API_KEY` from
+`.env.local` like `--egbe-request`, accepts only a remote under that URL's
+`/git/http/`, and passes each header to Git with
+`--config-env="http.<remote>.extraHeader=<variable>"`: the bearer token plus the
+same connection headers as Egbe requests, so Dashboard keeps showing this agent.
+Without `OS_AGENT_NAME` or its saved connection ID it prints one `egbe-git:` notice
+and Git still runs as an unidentified connection; a saved ID or nickname that is
+invalid is refused with exit 2, as for `--egbe-request`. Git's exit code is kept. Do not
+send Egbe Git requests with only an `Authorization` header: they replace the
+agent shown in Dashboard with an unnamed connection.
 
 For an existing project with a legacy Forgejo origin, select the same repository
 from the paginated list and use its OS URL on the dedicated `egbe` remote above.
@@ -146,15 +156,13 @@ a lost response does not prove the push failed.
 
 ## Clone or fetch
 
-Use the same temporary, remote-scoped header with every authenticated Git call:
+Run every authenticated Git call through the same helper from the workspace root:
 
 ```bash
-REMOTE="$OS_URL/git/http/my-app.git"
-export OS_GIT_AUTH="Authorization: Bearer $OS_API_KEY"
-git --config-env="http.$REMOTE.extraHeader=OS_GIT_AUTH" clone "$REMOTE"
-# Inside an existing clone whose egbe remote matches REMOTE:
-# git --config-env="http.$REMOTE.extraHeader=OS_GIT_AUTH" fetch egbe
-unset OS_GIT_AUTH
+REMOTE="<os_http_url>"
+OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-git "$REMOTE" clone "$REMOTE"
+# Fetch where the egbe remote matches REMOTE; for a clone elsewhere, put -C <clone> before fetch:
+# OS_AGENT_NAME="<your agent name>" python3 "<skills-directory>/egbe-os-quickstart/scripts/egbe-curl.py" --egbe-git "$REMOTE" fetch egbe
 ```
 
 This requires Git with `--config-env` support (2.31+). Git smart HTTP uses raw

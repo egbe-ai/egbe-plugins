@@ -198,10 +198,11 @@ will fail to start. Fixes:
 
 A missing remote, a local `master` branch or absent Vercel/Netlify configuration
 is normal setup. Read `/git/skill`, create/reuse the account's Forgejo repo and
-push with native Git through `/git/http/<repo>.git` using the OS key. Preserve
-current history and branch names. Prepare a root Dockerfile if missing and deploy
-the full pushed SHA. Without a terminal, Git or shell access to Egbe, follow
-"Publish without a terminal" below instead. Respect the founder's existing
+push with native Git through `/git/http/<repo>.git` using the git skill's
+`--egbe-git` helper command, which sends the OS key and this agent's identity.
+Preserve current history and branch names. Prepare a root Dockerfile if missing
+and deploy the full pushed SHA. Without a terminal, Git or shell access to Egbe,
+follow "Publish without a terminal" below instead. Respect the founder's existing
 authorization and budget; report only an observed redacted
 auth/provisioning/network/build error. Verify status, deployed revision and
 public URL after deploy.
