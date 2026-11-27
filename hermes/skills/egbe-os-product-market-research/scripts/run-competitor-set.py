@@ -229,6 +229,14 @@ def brand_token(domain: str) -> str:
     return _keyword_economics().brand_token(domain)
 
 
+def google_redirect(url: str) -> bool:
+    return _keyword_economics().google_redirect(url)
+
+
+def serp_result_domain(item: dict[str, Any]) -> str:
+    return _keyword_economics().serp_result_domain(item)
+
+
 def hosted_seller(domain: str) -> bool:
     """A seller's own subdomain on a course or creator host (kept whole by
     the shared domain normalization)."""
@@ -1031,6 +1039,14 @@ def _listicle(url: str, title: str) -> bool:
     return bool(_LISTICLE_RE.search(title or "")) or bool(_LISTICLE_RE.search(url or ""))
 
 
+def _shown_path(breadcrumb: str) -> str:
+    """The address path a breadcrumb shows: its lowercase, unspaced segments
+    ("best-whiteboard-apps"). A display label such as "Compare Plans" is the
+    site's wording, not a path, and says nothing about the page."""
+    segments = (segment.strip().rstrip(".…") for segment in breadcrumb.split("›")[1:])
+    return "/".join(s for s in segments if s and s == s.lower() and not re.search(r"\s", s))
+
+
 def _summary(round_no: int, query: str, kind: str, source: str, retrieved: int, found: int, listicles: list[str], unavailable: str | None = None) -> dict[str, Any]:
     row = {"type": "search_summary", "round": round_no, "query": query, "query_kind": kind, "source": source,
            "retrieved": retrieved, "candidates": found, "listicles": listicles, "tier": "A"}
@@ -1084,7 +1100,7 @@ def run_round1(client: OsClient, inputs: RunInputs) -> Discovery:
         if response.get("unavailable"):
             summaries.append(_summary(1, query, kind, "dataforseo_serp", 0, 0, [], str(response["unavailable"])))
             continue
-        retrieved = found = 0
+        retrieved = found = redirects = unnamed = 0
         listicles: list[str] = []
         for item in _serp_items(response):
             item_type = item.get("type")
@@ -1092,11 +1108,21 @@ def run_round1(client: OsClient, inputs: RunInputs) -> Discovery:
                 continue
             retrieved += 1
             url = str(item.get("url") or "")
-            domain = _domain(item.get("domain") or url)
+            shown = ""
+            if google_redirect(url):
+                # Google's redirect is not the result's page: the site shown
+                # with the result still counts, but there is no address to
+                # read as a listicle or to start a profile from. The path
+                # shown in the breadcrumb still tells a listicle.
+                domain, url, shown = _domain(serp_result_domain(item)), "", _shown_path(str(item.get("breadcrumb") or ""))
+                redirects += 1
+                unnamed += not domain
+            else:
+                domain = _domain(item.get("domain") or url)
             verdict = admit(domain, query)
             if verdict == "skip":
                 continue
-            if verdict == "directory" or (item_type == "organic" and _listicle(url, str(item.get("title") or ""))):
+            if verdict == "directory" or (item_type == "organic" and _listicle(url or shown, str(item.get("title") or ""))):
                 if url and len(listicles) < LISTICLES_PER_QUERY and url not in listicles:
                     listicles.append(url)
                 continue
@@ -1115,7 +1141,11 @@ def run_round1(client: OsClient, inputs: RunInputs) -> Discovery:
             candidate.listed(query)
             candidate.seen_on(url)
             found += 1
-        summaries.append(_summary(1, query, kind, "dataforseo_serp", retrieved, found, listicles))
+        summary = _summary(1, query, kind, "dataforseo_serp", retrieved, found, listicles)
+        if redirects:
+            summary["redirect_links"] = redirects
+            summary["unnamed_results"] = unnamed
+        summaries.append(summary)
 
     # SpyFu: the domains that bought Google ads on the offer's own phrases.
     for phrase in inputs.category_phrases if client.max_spyfu_calls > 0 else []:
@@ -2019,6 +2049,13 @@ def render_section(*, inputs: RunInputs, cap: int, competitors: list[dict[str, A
     if any(row.get("unavailable") for row in summaries):
         add("")
         add("Unavailable queries were rejected by the provider or failed; they are recorded, not retried silently.")
+    redirects = sum(row.get("redirect_links", 0) for row in summaries)
+    if redirects:
+        unnamed = sum(row.get("unnamed_results", 0) for row in summaries)
+        add("")
+        add(f"Google returned {redirects} result link(s) as its own redirects: those results count by the site shown with "
+            "them, and add no page to profile from and no listicle to read."
+            + (f" Left out because they showed no site: {unnamed}." if unnamed else ""))
     add("")
     add(f"- Listicles: {coverage['listicles_read']} page(s) read, {coverage['listicles_unreadable']} unreadable, "
         f"{coverage['listicle_entries']} program entries recorded.")

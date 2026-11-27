@@ -375,7 +375,10 @@ def registrable_domain(value: str) -> str:
     a seller's subdomain on a course or creator host is kept whole."""
     host = (value or "").strip().lower()
     if "//" in host:
-        host = urlparse(host).hostname or ""
+        try:
+            host = urlparse(host).hostname or ""
+        except ValueError:  # a malformed address names no domain
+            return ""
     host = host.split("/", 1)[0].removeprefix("www.")
     parts = [p for p in host.split(".") if p]
     if len(parts) <= 2:
@@ -592,31 +595,83 @@ def pick_serp_heads(ranked: list[dict[str, Any]], count: int = SERP_HEADS) -> li
     return heads
 
 
+# Google can return a result's link as its own redirect
+# (https://google.com/goto?url=<opaque token>); DataForSEO Live passes it on
+# unresolved, with `domain` set to google.com. The result's site is then shown
+# only in its breadcrumb ("https://example.com › Pricing"). Posts and videos
+# show an engagement line there instead ("160+ likes") and name their platform
+# in `website_name` ("Instagram · r/photography"); only the platforms in
+# NOISE_DOMAINS are recognized by name.
+_SITE_RE = re.compile(r"(?:[\w-]+\.)+[^\W\d_]{2,}")
+_PLATFORM_DOMAINS = {domain.split(".")[0]: domain for domain in NOISE_DOMAINS}
+
+
+def google_redirect(url: str) -> bool:
+    """True when `url` is Google's redirect standing in for a result's own link."""
+    try:
+        parsed = urlparse(url if "//" in url else f"//{url}")
+    except ValueError:  # a malformed link is not Google's redirect
+        return False
+    host = (parsed.hostname or "").removeprefix("www.")
+    return host.split(".")[0] == "google" and host == registrable_domain(host) and parsed.path.rstrip("/") == "/goto"
+
+
+def serp_result_domain(item: dict[str, Any]) -> str:
+    """Registrable domain of one SERP result; '' when Google's redirect leaves
+    the result's site unnamed."""
+    url = str(item.get("url") or "")
+    if not google_redirect(url):
+        return registrable_domain(str(item.get("domain") or url))
+    # The shown address leads the breadcrumb, alone or followed by a date
+    # ("https://example.com · Jan 17, 2025").
+    shown = str(item.get("breadcrumb") or "").split("›", 1)[0].split()
+    if shown and (len(shown) == 1 or "://" in shown[0]):
+        domain = registrable_domain(shown[0])
+        if _SITE_RE.fullmatch(domain):
+            return domain
+    platform = re.split(r"\s*·\s*", str(item.get("website_name") or "").strip(), maxsplit=1)[0].lower()
+    return _PLATFORM_DOMAINS.get(platform, "")
+
+
 def extract_serp_observation(keyword: str, serp_result: list[dict[str, Any]]) -> dict[str, Any]:
     entry = (serp_result or [{}])[0]
     available = bool(serp_result) and isinstance(entry.get("items"), list)
     items = entry.get("items") or []
     paid: list[str] = []
     organic: list[str] = []
+    redirects = unnamed = unnamed_ads = 0
     for item in items:
-        domain = registrable_domain(item.get("domain") or item.get("url") or "")
-        if not domain:
+        if item.get("type") not in ("paid", "organic"):
             continue
-        if item.get("type") == "paid" and domain not in paid:
+        redirected = google_redirect(str(item.get("url") or ""))
+        domain = serp_result_domain(item)
+        redirects += redirected
+        if not domain:
+            unnamed += redirected
+            # An ad whose advertiser cannot be named is still an ad.
+            unnamed_ads += item["type"] == "paid"
+            continue
+        if item["type"] == "paid" and domain not in paid:
             paid.append(domain)
-        elif item.get("type") == "organic" and len(organic) < 10 and domain not in organic:
+        elif item["type"] == "organic" and len(organic) < 10 and domain not in organic:
             organic.append(domain)
-    return {
+    observation = {
         "type": "serp_observation",
         "keyword": keyword,
         "intent_signal": query_intent_signal(keyword),
         "paid_advertisers": paid,
-        "ads_count": len(paid) if available else None,
+        "ads_count": len(paid) + unnamed_ads if available else None,
         "response_status": "available" if available else "unavailable",
         "organic_top": organic,
         "se_results_count": entry.get("se_results_count"),
         "tier": "A",
     }
+    if redirects:
+        # Recorded only when Google redirected result links: how many links
+        # were redirects, and how many of those results named no site.
+        observation["redirect_links"] = redirects
+        observation["unnamed_results"] = unnamed
+    return observation
 
 
 def classify_domain(domain: str) -> str:
@@ -857,7 +912,7 @@ def render_section(
     for obs in observations:
         add(
             f"| {obs['keyword']} | "
-            f"{', '.join(obs['paid_advertisers']) or ('unavailable' if obs.get('response_status') == 'unavailable' else 'none observed')} | "
+            f"{', '.join(obs['paid_advertisers']) or ('unavailable' if obs.get('response_status') == 'unavailable' else 'not named' if obs['ads_count'] else 'none observed')} | "
             f"{', '.join(obs['organic_top'][:5])} |"
         )
     add("")
@@ -998,6 +1053,14 @@ def render_section(
             "veto (both groups listed with their reasons in the evidence "
             "file) — foreign-brand drift like 'ai canvas' -> 'canva ai' "
             "stays out of the demand model."
+        )
+    redirects = sum(o.get("redirect_links", 0) for o in observations)
+    if redirects:
+        unnamed = sum(o.get("unnamed_results", 0) for o in observations)
+        add(
+            f"- Google returned {redirects} result link(s) as its own redirects; those results are "
+            "named by the site shown with each one."
+            + (f" Left out because they showed no site: {unnamed}." if unnamed else "")
         )
     add(
         "- Not covered here: non-Google channels, organic difficulty, "

@@ -107,6 +107,12 @@ and `missing` (what the runner still needs). Each candidate carries up to
 three `pages` where it ranked or advertised: start profiling there, because
 a reseller's or a host's page shows what the domain really sells.
 
+Google can return a result's link as its own redirect (`google.com/goto?...`).
+Such a result still names its candidate, by the site shown with the result,
+but adds no page and no listicle to read: profile that candidate from its home
+page. A result that shows no site is left out. The search summary row counts
+both as `redirect_links` and `unnamed_results`.
+
 A seller's own subdomain on a course or creator host (thinkific.com,
 teachable.com, kajabi.com, substack.com and the like) is a candidate of its
 own, named by that subdomain, never the host. When the seller also has its

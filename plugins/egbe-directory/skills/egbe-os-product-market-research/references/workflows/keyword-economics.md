@@ -90,6 +90,14 @@ lexical clue (`vendor_seeking`, `tool_seeking`, `informational`, `job_seeking`,
 Google Ads must compare it with the actual product offer before selecting paid
 keywords. An ambiguous AEO/GEO query cannot alone confirm a competitor.
 
+Google can return a result's link as its own redirect (`google.com/goto?...`),
+with `google.com` as the result's domain. The runner then names the result by
+the site shown with it: the address in its breadcrumb, or a known platform in
+its site name (Reddit, YouTube and the like). It records `redirect_links` and
+`unnamed_results` on that SERP evidence row and reports them under Method and
+coverage. A result that shows no site is left out, never counted as Google; an
+ad among them still counts as an observed ad.
+
 ## 3. On failure
 
 Provider rate limits and recognized internal DataForSEO errors explicitly

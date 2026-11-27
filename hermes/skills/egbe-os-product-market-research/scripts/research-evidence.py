@@ -45,6 +45,7 @@ PUBLIC_FIELDS = frozenset({
     "categories", "product_context", "has_dollar_amount", "created", "sample_url",
     "serp_paid_appearances", "serp_organic_appearances", "score", "paid_results", "organic_results",
     "paid_advertisers", "organic_top", "ads_count", "se_results_count", "response_status",
+    "redirect_links", "unnamed_results",
     "observed_on", "retrieved_on", "published_at", "first_seen", "last_seen", "active_days",
     "bid", "match", "average_cpc", "monthly_clicks_at_bid", "monthly_cost_at_bid",
     "test_budget_usd", "est_clicks_within_test_budget", "simulated_keywords", "budget_covers_full_month",
