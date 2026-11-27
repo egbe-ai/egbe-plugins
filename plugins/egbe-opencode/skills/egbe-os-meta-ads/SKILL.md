@@ -94,6 +94,10 @@ day. An omitted/default recent period can exclude today; do not label it lifetim
 spend. Match signup/payment counts to the report's resolved dates before computing
 cost per customer, and preserve that window in the final handoff.
 
+Same convention on every Egbe ads platform: `GET /ads/meta/campaigns/{id}` reads one
+owned campaign, and `GET /ads/meta/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+reads an inclusive window. Meta also accepts `period`. Unknown query names fail 400 and list the accepted ones.
+
 ## Read only the relevant reference
 
 - Access and payloads: [API](references/runtime/api-reference.md).

@@ -8,6 +8,7 @@ All requests authenticate with `Authorization: Bearer $OS_API_KEY`.
 GET  $OS_URL/ads/reddit/account
 POST $OS_URL/ads/reddit/campaigns
 GET  $OS_URL/ads/reddit/campaigns
+GET  $OS_URL/ads/reddit/campaigns/{campaign_id}
 POST $OS_URL/ads/reddit/campaigns/{campaign_id}/launch
 POST $OS_URL/ads/reddit/campaigns/{campaign_id}/pause
 GET  $OS_URL/ads/reddit/campaigns/{campaign_id}/results
@@ -391,7 +392,8 @@ An empty owned list is not proof that a provider write failed.
 ## Results
 
 `GET /ads/reddit/campaigns/{campaign_id}/results` returns normalized metrics
-for the last 30 days, the campaign's raw rows from every report page and `report`:
+for the last 30 days, or for `?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` (inclusive
+UTC days, hourly bounds, end capped at the current hour; at most 366 days), the campaign's raw rows from every report page and `report`:
 the request window and breakdown, `time_zone_id` (null: none was requested, so
 Reddit's default applies), `pages`, `rows`, `pagination_complete`,
 `incomplete_reason`, `metrics_available`, per-metric `metric_availability`,

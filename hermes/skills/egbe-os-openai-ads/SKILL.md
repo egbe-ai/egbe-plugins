@@ -106,14 +106,19 @@ then only the relevant workflow. Resolve the existing campaign before writing.
 
 For a performance or cross-channel comparison, read
 [Monitoring and changes](references/workflows/monitoring.md) and fetch
-`GET /ads/openai/campaigns/{id}/results?start_time=<unix_seconds>&end_time=<unix_seconds>`
-for each selected campaign's reporting window. Both query parameters are
-required integers in UTC Unix **seconds**, not ISO date strings or milliseconds.
-For example, January 1–2, 2026 UTC uses `start_time=1767225600&end_time=1767312000`;
-convert the actual requested dates. Correct a missing/invalid-period 422 and retry
+`GET /ads/openai/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+for each selected campaign's reporting window (inclusive UTC days; omit both for
+the last 30 days). The native form `start_time=<unix_seconds>&end_time=<unix_seconds>`
+still works; never mix the two. For example, January 1, 2026 UTC is
+`date_from=2026-01-01&date_to=2026-01-01`, the same as
+`start_time=1767225600&end_time=1767312000`. Correct a missing/invalid-period 422 and retry
 the report before treating it as unavailable. A campaign list/detail can include a `metrics` snapshot, but it does not
 replace this report or establish its dates and freshness. Match the report's
 window to the product/payment outcomes before computing acquisition cost.
+
+Same convention on every Egbe ads platform: `GET /ads/openai/campaigns/{id}` reads one
+owned campaign, and `GET /ads/openai/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+reads an inclusive window. Omit both for the last 30 days. Unknown query names fail 400 and list the accepted ones.
 
 | Request | Read |
 |---|---|

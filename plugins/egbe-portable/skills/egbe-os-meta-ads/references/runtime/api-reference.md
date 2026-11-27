@@ -21,6 +21,7 @@ GET  $OS_URL/ads/meta/account
 GET  $OS_URL/ads/meta/campaigns
 POST $OS_URL/ads/meta/plan
 POST $OS_URL/ads/meta/apply
+GET  $OS_URL/ads/meta/campaigns/{campaign_id}
 GET  $OS_URL/ads/meta/campaigns/{campaign_id}/state
 POST $OS_URL/ads/meta/campaigns/{campaign_id}/launch
 POST $OS_URL/ads/meta/campaigns/{campaign_id}/pause

@@ -148,6 +148,11 @@ Read only the relevant references. Endpoint paths below are relative to OS;
 Google does not support the generic Meta `/plan`, `/apply`, `/state` or
 `/status` routes. Use Google's `/readback`, not raw `/query` or `/mutate`.
 
+
+Same convention on every Egbe ads platform: `GET /ads/google/campaigns/{ref}` reads one
+owned campaign, and `GET /ads/google/campaigns/{ref}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+reads an inclusive window. Use the `customer_id:campaign_id` ref; Google also accepts `period`. Unknown query names fail 400 and list the accepted ones.
+
 ## Execution
 
 Before a write, follow [Campaign records](references/artifacts.md): find existing

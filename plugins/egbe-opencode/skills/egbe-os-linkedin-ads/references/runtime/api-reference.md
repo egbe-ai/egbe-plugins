@@ -99,7 +99,8 @@ return 409 and require an explicitly approved replacement, not implicit duplicat
 Follow launch workflow for parent order and wallet authorization.
 
 `GET /campaigns/{id}/results?date_from=2026-09-01&date_to=2026-09-11`:
-inclusive UTC dates, today allowed, at most 366 days per request.
+inclusive UTC dates, today allowed, at most 366 days per request. Omit both
+for the last 30 days through today; one without the other fails 422.
 Returns campaign_id, dates, currency, metrics (impressions/clicks/spend decimal
 in account currency), raw data, observed_ranges, data_status, fetched_at and
 freshness. Not a conversion report.

@@ -74,6 +74,10 @@ Use from any product repository with `OS_URL` and `OS_API_KEY` (scope `ads`).
 No scaffold, instance layout or egbe-os-product-build stage is required. Provider
 credentials stay inside Egbe OS; never request them for product code.
 
+Same convention on every Egbe ads platform: `GET /ads/linkedin/campaigns/{id}` reads one
+owned campaign, and `GET /ads/linkedin/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+reads an inclusive window. Dates are UTC; omit both for the last 30 days. Unknown query names fail 400 and list the accepted ones.
+
 `GET /ads/linkedin/skill` returns this entrypoint. Read only the references needed
 for the task from the installed bundle. External agents may download
 `GET /skills/linkedin-ads` (ZIP), or

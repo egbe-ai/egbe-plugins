@@ -180,7 +180,10 @@ is no hidden delivery worker. API acceptance does not prove attribution.
 
 ## Reports
 
-GET `/campaigns/{id}/results?start_time=<unix seconds>&end_time=<unix seconds>`.
+GET `/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` (inclusive UTC
+days, converted to Unix seconds from date_from 00:00 UTC to the next day after
+date_to, capped at now; omit both for the last 30 days) or the native
+`?start_time=<unix seconds>&end_time=<unix seconds>`; do not mix the two forms.
 The gateway rounds the start down and the end up to full hours in the ad account
 timezone, capped at the latest completed hour (never a future boundary).
 Do not send future timestamps.
@@ -198,7 +201,7 @@ conversions null; use the separate attribution report when needed.
 freshness is unknown unless explicitly reported. General insights are delivery
 metrics; never relabel clicks or accepted server events as attributed conversions.
 
-GET `/campaigns/{id}/conversion-results` with the same Unix period for attributed
+GET `/campaigns/{id}/conversion-results` with the same date_from/date_to or Unix period for attributed
 campaign totals. `conversions` means click-through conversions; view-through is
 separate and must not be added to it. Account availability can limit this report.
 This is a campaign total, not a breakdown by event setting. If signup and purchase

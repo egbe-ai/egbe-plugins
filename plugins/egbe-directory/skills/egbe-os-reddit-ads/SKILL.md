@@ -77,6 +77,11 @@ Reddit Ads directly.
 Use the requested targeting, objective, budget and assets for writes.
 Status, spend and pause requests do not require research or policy files.
 
+
+Same convention on every Egbe ads platform: `GET /ads/reddit/campaigns/{id}` reads one
+owned campaign, and `GET /ads/reddit/campaigns/{id}/results?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD`
+reads an inclusive window. Dates are UTC; omit both for the last 30 days. Unknown query names fail 400 and list the accepted ones.
+
 ## Through the Egbe connector
 
 Campaign reads, paused builds, status changes, metrics and recovery work through
