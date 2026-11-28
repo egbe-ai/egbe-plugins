@@ -59,12 +59,33 @@ and outgoing HTTPS requests.
 
 ### Handle checkout and refresh
 
+- Before creating Checkout, validate the same server-owned attempt with
+  `POST /payments/app/checkout-sessions/validate`. Use the creation fields
+  below, the same stable `Idempotency-Key`, and both headers
+  `X-Egbe-Payment-Probe: validate-only` and
+  `X-Egbe-Payment-Probe-ID: <fresh 16–128 character letters/digits/_/- id>`.
+  This route uses provider reads only. It validates the app-owned price, mode,
+  order reference and platform-resolved return origin; it creates no checkout,
+  customer, subscription or entitlement. Status-based integrations do not need
+  a webhook receiver for this configuration check.
+- Verify the returned `validation_receipt` through
+  `POST /payments/app/validation-receipts/verify` with `receipt`, `probe_id`,
+  the expected `price` and expected `client_reference_id` read from that same
+  saved attempt, and its same `Idempotency-Key` header. The short-lived signed receipt is bound to this instance,
+  app, current return origin, price, order and probe. Inspect its returned mode
+  and success/cancel paths against the saved attempt too. A receipt proves
+  configuration, not payment, durable fulfillment or customer demand.
+  Never call the legacy `/payments/checkout-sessions/validate` or legacy
+  receipt verifier with an app-bound key, or put a primary agent key in an app
+  to work around a refusal.
 - After the server authenticates the product account, call
   `POST /payments/app/checkout-sessions` with `price`, `mode` (`payment` or
   `subscription`), an opaque local `client_reference_id`, `success_path`, and
   `cancel_path`. Checkout enables promotion codes by default. Send an
   `Idempotency-Key` stable for this checkout attempt. Save
   `data.id` against the local order or account before redirecting to `data.url`.
+  Real creation must omit both probe headers; they fail closed on mutation
+  routes. A validate-only request must never fall through to creation.
 - When the user returns, load the saved ID for that signed-in account and call
   `GET /payments/app/checkout-sessions/{id}`. Check `livemode`,
   `client_reference_id`, `payment_status`, and applicable refund information.

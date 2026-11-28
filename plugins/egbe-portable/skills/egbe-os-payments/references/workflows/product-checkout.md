@@ -2,7 +2,10 @@
 
 For the app-bound status API, use [Checkout and status through OS](../security/server-integration.md#checkout-and-status-through-os) for
 checkout, runtime credentials and payment verification. The signed delivery
-steps here apply to apps using the webhook integration.
+steps here apply to apps using the webhook integration. App-bound status
+integrations use `/payments/app/checkout-sessions/validate` and
+`/payments/app/validation-receipts/verify` with the documented probe headers;
+they must not call the legacy routes or copy a primary key into the backend.
 
 Use this workflow to implement an accepted offer's catalog, pricing handoff and
 Checkout Session creation. `one_time` uses `mode: "payment"`; `subscription`
@@ -61,12 +64,12 @@ Read before implementation:
 8. For subscriptions, if the account already has an active, trialing, past-due, paused, or otherwise
    managed subscription, open Customer Portal instead of creating another
    subscription.
-9. Build one server-owned checkout payload from the durable attempt. Validate
+9. For the webhook integration, build one server-owned checkout payload from the durable attempt. Validate
    it with `POST /payments/checkout-sessions/validate`; this must not create a
    session. New implementations enable customer-entered promotion codes by
    default. Leave automatic discounts absent unless product billing
    configuration selects one through the discounts workflow.
-10. Only after validation succeeds (`data.valid` is true), create the real
+10. For that webhook integration, only after validation succeeds (`data.valid` is true), create the real
     session through `POST /payments/checkout-sessions`. In this ordinary
     customer flow the validation response carries no `validation_receipt`, so
     never require one before creating the session; see
